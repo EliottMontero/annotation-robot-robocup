@@ -1,0 +1,18 @@
+{
+    "message_manager" : {
+        "file_path" : "messages.bin"
+    },
+    "image_providers" : {
+        "camera0" : {
+            "class_name" : "ReplayImageProvider",
+            "input_path" : "camera0.avi",
+            "meta_information_path" : "camera0.bin"
+        },
+        "camera1" : {
+            "class_name" : "ReplayImageProvider",
+            "input_path" : "camera1.avi",
+            "meta_information_path" : "camera1.bin"
+        }
+    },
+    "live" : false
+}

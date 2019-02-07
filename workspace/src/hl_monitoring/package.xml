@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>hl_monitoring</name>
+  <version>0.0.1</version>
+  <description>Library containing multiple tools to monitor RoboCup Humanoid
+  League games based on the messages sent by the robots, the Game Controller and
+  video streams.</description>
+
+  <maintainer email="lhofer@labri.fr">Ludovic Hofer</maintainer>
+
+  <license>MIT</license>
+
+  <author email="lhofer@labri.fr">Ludovic Hofer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>hl_communication</build_depend>
+
+  <run_depend>hl_communication</run_depend>
+
+</package>
