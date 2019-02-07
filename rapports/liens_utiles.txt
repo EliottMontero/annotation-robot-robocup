@@ -1,0 +1,23 @@
+Lien pour le rapport du cahier des besoins : 
+
+https://www.overleaf.com/8338392897vpcjbxgwrfxn?fbclid=IwAR3qy4lal6QdCO7OIQV8yLBn88qIe-lJGmNlK-Cf4xHasV6m4qc2qWjHCQo
+
+
+Lien du rapport du 1er TD (si Eliott donne les droits publics un jour) :
+
+https://www.overleaf.com/project/5c49c1c4162321495ab269f1
+
+
+Ebauche de diagramme (ou outil pour les diagramme UML) :
+
+https://www.draw.io/#Lrobot
+
+
+Outil pour le diagramme de Gantt (version gratuite mais ça suffit) : 
+
+https://www.tomsplanner.fr/?template=example
+
+
+Livre de OpenCV :
+
+https://www-dawsonera-com.docelec.u-bordeaux.fr/readonline/9780596156022
