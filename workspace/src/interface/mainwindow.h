@@ -31,6 +31,7 @@ class Window : public QWidget
 protected :
     //QGridLayout *layout;
     QTimer *timer;
+    float img_ratio;
     int x;
     int y;
     bool init=true;
@@ -62,6 +63,6 @@ public:
 public slots :
     void InitSpectatorInterface();
     void UpdateSpectatorInterface();
-
+    //void resize();
 };
 #endif // WINDOW_H
