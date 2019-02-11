@@ -33,9 +33,18 @@ Window::Window(QWidget *parent)
     setWindowTitle(tr("CHOIX DU MODE"));
 }
 
+
+
 void Window::UpdateSpectatorInterface(){
+    //QDesktopWidget dw;
     y = this->size().height();
     x = this->size().width();
+    //if(dw.width()<x || dw.height()<y){
+    //    y = 50;
+    //    y = dw.height();
+    //    x = 50;
+    //    x = dw.width();
+    //}
 
     //ici la taille des widgets par rapport à la fenètre.
     int x_marge=10;
@@ -43,7 +52,9 @@ void Window::UpdateSpectatorInterface(){
     float ratioL1=2.0/3.0;
     float ratioL2=1.7/12.0;
 
-    QSize sizeL1(x*ratioL1,y*ratioL1);
+    //alors ca passe pour de 16/9 mais il faut rien de plus large sinon ca fait bizarre. Faudrait tester sur un écran 4/3 ou carré voir ce que ca donne.
+    //normalement les vidéos que l'on aura seront plus proche du format carré. Mais rajouter une exception au cas où... (ou juste un hard resize)
+    QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
     label1->setFixedSize(sizeL1);
     label1->setGeometry((int)x/(2*x_marge),y-(y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
 
@@ -72,7 +83,7 @@ void Window::UpdateSpectatorInterface(){
 
 //on initialise l'interface dans le style que lulu a proposé
 void Window::InitSpectatorInterface(){
-      QGridLayout *layout = new   QGridLayout();
+    QGridLayout *layout = new   QGridLayout();
     setLayout(layout);
     spectator=true;
 
@@ -101,12 +112,12 @@ void Window::InitSpectatorInterface(){
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-
-     pixmap.load("../interface/a.jpeg");
+     pixmap.load("../interface/a.jpg");
+     img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
      label1->setPixmap(pixmap);
-     label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
+     //label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
 
      //label1->setMask(pixmap.mask());
      label1->setScaledContents(true);
@@ -119,7 +130,7 @@ void Window::InitSpectatorInterface(){
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(100);
+     timer->start(0);
 }
 
 
