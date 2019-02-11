@@ -62,7 +62,6 @@ public:
 public slots :
     void InitSpectatorInterface();
     void UpdateSpectatorInterface();
-    void update();
 
 };
 #endif // WINDOW_H
