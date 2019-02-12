@@ -3,11 +3,13 @@
 #define WINDOW_H
 
 #include <iostream>
+#include <QSlider>
 #include <string>
 #include <QWidget>
 #include <QMenu>
 #include <QMenuBar>
 #include <QImageReader>
+#include <QWindow>
 #include <QLabel>
 #include <QPixmap>
 #include <QApplication>
@@ -33,6 +35,7 @@ class Window : public QWidget
     Q_OBJECT
 protected :
     //QGridLayout *layout;
+    int sliderValue;
     QTimer *timer;
     float img_ratio;
     int x;
@@ -44,6 +47,7 @@ protected :
     QString fichierchoisi;
     QSize taille;
     QPixmap pixmap;
+    QSlider *slider;
     QLabel * label0;
     QLabel * label1;
     QLabel * label2;
@@ -66,6 +70,7 @@ public:
 public slots :
     void InitSpectatorInterface();
     void UpdateSpectatorInterface();
+
     //void resize();
 };
 #endif // WINDOW_H

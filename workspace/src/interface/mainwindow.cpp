@@ -18,7 +18,8 @@ Window::Window(QWidget *parent)
             )
         );
     //this->setFixedSize(initSize);
-    //this->setStyleSheet("background-color: white;");
+    this->setStyleSheet("background-color: grey;");
+
     mainbar = new QMenuBar(this);
     m1 = new QMenu("Mode de Vue",this);
     mainbar->addMenu(m1);
@@ -28,12 +29,9 @@ Window::Window(QWidget *parent)
     mainbar->addMenu(m1);
     m1->addAction(ouvrirAct);
     init=false;
-    this->setStyleSheet("background-color: black;");
 
     setWindowTitle(tr("CHOIX DU MODE"));
 }
-
-
 
 void Window::UpdateSpectatorInterface(){
     //QDesktopWidget dw;
@@ -50,13 +48,13 @@ void Window::UpdateSpectatorInterface(){
     int x_marge=10;
     int y_marge=20;
     float ratioL1=2.0/3.0;
-    float ratioL2=1.7/12.0;
+    float ratioL2=2/12.0;
 
     //alors ca passe pour de 16/9 mais il faut rien de plus large sinon ca fait bizarre. Faudrait tester sur un écran 4/3 ou carré voir ce que ca donne.
     //normalement les vidéos que l'on aura seront plus proche du format carré. Mais rajouter une exception au cas où... (ou juste un hard resize)
     QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
     label1->setFixedSize(sizeL1);
-    label1->setGeometry((int)x/(2*x_marge),y-(y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
+    label1->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
 
     QSize sizeL2(x*ratioL2,y*ratioL2);
     label2->setFixedSize(sizeL2);
@@ -79,6 +77,17 @@ void Window::UpdateSpectatorInterface(){
     font.setPointSize(x/100);
     font.setBold(true);
     label4->setFont(font);
+
+    slider->setGeometry(x/(2*x_marge), y-(y/y_marge),x*ratioL1, slider->height());
+    //slider->setFixedWidth(x*ratioL1);
+
+    label5->setGeometry(x/(2*x_marge)-label5->width(),y-(y/y_marge),30,30);
+    char str[3];
+    snprintf(str, 3, "%d", slider->value());
+    label5->setText(str);
+
+    label6->setGeometry(x/(2*x_marge)+x*ratioL1,y-(y/y_marge),30,30);
+
 }
 
 //on initialise l'interface dans le style que lulu a proposé
@@ -112,7 +121,19 @@ void Window::InitSpectatorInterface(){
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-     pixmap.load("../interface/a.jpeg");
+    //valeur début slider
+    label5=new QLabel(this);
+    label5->setAlignment(Qt::AlignCenter);
+    label5->setText("-0-");
+    //label5->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
+    //label5->setFrameStyle(QFrame::Panel | QFrame::Raised);
+
+    //valeur fin slider
+    label6=new QLabel(this);
+    label6->setAlignment(Qt::AlignCenter);
+    label6->setText("-100-");
+
+    pixmap.load("../interface/a.png");
      img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
@@ -122,15 +143,24 @@ void Window::InitSpectatorInterface(){
      //label1->setMask(pixmap.mask());
      label1->setScaledContents(true);
 
+     slider=new QSlider(Qt::Horizontal,this);
+     slider->setTickInterval(1);
+     slider->setMaximum(100);
+     slider->setMinimum(0);
+
+     //connect(slider, SIGNAL(sliderReleased()), this, SLOT(updateSlider()));
      //layout->addWidget(mainbar,0,0);
      layout->addWidget(label1,2,0);
      layout->addWidget(label2,0,2);
      layout->addWidget(label3,0,1);
      layout->addWidget(label4,0,0);
+     layout->addWidget(slider,0,3);
+     layout->addWidget(label5,0,4);
+     layout->addWidget(label6,0,5);
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(0);
+     timer->start(10);
 }
 
 
