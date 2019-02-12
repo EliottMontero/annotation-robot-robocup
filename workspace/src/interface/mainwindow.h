@@ -10,10 +10,13 @@
 #include <QImageReader>
 #include <QLabel>
 #include <QPixmap>
+#include <QApplication>
 #include <QSize>
+#include <QStyle>
 #include <QDesktopWidget>
+#include <QGuiApplication>
 #include <QMainWindow>
-#include "opencv2/core.hpp"
+//#include "opencv2/core.hpp"
 #include <QGridLayout>
 
 
