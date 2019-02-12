@@ -24,6 +24,10 @@ Window::Window(QWidget *parent)
     m1 = new QMenu("Mode de Vue",this);
     mainbar->addMenu(m1);
 
+    bouton = new QPushButton("My Button", this);
+    connect(bouton, SIGNAL (released()), this, SLOT (handleButton()));
+    bouton->setVisible(false);
+
     ouvrirAct=new QAction(tr("Spectateur"),this);
     connect(ouvrirAct, SIGNAL(triggered()), this, SLOT(InitSpectatorInterface()));
     mainbar->addMenu(m1);
@@ -34,17 +38,24 @@ Window::Window(QWidget *parent)
 
 }
 
+void Window::handleButton(){
+    if (play){
+        player->pause();
+        play=false;
+        bouton->setText("PLAY");
+    }
+    else{
+        player->play();
+        play=true;
+        bouton->setText("PAUSE");
+
+    }
+}
+
 void Window::UpdateSpectatorInterface(){
-    //QDesktopWidget dw;
+
     y = this->size().height();
     x = this->size().width();
-
-    //if(dw.width()<x || dw.height()<y){
-    //    y = 50;
-    //    y = dw.height();
-    //    x = 50;
-    //    x = dw.width();
-    //}
 
     //ici la taille des widgets par rapport à la fenètre.
     int x_marge=10;
@@ -52,11 +63,6 @@ void Window::UpdateSpectatorInterface(){
     float ratioL1=2.0/3.0;
     float ratioL2=2/12.0;
 
-    //alors ca passe pour de 16/9 mais il faut rien de plus large sinon ca fait bizarre. Faudrait tester sur un écran 4/3 ou carré voir ce que ca donne.
-    //normalement les vidéos que l'on aura seront plus proche du format carré. Mais rajouter une exception au cas où... (ou juste un hard resize)
-    //QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
-    //label1->setFixedSize(sizeL1);
-    //label1->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
     vw->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
 
     QSize sizeL2(x*ratioL2,y*ratioL2);
@@ -82,30 +88,32 @@ void Window::UpdateSpectatorInterface(){
     label4->setFont(font);
 
     slider->setGeometry(x/(2*x_marge), y-(y/y_marge)-slider->height(),vw->width(), slider->height());
-    //slider->setFixedWidth(x*ratioL1);
 
-    label5->setGeometry(x/(2*x_marge)-label5->width(),y-(y/y_marge)-slider->height(),30,30);
+    label5->setGeometry(x/(2*x_marge)-label5->width(),y-(4*y/(3*y_marge))-slider->height(),30,30);
     char str[3];
     snprintf(str, 3, "%d", slider->value());
     label5->setText(str);
 
-
     label6->setGeometry(vw->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),slider->height(), slider->height());
 
+    bouton->setGeometry(slider->width()/2+x/(2*x_marge), y-(y/(2*y_marge))-bouton->height()*ratioL1,slider->width()/10, slider->width()/40);
+    font = bouton->font();
+    font.setPointSize(x/120);
+    font.setBold(false);
+    bouton->setFont(font);
 
-    //label1->setVisible(false);
     label2->setVisible(true);
     label3->setVisible(true);
     label4->setVisible(true);
     label5->setVisible(true);
     label6->setVisible(true);
     slider->setVisible(true);
+    bouton->setVisible(true);
     vw->setVisible(true);
 }
 
 //on initialise l'interface dans le style que lulu a proposé
 void Window::InitSpectatorInterface(){
-
     player = new QMediaPlayer;
     vw = new QVideoWidget(this);
     player->setVideoOutput(vw);
@@ -113,14 +121,13 @@ void Window::InitSpectatorInterface(){
     player->setMedia(QUrl::fromLocalFile("/home/flo/emmc2/2vs1/dynamic_video.avi"));
     vw->setGeometry(100,100,300,400);
     //vw->show();
-
+    bouton->setText("PAUSE");
     player->play();
-    qDebug() << player->state();
+    play=true;
 
-    spectator=true;
 
     //label1 sera le label contenant l'image de la vidéo
-    label1=new QLabel(this);
+    //label1=new QLabel(this);
     //label1->setAlignment(Qt::AlignCenter);
 
     //label2 = SCORE
@@ -160,11 +167,11 @@ void Window::InitSpectatorInterface(){
      //img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
-     label1->setPixmap(pixmap);
+     //label1->setPixmap(pixmap);
      //label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
 
      //label1->setMask(pixmap.mask());
-     label1->setScaledContents(true);
+     //label1->setScaledContents(true);
 
      slider=new QSlider(Qt::Horizontal,this);
      slider->setTickInterval(1);

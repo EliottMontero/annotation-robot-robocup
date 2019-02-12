@@ -43,11 +43,12 @@ protected :
     int x;
     int y;
     bool init=true;
-    bool spectator=false;
     QAction *ouvrirAct;
     QMenu *m1;
     QString fichierchoisi;
     QSize taille;
+    QPushButton * bouton;
+    bool play;
     QPixmap pixmap;
     QSlider *slider;
     QLabel * label0;
@@ -68,12 +69,13 @@ protected :
 
 public:
     Window(QWidget *parent = 0);
-   // ~Window();
+    //~Window();
 
 
 public slots :
     void InitSpectatorInterface();
     void UpdateSpectatorInterface();
+    void handleButton();
 
     //void resize();
 };
