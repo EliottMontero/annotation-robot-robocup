@@ -17,6 +17,9 @@
 #include <QStyle>
 #include <QWidget>
 #include <QWindow>
+#include <QMediaPlayer>
+#include <QVideoWidget>
+#include <QDebug>
 #include <string>
 //#include "opencv2/core.hpp"
 
@@ -60,6 +63,8 @@ protected :
     QImageReader *image;
     QMenuBar *mainbar;
     QStandardItemModel *model;
+    QMediaPlayer* player;
+    QVideoWidget* vw;
 
 public:
     Window(QWidget *parent = 0);
