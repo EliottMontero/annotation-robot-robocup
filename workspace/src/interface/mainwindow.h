@@ -1,25 +1,24 @@
 
 #ifndef WINDOW_H
 #define WINDOW_H
-
 #include <iostream>
-#include <QSlider>
-#include <string>
-#include <QWidget>
-#include <QMenu>
-#include <QMenuBar>
-#include <QImageReader>
-#include <QWindow>
-#include <QLabel>
-#include <QPixmap>
 #include <QApplication>
-#include <QSize>
-#include <QStyle>
 #include <QDesktopWidget>
 #include <QGuiApplication>
-#include <QMainWindow>
-//#include "opencv2/core.hpp"
 #include <QGridLayout>
+#include <QImageReader>
+#include <QLabel>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
+#include <QPixmap>
+#include <QSize>
+#include <QSlider>
+#include <QStyle>
+#include <QWidget>
+#include <QWindow>
+#include <string>
+//#include "opencv2/core.hpp"
 
 
 class QDataWidgetMapper;
