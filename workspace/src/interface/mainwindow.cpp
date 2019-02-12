@@ -78,22 +78,28 @@ void Window::UpdateSpectatorInterface(){
     font.setBold(true);
     label4->setFont(font);
 
-    slider->setGeometry(x/(2*x_marge), y-(y/y_marge),x*ratioL1, slider->height());
+    slider->setGeometry(x/(2*x_marge), y-(y/y_marge)-slider->height(),label1->width(), slider->height());
     //slider->setFixedWidth(x*ratioL1);
 
-    label5->setGeometry(x/(2*x_marge)-label5->width(),y-(y/y_marge),30,30);
+    label5->setGeometry(x/(2*x_marge)-label5->width(),y-(y/y_marge)-slider->height(),30,30);
     char str[3];
     snprintf(str, 3, "%d", slider->value());
     label5->setText(str);
 
-    label6->setGeometry(x/(2*x_marge)+x*ratioL1,y-(y/y_marge),30,30);
+    label6->setGeometry(label1->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),30,30);
 
+    label1->setVisible(true);
+    label2->setVisible(true);
+    label3->setVisible(true);
+    label4->setVisible(true);
+    label5->setVisible(true);
+    label6->setVisible(true);
+    slider->setVisible(true);
 }
 
 //on initialise l'interface dans le style que lulu a proposé
 void Window::InitSpectatorInterface(){
-    QGridLayout *layout = new   QGridLayout();
-    setLayout(layout);
+
     spectator=true;
 
     //label1 sera le label contenant l'image de la vidéo
@@ -133,7 +139,7 @@ void Window::InitSpectatorInterface(){
     label6->setAlignment(Qt::AlignCenter);
     label6->setText("-100-");
 
-    pixmap.load("../interface/a.png");
+    pixmap.load("../interface/a.jpeg");
      img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
@@ -148,19 +154,12 @@ void Window::InitSpectatorInterface(){
      slider->setMaximum(100);
      slider->setMinimum(0);
 
-     //connect(slider, SIGNAL(sliderReleased()), this, SLOT(updateSlider()));
-     //layout->addWidget(mainbar,0,0);
-     layout->addWidget(label1,2,0);
-     layout->addWidget(label2,0,2);
-     layout->addWidget(label3,0,1);
-     layout->addWidget(label4,0,0);
-     layout->addWidget(slider,0,3);
-     layout->addWidget(label5,0,4);
-     layout->addWidget(label6,0,5);
+
+
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(10);
+     timer->start(100);
 }
 
 
