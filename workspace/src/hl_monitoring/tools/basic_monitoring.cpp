@@ -65,7 +65,19 @@ int main(int argc, char ** argv) {
       if (team_msg.has_team_number() && team_msg.has_team_color()) {
         uint32_t team_number = team_msg.team_number();
         uint32_t team_color = team_msg.team_color();
+        uint32_t team_score = team_msg.score();
         colors_by_team[team_number] = team_colors[team_color];
+        std::cout << " team " << team_msg.team_number()
+                  << " score : " << team_score << std::endl;
+        /*for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
+           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
+           if (robots_msg.has_penalty()) {
+            uint32_t robot_penalty = robots_msg.penalty();
+            uint32_t robot_secs_till_unpenalised = robots_msg.secs_till_unpenalised();
+             std::cout << "-> Message from robot " << idx << " of team  " << team_number
+                  << " -> penalty " << robot_penalty  << " secs_till_unpenalised : " << robot_secs_till_unpenalised   << std::endl;
+           }
+         }*/
       }
     }
 
