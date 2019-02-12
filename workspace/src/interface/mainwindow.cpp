@@ -54,9 +54,10 @@ void Window::UpdateSpectatorInterface(){
 
     //alors ca passe pour de 16/9 mais il faut rien de plus large sinon ca fait bizarre. Faudrait tester sur un écran 4/3 ou carré voir ce que ca donne.
     //normalement les vidéos que l'on aura seront plus proche du format carré. Mais rajouter une exception au cas où... (ou juste un hard resize)
-    QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
-    label1->setFixedSize(sizeL1);
-    label1->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
+    //QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
+    //label1->setFixedSize(sizeL1);
+    //label1->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
+    vw->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
 
     QSize sizeL2(x*ratioL2,y*ratioL2);
     label2->setFixedSize(sizeL2);
@@ -80,7 +81,7 @@ void Window::UpdateSpectatorInterface(){
     font.setBold(true);
     label4->setFont(font);
 
-    slider->setGeometry(x/(2*x_marge), y-(y/y_marge)-slider->height(),label1->width(), slider->height());
+    slider->setGeometry(x/(2*x_marge), y-(y/y_marge)-slider->height(),vw->width(), slider->height());
     //slider->setFixedWidth(x*ratioL1);
 
     label5->setGeometry(x/(2*x_marge)-label5->width(),y-(y/y_marge)-slider->height(),30,30);
@@ -88,28 +89,30 @@ void Window::UpdateSpectatorInterface(){
     snprintf(str, 3, "%d", slider->value());
     label5->setText(str);
 
-    label6->setGeometry(label1->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),30,30);
 
-    label1->setVisible(true);
+    label6->setGeometry(vw->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),slider->height(), slider->height());
+
+
+    //label1->setVisible(false);
     label2->setVisible(true);
     label3->setVisible(true);
     label4->setVisible(true);
     label5->setVisible(true);
     label6->setVisible(true);
     slider->setVisible(true);
+    vw->setVisible(true);
 }
 
 //on initialise l'interface dans le style que lulu a proposé
 void Window::InitSpectatorInterface(){
 
     player = new QMediaPlayer;
-    vw = new QVideoWidget;
+    vw = new QVideoWidget(this);
     player->setVideoOutput(vw);
-
-    player->setMedia(QUrl::fromLocalFile("/home/eliott/tests1/drop.avi"));
-
+    //img_ratio = (float)vw->sizeHint().width()/(float)vw->sizeHint().height();
+    player->setMedia(QUrl::fromLocalFile("/home/flo/emmc2/2vs1/dynamic_video.avi"));
     vw->setGeometry(100,100,300,400);
-    vw->show();
+    //vw->show();
 
     player->play();
     qDebug() << player->state();
@@ -154,7 +157,7 @@ void Window::InitSpectatorInterface(){
     label6->setText("-100-");
 
     pixmap.load("../interface/a.jpeg");
-     img_ratio=(float)pixmap.width()/(float)pixmap.height();
+     //img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
      label1->setPixmap(pixmap);
@@ -173,7 +176,7 @@ void Window::InitSpectatorInterface(){
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(100);
+     timer->start(10);
 }
 
 
