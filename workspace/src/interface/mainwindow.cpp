@@ -31,12 +31,14 @@ Window::Window(QWidget *parent)
     init=false;
 
     setWindowTitle(tr("CHOIX DU MODE"));
+
 }
 
 void Window::UpdateSpectatorInterface(){
     //QDesktopWidget dw;
     y = this->size().height();
     x = this->size().width();
+
     //if(dw.width()<x || dw.height()<y){
     //    y = 50;
     //    y = dw.height();
@@ -99,6 +101,18 @@ void Window::UpdateSpectatorInterface(){
 
 //on initialise l'interface dans le style que lulu a proposé
 void Window::InitSpectatorInterface(){
+
+    player = new QMediaPlayer;
+    vw = new QVideoWidget;
+    player->setVideoOutput(vw);
+
+    player->setMedia(QUrl::fromLocalFile("/home/eliott/tests1/drop.avi"));
+
+    vw->setGeometry(100,100,300,400);
+    vw->show();
+
+    player->play();
+    qDebug() << player->state();
 
     spectator=true;
 
