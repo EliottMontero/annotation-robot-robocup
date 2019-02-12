@@ -18,7 +18,7 @@ Window::Window(QWidget *parent)
             )
         );
     //this->setFixedSize(initSize);
-    this->setStyleSheet("background-color: grey;");
+    //this->setStyleSheet("background-color: white;");
     mainbar = new QMenuBar(this);
     m1 = new QMenu("Mode de Vue",this);
     mainbar->addMenu(m1);
@@ -112,7 +112,7 @@ void Window::InitSpectatorInterface(){
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-     pixmap.load("../interface/a.jpg");
+     pixmap.load("../interface/a.jpeg");
      img_ratio=(float)pixmap.width()/(float)pixmap.height();
      //QSize imageTaille(x/3,y/3);
      //label1->setFixedSize(imageTaille);
