@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+  <name>traitement</name>
+  <version>0.0.1</version>
+  <description>Video annotation for RoboCup humanoid league</description>
+
+  <maintainer email="lucie.mathe@u-bordeaux.fr">Lucie Mathé</maintainer>
+
+  <license>MIT</license>
+
+  <author email="lucie.mathe@u-bordeaux.fr">Lucie Mathé</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>hl_monitoring</build_depend>
+
+  <run_depend>hl_monitoring</run_depend>
+
+
+</package>

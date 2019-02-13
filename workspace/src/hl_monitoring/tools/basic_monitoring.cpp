@@ -115,7 +115,7 @@ int main(int argc, char ** argv) {
                 cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);
                 /* direction du robot */
                 const AngleDistribution & dir = weighted_pose.pose().dir();
-                int angle = dir.mean();
+                float angle = dir.mean();
                 cv :: Point3f pos_in_fielddir(position.x()+cos(angle), position.y()+sin(angle), 0.0);
                 cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
                 /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
@@ -132,10 +132,10 @@ int main(int argc, char ** argv) {
 
 
                 /* Affichage du message pour vérifications */
-               /* std::cout << "-> Robot num " << robot_entry.first.robot_id()
+                std::cout << "-> Robot num " << robot_entry.first.robot_id()
                 << " from team " << robot_entry.first.team_id()
                 << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;
-                std::cout << "-> Robot pos x : " << pos_in_img.x << " y : " << pos_in_img.y
+                /*std::cout << "-> Robot pos x : " << pos_in_img.x << " y : " << pos_in_img.y
                  << " pos fleche : " << pos_in_imgdir.x << " y : " << pos_in_imgdir.y
                  << " pos fleche new : " << fleche.x << " y : " << fleche.y << " hypo ==> " << hypo <<std::endl;*/
               }
