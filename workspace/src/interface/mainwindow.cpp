@@ -4,17 +4,13 @@
 
 Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
-    x=dw.width()*1;
-    y=dw.height()*1;
-    x=1600;
-    y=1000;
+    x=static_cast<int>(dw.width()*0.8);
+    y=static_cast<int>(dw.height()*0.8);
+
     QSize initSize(x,y);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,initSize,qApp->desktop()->availableGeometry()));
     this->setStyleSheet("background-color: grey;");
 
-    mainbar = new QMenuBar(this);
-    m1 = new QMenu("Mode de Vue",this);
-    mainbar->addMenu(m1);
 
     bouton0 = new QPushButton("PAUSE", this);
     bouton1 = new QPushButton("Position", this);
@@ -28,11 +24,6 @@ Window::Window(QWidget *parent) : QWidget(parent){
     bouton1->setVisible(false);
     bouton2->setVisible(false);
 
-    ouvrirAct=new QAction(tr("Spectateur"),this);
-    connect(ouvrirAct, SIGNAL(triggered()), this, SLOT(InitSpectatorInterface()));
-    mainbar->addMenu(m1);
-    m1->addAction(ouvrirAct);
-    init=false;
     InitSpectatorInterface();
     setWindowTitle(tr("CHOIX DU MODE"));
 }
@@ -84,49 +75,74 @@ void Window::UpdateSpectatorInterface(){
     y = this->size().height();
     x = this->size().width();
 
-    //ici la taille des widgets par rapport a  la fenetre.
+    int label_font_size=x/100;
+    int button_font_size=x/120;
+
     int x_marge=10;
     int y_marge=20;
     float ratioL1=2.0f/3.0f;
     float ratioL2=2.f/12.0f;
 
-    QSize sizeL1(static_cast<int>(img_ratio*y*ratioL1),static_cast<int>(y*ratioL1));
+    int ZERO=0;
+
+    int posX_label1 = x/(2*x_marge);
+    int posY_label1 = y-label1->height()-2*y/y_marge;
+    int width_label1 = static_cast<int>(img_ratio*y*ratioL1);
+    int height_label1 = static_cast<int>(y*ratioL1);
+
+    int posX_label2 = static_cast<int>(x-(x*ratioL2)-(x/x_marge));
+    int posY_label2 = (2*y/4)-(y/y_marge)-y/4;
+    int width_label2 = static_cast<int>(x*ratioL2);
+    int height_label2 = static_cast<int>(y*ratioL2);
+
+    int posX_label3 = posX_label2;
+    int posY_label3 = posY_label2 + y/4;
+    int width_label3 = width_label2;
+    int height_label3 = height_label2;
+
+    int posX_label4 = posX_label2;
+    int posY_label4 = posY_label3 + y/4;
+    int width_label4 = width_label2;
+    int height_label4 = height_label2;
+
+    int posX_button0 = width_label1/2+x/(2*x_marge);
+    int posY_button0 = static_cast<int>(y-(y/(2*y_marge))-y/y_marge);
+    int width_button0 = label1->width()/10;
+    int height_button0 = label1->width()/40;
+
+    int posX_button1 = x/x_marge;
+    int posY_button1 = y-label1->height()-4*y/y_marge;
+    int width_button1 = width_button0;
+    int height_button1 = height_button0;
+
+    int posX_button2 = x/x_marge+3*bouton1->width();
+    int posY_button2 = y-label1->height()-4*y/y_marge;
+    int width_button2 = width_button1;
+    int height_button2 =  height_button1;
+
+    QSize sizeL1(width_label1, height_label1);
     label1->setFixedSize(sizeL1);
-    label1->setGeometry(x/(2*x_marge),y-label1->height()-2*y/y_marge,0,0);
+    label1->setGeometry(posX_label1, posY_label1, ZERO, ZERO);
+    label2->setGeometry(posX_label2, posY_label2, width_label2, height_label2);
+    label3->setGeometry(posX_label3, posY_label3, width_label3, height_label3);
+    label4->setGeometry(posX_label4, posY_label4, width_label4, height_label4);
 
-
-    QSize sizeL2(static_cast<int>(x*ratioL2),static_cast<int>(y*ratioL2));
-    label2->setFixedSize(sizeL2);
-    label2->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)),(2*y/4)-(y/y_marge)-y/4,static_cast<int>(x*ratioL2),static_cast<int>(y*ratioL2));
     QFont font = label2->font();
-    font.setPointSize(x/100);
+    font.setPointSize(label_font_size);
     font.setBold(true);
     label2->setFont(font);
-
-    label3->setFixedSize(sizeL2);
-    label3->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)), (3*y/4)-(y/y_marge)-y/4,0,0);
-    font = label4->font();
-    font.setPointSize(x/100);
-    font.setBold(true);
     label3->setFont(font);
-
-    label4->setFixedSize(sizeL2);
-    label4->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)), y-(y/y_marge)-y/4,0,0);
-    font = label4->font();
-    font.setPointSize(x/100);
-    font.setBold(true);
     label4->setFont(font);
-
-    bouton0->setGeometry(label1->width()/2+x/(2*x_marge), static_cast<int>(y-(y/(2*y_marge))-bouton0->height()*ratioL1),label1->width()/10, label1->width()/40);
     font = bouton0->font();
-    font.setPointSize(x/120);
+    font.setPointSize(button_font_size);
     font.setBold(false);
     bouton0->setFont(font);
     bouton1->setFont(font);
     bouton2->setFont(font);
 
-    bouton1->setGeometry(x/x_marge, y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
-    bouton2->setGeometry(x/x_marge+3*bouton1->width(), y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
+    bouton0->setGeometry(posX_button0, posY_button0, width_button0, height_button0);
+    bouton1->setGeometry(posX_button1, posY_button1, width_button1, height_button1);
+    bouton2->setGeometry(posX_button2, posY_button2, width_button2, height_button2);
 
     label1->setVisible(true);
     label2->setVisible(true);
@@ -136,8 +152,6 @@ void Window::UpdateSpectatorInterface(){
     bouton1->setVisible(true);
     bouton2->setVisible(true);
 }
-
-
 
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
@@ -169,8 +183,6 @@ void Window::InitSpectatorInterface(){
 
      pixmap.load("../interface/a.jpeg");
      img_ratio=(float)pixmap.width()/(float)pixmap.height();
-     QSize imageTaille(x/3,y/3);
-     label1->setFixedSize(imageTaille);
      label1->setPixmap(pixmap);
      label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
 
@@ -180,7 +192,7 @@ void Window::InitSpectatorInterface(){
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(10);
+     timer->start(100);
 }
 
 

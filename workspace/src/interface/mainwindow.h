@@ -22,14 +22,6 @@
 #include <QDebug>
 #include <string>
 #include "opencv2/core.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/core/mat.hpp"
-#include "opencv/cv.hpp"
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv/cv.hpp>
 
 
@@ -47,17 +39,10 @@ class Window : public QWidget
 {
     Q_OBJECT
 protected :
-    //QGridLayout *layout;
-    int sliderValue;
     QTimer *timer;
     float img_ratio;
     int x;
     int y;
-    bool init=true;
-    QAction *ouvrirAct;
-    QMenu *m1;
-    QString fichierchoisi;
-    QSize taille;
     bool but0, but1, but2;
     QPushButton * bouton0;
     QPushButton * bouton1;
@@ -79,11 +64,6 @@ protected :
     QLabel * label8;
     QLabel * label9;
     QImageReader *image;
-    QMenuBar *mainbar;
-    QStandardItemModel *model;
-
-
-
 
 
 public:
