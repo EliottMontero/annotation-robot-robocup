@@ -60,28 +60,28 @@ void Window::UpdateSpectatorInterface(){
     //ici la taille des widgets par rapport à la fenètre.
     int x_marge=10;
     int y_marge=20;
-    float ratioL1=2.0/3.0;
-    float ratioL2=2/12.0;
+    float ratioL1=2.0f/3.0f;
+    float ratioL2=2.f/12.0f;
 
-    vw->setGeometry((int)x/(2*x_marge),y-(2*y/y_marge)-(y*ratioL1),x*ratioL1,y*ratioL1);
+    vw->setGeometry(static_cast<int>(x/(2*x_marge)),static_cast<int>(y-(2*y/y_marge)-(y*ratioL1)),static_cast<int>(x*ratioL1),static_cast<int>(y*ratioL1));
 
-    QSize sizeL2(x*ratioL2,y*ratioL2);
+    QSize sizeL2(static_cast<int>(x*ratioL2),static_cast<int>(y*ratioL2));
     label2->setFixedSize(sizeL2);
-    label2->setGeometry(x-(x*ratioL2)-(x/x_marge), (2*y/4)-(y/y_marge)-y/4,x*ratioL2,y*ratioL2);
+    label2->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)),(2*y/4)-(y/y_marge)-y/4,static_cast<int>(x*ratioL2),static_cast<int>(y*ratioL2));
     QFont font = label2->font();
     font.setPointSize(x/100);
     font.setBold(true);
     label2->setFont(font);
 
     label3->setFixedSize(sizeL2);
-    label3->setGeometry(x-(x*ratioL2)-(x/x_marge), (3*y/4)-(y/y_marge)-y/4,0,0);
+    label3->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)), (3*y/4)-(y/y_marge)-y/4,0,0);
     font = label4->font();
     font.setPointSize(x/100);
     font.setBold(true);
     label3->setFont(font);
 
     label4->setFixedSize(sizeL2);
-    label4->setGeometry(x-(x*ratioL2)-(x/x_marge), y-(y/y_marge)-y/4,0,0);
+    label4->setGeometry(static_cast<int>(x-(x*ratioL2)-(x/x_marge)), y-(y/y_marge)-y/4,0,0);
     font = label4->font();
     font.setPointSize(x/100);
     font.setBold(true);
@@ -96,7 +96,7 @@ void Window::UpdateSpectatorInterface(){
 
     label6->setGeometry(vw->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),slider->height(), slider->height());
 
-    bouton->setGeometry(slider->width()/2+x/(2*x_marge), y-(y/(2*y_marge))-bouton->height()*ratioL1,slider->width()/10, slider->width()/40);
+    bouton->setGeometry(slider->width()/2+x/(2*x_marge), static_cast<int>(y-(y/(2*y_marge))-bouton->height()*ratioL1),slider->width()/10, slider->width()/40);
     font = bouton->font();
     font.setPointSize(x/120);
     font.setBold(false);
