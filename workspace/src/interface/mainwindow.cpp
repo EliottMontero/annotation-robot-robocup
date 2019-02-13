@@ -73,8 +73,14 @@ void Window::handleButton2(){
     }
 }
 
-void Window::UpdateSpectatorInterface(){
 
+void Window::MatToImage(){
+         QImage *Qim= new QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_ARGB32);
+         QPixmap pix=QPixmap::fromImage(*Qim);
+         label1->setPixmap(pix);
+   }
+
+void Window::UpdateSpectatorInterface(){
     y = this->size().height();
     x = this->size().width();
 
@@ -121,7 +127,6 @@ void Window::UpdateSpectatorInterface(){
 
     bouton1->setGeometry(x/x_marge, y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
     bouton2->setGeometry(x/x_marge+3*bouton1->width(), y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
-
 
     label1->setVisible(true);
     label2->setVisible(true);

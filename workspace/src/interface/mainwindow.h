@@ -21,8 +21,19 @@
 #include <QVideoWidget>
 #include <QDebug>
 #include <string>
-//#include "opencv2/core.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/core/mat.hpp"
+#include "opencv/cv.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv/cv.hpp>
 
+
+using namespace cv;
 
 class QDataWidgetMapper;
 class QLabel;
@@ -54,6 +65,7 @@ protected :
     QPushButton * bouton3;
     QPushButton * bouton4;
     QPushButton * bouton5;
+    cv::Mat cvImage;
     bool play;
     QPixmap pixmap;
     QLabel * label0;
@@ -71,6 +83,9 @@ protected :
     QStandardItemModel *model;
 
 
+
+
+
 public:
     Window(QWidget *parent = nullptr);
     //~Window();
@@ -82,7 +97,7 @@ public slots :
     void handleButton0();
     void handleButton1();
     void handleButton2();
-
+    void MatToImage();
     //void resize();
 };
 #endif // WINDOW_H
