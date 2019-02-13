@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include <hl_monitoring/camera.pb.h>
+#include <google/protobuf/message.h>
 
 #include <opencv2/core.hpp>
 
@@ -16,7 +16,7 @@ class Position {
 
     Position();
     ~Position();
-    void getPosition(float xp, float yp );
-    void annotePosition(cv::Mat* display_img, const CameraMetaInformation & camera_information, cv::Scalar & color);
+    void setPosition(float xp, float yp );
+    void annotePosition(cv::Mat* display_img, const ::google::protobuf::Message& from,cv::Scalar & color);
   };
 }

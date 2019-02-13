@@ -3,7 +3,7 @@
 using namespace traitement;
 
 int main(int argc, char ** argv) {
-  Annotation manager = new Annotation();
+  Annotation manager;
 
   manager.launchAnnotation();
 

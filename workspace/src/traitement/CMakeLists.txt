@@ -23,23 +23,40 @@ file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 
 set_source_files_properties(${PROTO_SOURCES} ${PROTO_HEADERS} PROPERTIES GENERATED TRUE)
 
+set(DELEGATE_INCLUDE_DIRS
+  include)
+
 catkin_package(
-  INCLUDE_DIRS .
+  INCLUDE_DIRS ${DELEGATE_INCLUDE_DIRS} ${PROTO_HEADERS}
   )
 
-include_directories( ${catkin_INCLUDE_DIRS} )
+include_directories(${DELEGATE_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS}  )
 
 
 set(SOURCES_DIRECTORIES
   src/traitement
   )
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
+  #Include Sources sub sources
+foreach (DIRECTORY ${SOURCES_DIRECTORIES})
+  include (${DIRECTORY}/sources.cmake)
+  set (PREFIXED_SOURCES)
+  foreach (SOURCE ${SOURCES})
+    set (PREFIXED_SOURCES ${PREFIXED_SOURCES} ${DIRECTORY}/${SOURCE})
+  endforeach (SOURCE)
+  set (ALL_SOURCES ${ALL_SOURCES} ${PREFIXED_SOURCES})
+endforeach (DIRECTORY)
+
+
 
 #Build the kid_size main library
-add_library (traitement src/traitement/annotation.cpp src/traitement/position.cpp) 
-target_link_libraries(${PROJECT_NAME} ${PROTOBUF_LIBRARIES})
+add_library (${PROJECT_NAME} SHARED ${ALL_SOURCES})
 
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
+option(BUILD_TRAITEMENT_TOOLS "Building TRAITEMENT tools" OFF)
 
+if (BUILD_TRAITEMENT_TOOLS)
+  add_executable(test_traitement tools/test_traitement.cpp)
+  target_link_libraries(test_traitement ${PROJECT_NAME} ${catkin_LIBRARIES})
+  endif()

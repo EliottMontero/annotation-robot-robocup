@@ -6,7 +6,6 @@
 
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-#include <tclap/CmdLine.h>
 
 
 namespace traitement{
@@ -18,6 +17,6 @@ namespace traitement{
 	  Annotation();
 	  ~Annotation();
 
-	 void lauchAnnotation();
+	 void launchAnnotation();
 };
 }
