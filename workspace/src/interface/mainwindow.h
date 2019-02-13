@@ -47,10 +47,15 @@ protected :
     QMenu *m1;
     QString fichierchoisi;
     QSize taille;
-    QPushButton * bouton;
+    bool but0, but1, but2;
+    QPushButton * bouton0;
+    QPushButton * bouton1;
+    QPushButton * bouton2;
+    QPushButton * bouton3;
+    QPushButton * bouton4;
+    QPushButton * bouton5;
     bool play;
     QPixmap pixmap;
-    QSlider *slider;
     QLabel * label0;
     QLabel * label1;
     QLabel * label2;
@@ -64,8 +69,7 @@ protected :
     QImageReader *image;
     QMenuBar *mainbar;
     QStandardItemModel *model;
-    QMediaPlayer* player;
-    QVideoWidget* vw;
+
 
 public:
     Window(QWidget *parent = nullptr);
@@ -75,7 +79,9 @@ public:
 public slots :
     void InitSpectatorInterface();
     void UpdateSpectatorInterface();
-    void handleButton();
+    void handleButton0();
+    void handleButton1();
+    void handleButton2();
 
     //void resize();
 };

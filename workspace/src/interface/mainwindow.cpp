@@ -2,78 +2,91 @@
 
 #include <QtWidgets>
 
-Window::Window(QWidget *parent)
-    : QWidget(parent)
-{
+Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
     x=dw.width()*1;
     y=dw.height()*1;
-    x=400;
-    y=300;
+    x=1600;
+    y=1000;
     QSize initSize(x,y);
-    setGeometry(
-            QStyle::alignedRect(
-                Qt::LeftToRight,
-                Qt::AlignCenter,
-                initSize,
-                qApp->desktop()->availableGeometry()
-            )
-        );
-    //this->setFixedSize(initSize);
+    setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,initSize,qApp->desktop()->availableGeometry()));
     this->setStyleSheet("background-color: grey;");
 
     mainbar = new QMenuBar(this);
     m1 = new QMenu("Mode de Vue",this);
     mainbar->addMenu(m1);
 
-    bouton = new QPushButton("My Button", this);
-    connect(bouton, SIGNAL (released()), this, SLOT (handleButton()));
-    bouton->setVisible(false);
+    bouton0 = new QPushButton("PAUSE", this);
+    bouton1 = new QPushButton("Position", this);
+    bouton2 = new QPushButton("Direction", this);
+
+    connect(bouton0, SIGNAL (released()), this, SLOT (handleButton0()));
+    connect(bouton1, SIGNAL (released()), this, SLOT (handleButton1()));
+    connect(bouton2, SIGNAL (released()), this, SLOT (handleButton2()));
+
+    bouton0->setVisible(false);
+    bouton1->setVisible(false);
+    bouton2->setVisible(false);
 
     ouvrirAct=new QAction(tr("Spectateur"),this);
     connect(ouvrirAct, SIGNAL(triggered()), this, SLOT(InitSpectatorInterface()));
     mainbar->addMenu(m1);
     m1->addAction(ouvrirAct);
     init=false;
-
-
     InitSpectatorInterface();
     setWindowTitle(tr("CHOIX DU MODE"));
-
 }
 
-void Window::handleButton(){
+void Window::handleButton0(){
     if (play){
-        //player->pause();
         play=false;
-        bouton->setText("PLAY");
+        bouton0->setText("PLAY");
     }
     else{
-        //player->play();
         play=true;
-        bouton->setText("PAUSE");
+        bouton0->setText("PAUSE");
+    }
+}
 
+void Window::handleButton1(){
+    if (but1) {
+        bouton1-> setStyleSheet("margin-left: 10px; border-radius: 25px; background: #DC524A; color: #000000;");
+        but1=false;
+   }
+    else
+    {
+        bouton1->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #2FD265; color: #000000;");
+        but1 = true;
+    }
+}
+
+
+void Window::handleButton2(){
+    if (but2) {
+        bouton2->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #DC524A; color: #000000;");
+        but2=false;
+   }
+    else
+    {
+        bouton2->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #2FD265; color: #000000;");
+        but2 = true;
     }
 }
 
 void Window::UpdateSpectatorInterface(){
 
-
     y = this->size().height();
     x = this->size().width();
 
-    //ici la taille des widgets par rapport Ã  la fenÃ¨tre.
+    //ici la taille des widgets par rapport a  la fenetre.
     int x_marge=10;
     int y_marge=20;
     float ratioL1=2.0f/3.0f;
     float ratioL2=2.f/12.0f;
 
-    //vw->setGeometry(static_cast<int>(x/(2*x_marge)),static_cast<int>(y-(2*y/y_marge)-(y*ratioL1)),static_cast<int>(x*ratioL1),static_cast<int>(y*ratioL1));
-
-    QSize sizeL1(img_ratio*y*ratioL1,y*ratioL1);
+    QSize sizeL1(static_cast<int>(img_ratio*y*ratioL1),static_cast<int>(y*ratioL1));
     label1->setFixedSize(sizeL1);
-    label1->setGeometry((int)x/(2*x_marge),y-label1->height()-2*y/y_marge,0,0);
-    //label1->setGeometry(10,10,0,0);
+    label1->setGeometry(x/(2*x_marge),y-label1->height()-2*y/y_marge,0,0);
 
 
     QSize sizeL2(static_cast<int>(x*ratioL2),static_cast<int>(y*ratioL2));
@@ -98,49 +111,33 @@ void Window::UpdateSpectatorInterface(){
     font.setBold(true);
     label4->setFont(font);
 
-    //slider->setGeometry(x/(2*x_marge), y-(y/y_marge)-slider->height(),vw->width(), slider->height());
-
-    //label5->setGeometry(x/(2*x_marge)-label5->width(),y-(4*y/(3*y_marge))-slider->height(),30,30);
-    //char str[3];
-    //snprintf(str, 3, "%d", slider->value());
-    //label5->setText(str);
-
-    //label6->setGeometry(vw->width()+x/(2*x_marge)+10,y-(y/y_marge)-slider->height(),slider->height(), slider->height());
-
-    bouton->setGeometry(label1->width()/2+x/(2*x_marge), static_cast<int>(y-(y/(2*y_marge))-bouton->height()*ratioL1),label1->width()/10, label1->width()/40);
-    font = bouton->font();
+    bouton0->setGeometry(label1->width()/2+x/(2*x_marge), static_cast<int>(y-(y/(2*y_marge))-bouton0->height()*ratioL1),label1->width()/10, label1->width()/40);
+    font = bouton0->font();
     font.setPointSize(x/120);
     font.setBold(false);
-    bouton->setFont(font);
+    bouton0->setFont(font);
+    bouton1->setFont(font);
+    bouton2->setFont(font);
+
+    bouton1->setGeometry(x/x_marge, y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
+    bouton2->setGeometry(x/x_marge+3*bouton1->width(), y-label1->height()-4*y/y_marge,bouton0->width(), bouton0->height());
+
 
     label1->setVisible(true);
     label2->setVisible(true);
     label3->setVisible(true);
     label4->setVisible(true);
-    //label5->setVisible(true);
-    //label6->setVisible(true);
-    //slider->setVisible(true);
-    bouton->setVisible(true);
-    //vw->setVisible(false);
+    bouton0->setVisible(true);
+    bouton1->setVisible(true);
+    bouton2->setVisible(true);
 }
 
-//on initialise l'interface dans le style que lulu a proposÃ©
+
+
+//on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
-    //player = new QMediaPlayer;
-    //vw = new QVideoWidget(this);
-    //player->setVideoOutput(vw);
-    //img_ratio = (float)vw->sizeHint().width()/(float)vw->sizeHint().height();
-    //player->setMedia(QUrl::fromLocalFile("/home/flo/emmc2/2vs1/dynamic_video.avi"));
-    //vw->setGeometry(100,100,300,400);
-    //vw->show();
-    bouton->setText("PAUSE");
-    //player->play();
-    //play=true;
 
-
-
-
-    //label1 sera le label contenant l'image de la vidÃ©o
+    //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
     label1->setAlignment(Qt::AlignCenter);
 
@@ -165,18 +162,6 @@ void Window::InitSpectatorInterface(){
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-    //valeur dÃ©but slider
-    //label5=new QLabel(this);
-    //label5->setAlignment(Qt::AlignCenter);
-    //label5->setText("-0-");
-    //label5->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
-    //label5->setFrameStyle(QFrame::Panel | QFrame::Raised);
-
-    //valeur fin slider
-    //label6=new QLabel(this);
-    //label6->setAlignment(Qt::AlignCenter);
-    //label6->setText("-100-");
-
      pixmap.load("../interface/a.jpeg");
      img_ratio=(float)pixmap.width()/(float)pixmap.height();
      QSize imageTaille(x/3,y/3);
@@ -186,13 +171,6 @@ void Window::InitSpectatorInterface(){
 
      label1->setMask(pixmap.mask());
      label1->setScaledContents(true);
-
-     //slider=new QSlider(Qt::Horizontal,this);
-     //slider->setTickInterval(1);
-     //slider->setMaximum(100);
-     //slider->setMinimum(0);
-
-
 
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
