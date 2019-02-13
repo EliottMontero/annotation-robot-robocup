@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <name>interface</name>
+  <version>0.0.1</version>
+  <description>TMP</description>
+
+  <maintainer email="lhofer@labri.fr">Ludovic Hofer</maintainer>
+
+  <license>MIT</license>
+
+  <author email="lhofer@labri.fr">Ludovic Hofer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>hl_monitoring</build_depend>
+
+  <run_depend>hl_monitoring</run_depend>
+
+</package>
