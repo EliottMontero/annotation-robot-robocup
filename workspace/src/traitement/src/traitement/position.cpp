@@ -17,10 +17,10 @@ namespace traitement
 /*Afficher la position du robot depuis les logs*/
 {
 	Position::Position(){
-		float x = 0;
-		float y = 0;
-		float uncertainty = 0;
-		
+		x = 0;
+		y = 0;
+		uncertainty = 0;
+
 	}
 	Position::~Position(){
 	}

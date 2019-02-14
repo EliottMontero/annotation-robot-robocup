@@ -24,6 +24,7 @@ namespace traitement{
 
 		std::map<uint32_t,cv::Scalar> colors_by_team;
 		std::vector<cv::Scalar> team_colors;
+		uint32_t TeamNumber[2];
 
 
 	  Annotation();

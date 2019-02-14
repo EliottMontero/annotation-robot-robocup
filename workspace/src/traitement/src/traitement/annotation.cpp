@@ -21,15 +21,9 @@ using namespace hl_monitoring;
 
 namespace traitement{
 	Annotation::Annotation(){
-		std::string config = "replay.json";
-		std::string field_name= "eirlab.json";
-		cv::Mat display_img ;
-
-		//Key pour retrouver plus facilement les Map avec info des Team
-		//Number Magic pour l'instant...
-		Team1 = 9;
-	 	Team2 = 12;
-
+		config = "replay.json";
+		field_name= "eirlab.json";
+		display_img ;
 
 		//Choix des Couleurs pour chaque équipe
 		team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
@@ -43,7 +37,9 @@ namespace traitement{
 
 	std::string Annotation::getScore(){
 		std::stringstream score;
-		score << score_by_team.find(Team1)->second << " - " << score_by_team.find(Team2)->second;
+		score << score_by_team.find(TeamNumber[0])->second
+					<< " - "
+					<< score_by_team.find(TeamNumber[1])->second;
 		return score.str();
 	}
 
@@ -107,6 +103,7 @@ namespace traitement{
 	        uint32_t team_score = team_msg.score();
 
 					//Sauvegarde du Score
+					TeamNumber[team_color] = team_number;
 					score_by_team[team_number] = team_score;
 	        colors_by_team[team_number] = team_colors[team_color];
 
