@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 
   std::string conf = config_arg.getValue();
   std::string field = field_arg.getValue();*/
-  manager.launchAnnotation(argc, argv);
+  manager.launchAnnotation(argc, argv, true);
 
   return 0;
 }

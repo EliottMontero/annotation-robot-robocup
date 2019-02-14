@@ -22,16 +22,17 @@ namespace traitement{
 	Annotation::Annotation(){
 		std::string config = "replay.json";
 		std::string field_name= "eirlab.json";
+		cv::Mat display_img ;
 	}
 
 	Annotation::~Annotation(){
 	}
 
-	/*void Annotation::displayAnnotation(){
+	void Annotation::displayAnnotation(){
 		cv::imshow("annoted_video", display_img);
 	}
-*/
-	void Annotation :: launchAnnotation(int argc, char ** argv){
+
+	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage){
 		TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
 	                     ' ', "0.9");
 
@@ -39,6 +40,9 @@ namespace traitement{
 	                                          true, "config.json", "string");
 	  TCLAP::ValueArg<std::string> field_arg("f", "field", "The path to the json description of the file",
 	                                          true, "field.json", "string");
+
+	 TCLAP::MultiArg<int> annot_arg("a", "annotation", "annotation to print",
+	                                          true, "vector of annot", cmd);
 	  TCLAP::SwitchArg verbose_arg("v", "verbose", "If enabled display all messages received",
 	                               cmd, false);
 	  cmd.add(config_arg);
@@ -50,6 +54,7 @@ namespace traitement{
 	  } catch (const TCLAP::ArgException & e) {
 	    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
 	  }
+	  std::vector<int> annot = annot_arg.getValue();
 
 	  MonitoringManager manager;
 
@@ -107,7 +112,7 @@ namespace traitement{
 	    std::map<std::string, CalibratedImage> images_by_source =
 	      manager.getCalibratedImages(now);
 	    for (const auto & entry : images_by_source) {
-	      cv::Mat display_img = entry.second.getImg().clone();
+	     	display_img = entry.second.getImg().clone();
 	      if (entry.second.isFullySpecified()) {
 	        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
 	        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
@@ -133,9 +138,12 @@ namespace traitement{
               		  pos.setPosition(position.x(), position.y());
                		 cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
 	               	 cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	               	 if (annot[0] == 1){
 	                 int circle_size = 10;
                          cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
+                     }
 
+                     if (annot[1] == 1){
 
 	                /* direction du robot */
 	                const AngleDistribution & dir = weighted_pose.pose().dir();
@@ -158,7 +166,7 @@ namespace traitement{
 	                /* Affichage du message pour vérifications */
 	                std::cout << "-> Robot num " << robot_entry.first.robot_id()
 	                << " from team " << robot_entry.first.team_id()
-	                << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;
+	                << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;}
 	                /*std::cout << "-> Robot pos x : " << pos_in_img.x << " y : " << pos_in_img.y
 	                 << " pos fleche : " << pos_in_imgdir.x << " y : " << pos_in_imgdir.y
 	                 << " pos fleche new : " << fleche.x << " y : " << fleche.y << " hypo ==> " << hypo <<std::endl;*/
@@ -167,7 +175,7 @@ namespace traitement{
 	          }
 	        }
 	      }
-	      cv::imshow(entry.first, display_img);
+	      displayAnnotation();	
 	    }
 	    char key = cv::waitKey(10);
 	    if (key == 'q' || key == 'Q') break;

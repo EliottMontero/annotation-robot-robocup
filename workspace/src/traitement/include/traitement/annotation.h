@@ -14,10 +14,10 @@ namespace traitement{
 	public:
 		std::string config;
 		std::string field_name;
-		 //cv::Mat display_img ;
+		 cv::Mat display_img ;
 	  Annotation();
 	  ~Annotation();
-	 //void displayAnnotation();
-	 void launchAnnotation(int argc, char ** argv);
+	 void displayAnnotation();
+	 void launchAnnotation(int argc, char ** argv, bool affichage);
 };
 }
