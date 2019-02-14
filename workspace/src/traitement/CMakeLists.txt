@@ -15,20 +15,14 @@ find_package(Protobuf REQUIRED)
 #Enable C++11
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11")
 
-# Handling generated headers is based on Dirk Thomas answer on topic:
-# - https://answers.ros.org/answers/123416/revisions/
-catkin_destinations()
-file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-
-
-set_source_files_properties(${PROTO_SOURCES} ${PROTO_HEADERS} PROPERTIES GENERATED TRUE)
 
 set(DELEGATE_INCLUDE_DIRS
   include)
 
 catkin_package(
-  INCLUDE_DIRS ${DELEGATE_INCLUDE_DIRS} ${PROTO_HEADERS}
-  )
+   INCLUDE_DIRS ${DELEGATE_INCLUDE_DIRS}
+   LIBRARIES ${PROJECT_NAME}
+)
 
 include_directories(${DELEGATE_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS}  )
 
