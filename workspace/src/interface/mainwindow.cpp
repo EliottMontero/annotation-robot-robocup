@@ -2,7 +2,6 @@
 
 #include <QtWidgets>
 
-using namespace traitement;
 
 Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
@@ -12,8 +11,6 @@ Window::Window(QWidget *parent) : QWidget(parent){
     QSize initSize(x,y);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,initSize,qApp->desktop()->availableGeometry()));
     this->setStyleSheet("background-color: grey;");
-
-    //Annotation annotation=new Annotation();
 
     bouton0 = new QPushButton("PAUSE", this);
     bouton1 = new QPushButton("Position", this);
@@ -84,10 +81,10 @@ void Window::UpdateSpectatorInterface(){
 
 
     label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
-    int posX_label1 = x/(2*x_marge);
-    int posY_label1 = y-label1->height()-2*y/y_marge;
     int width_label1 = static_cast<int>(img_ratio*y*ratioL1);
     int height_label1 = static_cast<int>(y*ratioL1);
+    int posX_label1 = x/(2*x_marge);
+    int posY_label1 = y-height_label1-2*y/y_marge;
 
     int posX_label2 = static_cast<int>(x-(x*ratioL2)-(x/x_marge));
     int posY_label2 = (2*y/4)-(y/y_marge)-y/4;
@@ -106,18 +103,18 @@ void Window::UpdateSpectatorInterface(){
 
     int posX_button0 = width_label1/2+x/(2*x_marge);
     int posY_button0 = static_cast<int>(y-(y/(2*y_marge))-y/y_marge);
-    int width_button0 = label1->width()/10;
-    int height_button0 = label1->width()/40;
+    int width_button0 = x/20;
+    int height_button0 = y/30;
 
     int posX_button1 = x/x_marge;
-    int posY_button1 = y-label1->height()-4*y/y_marge;
+    int posY_button1 = y/y_marge;
     int width_button1 = width_button0;
     int height_button1 = height_button0;
 
-    int posX_button2 = x/x_marge+3*bouton1->width();
-    int posY_button2 = y-label1->height()-4*y/y_marge;
+    int posX_button2 = posX_button1+3*width_button1;
+    int posY_button2 = posY_button1;
     int width_button2 = width_button1;
-    int height_button2 =  height_button1;
+    int height_button2 = height_button1;
 
     QSize sizeL1(width_label1, height_label1);
     label1->setFixedSize(sizeL1);
@@ -155,13 +152,15 @@ void Window::UpdateSpectatorInterface(){
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
 
-    cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
+    //cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
 
 
     char** argV=(char**)malloc(8*sizeof(char*));
     for(int i=0; i<8; i++){
         argV[i]=(char*)malloc(100*sizeof(char));
     }
+
+    /*
     sprintf(argV[0],"~/emmc2/workspace/devel/lib/traitement/test_traitement");
     sprintf(argV[1],"-c");
     sprintf(argV[2],"rep)lay.json");
@@ -172,8 +171,8 @@ void Window::InitSpectatorInterface(){
     sprintf(argV[7],"-a)");
     sprintf(argV[8],"1");
 
-
-    //manager.launchAnnotation(8, argV, true, *cvImage);
+*/
+    //manager->launchAnnotation(8, argV, true, cvImage);
 
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
@@ -213,5 +212,5 @@ void Window::InitSpectatorInterface(){
      setWindowTitle(tr("SPECTATOR MODE"));
      QTimer *timer = new QTimer(this);
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
-     timer->start(100);
+     timer->start(10);
 }

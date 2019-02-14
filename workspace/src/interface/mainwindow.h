@@ -73,8 +73,7 @@ protected :
     QLabel * label8;
     QLabel * label9;
     QImageReader *image;
-    //Annotation annotation;
-    //Annotation manager;
+    Annotation * manager;
 public:
     Window(QWidget *parent = nullptr);
     //~Window();
@@ -86,6 +85,5 @@ public slots :
     void handleButton0();
     void handleButton1();
     void handleButton2();
-    //void resize();
 };
 #endif // WINDOW_H
