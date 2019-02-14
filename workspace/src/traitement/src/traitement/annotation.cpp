@@ -44,6 +44,10 @@ namespace traitement{
 		return score.str();
 	}
 
+	cv::Scalar Annotation::getColorByTeam(int num){
+		return colors_by_team[num];
+	}
+
 	std::string Annotation::getTime(){
 		std::stringstream time;
 		time << (int) ((now - time_start)/1*exp(-9)/60/60)

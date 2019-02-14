@@ -32,6 +32,7 @@ namespace traitement{
 	  Annotation();
 	  ~Annotation();
 		std::string getScore();
+		cv::Scalar getColorByTeam(int num);
 		std::string getTime();
 	 	void displayAnnotation();
 	 	void launchAnnotation(int argc, char ** argv, bool affichage);
