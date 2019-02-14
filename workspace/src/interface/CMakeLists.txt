@@ -67,9 +67,9 @@ qt5_use_modules(interface MultimediaWidgets)
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
-option(BUILD_TRAITEMENT_TOOLS "Building TRAITEMENT tools" OFF)
+option(BUILD_INTERFACE_TOOLS "Building interface tools" OFF)
 
-if (BUILD_TRAITEMENT_TOOLS)
+if (BUILD_INTERFACE_TOOLS)
   add_executable(main tools/main.cpp)
   target_link_libraries(main ${PROJECT_NAME} ${catkin_LIBRARIES})
   endif()
