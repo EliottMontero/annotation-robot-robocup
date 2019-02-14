@@ -3,6 +3,8 @@
 #include <hl_communication/utils.h>
 #include <hl_monitoring/monitoring_manager.h>
 #include <hl_monitoring/utils.h>
+#include <traitement/robotInformation.h>
+#include <traitement/direction.h>
 
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>

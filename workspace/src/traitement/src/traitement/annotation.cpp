@@ -69,7 +69,11 @@ namespace traitement{
 	                                          true, "config.json", "string");
 	  TCLAP::ValueArg<std::string> field_arg("f", "field", "The path to the json description of the file",
 	                                          true, "field.json", "string");
-
+	  TCLAP::MultiArg<int> trace_arg("t", "trace", "The trace of one robot on the video",
+	                                          false, "tracerobot", cmd); //multi arg en prevision de multiple robots 
+	  // -t 0 si on veut rien pour les trace  ou sinon un numéro de robot (1 pour l'instant)
+	  // -a 0 si on ne veut pas d'annotation/ 1 si on la veut
+	  // dans l'ordre : -a position -a direction
 	 TCLAP::MultiArg<int> annot_arg("a", "annotation", "annotation to print",
 	                                          true, "vector of annot", cmd);
 	  TCLAP::SwitchArg verbose_arg("v", "verbose", "If enabled display all messages received",
@@ -85,7 +89,12 @@ namespace traitement{
 	  }
 	  std::vector<int> annot = annot_arg.getValue();
 
+	  std::vector<int> tr = trace_arg.getValue();
+
+
 		MonitoringManager manager;
+		RobotInformation rb;
+		rb.numRobotInformation = tr[0];
 
 	  manager.loadConfig(config_arg.getValue());
 
@@ -118,25 +127,25 @@ namespace traitement{
 
 					//Lecture TeamMsg
 					uint32_t team_number = team_msg.team_number();
-	        uint32_t team_color = team_msg.team_color();
-	        uint32_t team_score = team_msg.score();
+			        uint32_t team_color = team_msg.team_color();
+			        uint32_t team_score = team_msg.score();
 
 					//Sauvegarde du Score
 					TeamNumber[team_color] = team_number;
 					score_by_team[team_number] = team_score;
-	        colors_by_team[team_number] = team_colors[team_color];
+			        colors_by_team[team_number] = team_colors[team_color];
 
-	        std::cout << " team " << team_msg.team_number()
-	                  << " score : " << team_score << std::endl;
-	        /*for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
-	           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
-	           if (robots_msg.has_penalty()) {
-	            uint32_t robot_penalty = robots_msg.penalty();
-	            uint32_t robot_secs_till_unpenalised = robots_msg.secs_till_unpenalised();
-	             std::cout << "-> Message from robot " << idx << " of team  " << team_number
-	                  << " -> penalty " << robot_penalty  << " secs_till_unpenalised : " << robot_secs_till_unpenalised   << std::endl;
-	           }
-	         }*/
+			        std::cout << " team " << team_msg.team_number()
+			                  << " score : " << team_score << std::endl;
+			       /* for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
+			           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
+			           if (robots_msg.has_penalty()) {
+			            uint32_t robot_penalty = robots_msg.penalty();
+			            uint32_t robot_secs_till_unpenalised = robots_msg.secs_till_unpenalised();
+			             std::cout << "-> Message from robot " << idxr << " of team  " << team_number
+			                  << " -> penalty " << robot_penalty  << " secs_till_unpenalised : " << robot_secs_till_unpenalised   << std::endl;
+			           }
+			         }*/
 	      }
 	    }
 
@@ -172,9 +181,17 @@ namespace traitement{
 	                cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	                int circle_size = 10;
 	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);*/
-	                 Position pos;
 
-              		  pos.setPosition(position.x(), position.y());
+
+	                 Position pos;
+	                
+              		 pos.setPosition(position.x(), position.y());
+              		 if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
+              		
+              		 		rb.update(pos);
+              
+              		 	std::cout << "-> ok " <<std::endl;
+						}
                		 cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
 	               	 cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	               	 if (annot[0] == 1){
@@ -199,13 +216,28 @@ namespace traitement{
 	                  cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
 	                else
 	                  cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
-
+ 					std::cout << "-> Robot num " << robot_entry.first.robot_id()<< 
+	              		 "de" << rb.getNumRobotInformation() <<std::endl;
+	              	}
+	              	if (tr[0] != 0 &&robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
+	              		int circle_size = 5;
+	              		int qsize = rb.sizeOfQueue();
+	              		 std::cout << "-> ok bis" <<std::endl;
+	              		
+	              		for (int i = 0; i<qsize; i++){
+	              			Position p;
+	              			p = rb.getPosition();
+	              			 cv :: Point3f pos_in_fieldp(p.x, p.y, 0.0);
+	               			 cv :: Point2f pos_in_imgp = fieldToImg(pos_in_fieldp, camera_information);
+                         	cv::circle(display_img,pos_in_imgp, circle_size, cv::Scalar(0,0,0),cv::FILLED);
+	              		}
+	              	}
 
 
 	                /* Affichage du message pour vérifications */
-	                std::cout << "-> Robot num " << robot_entry.first.robot_id()
+	               /*std::cout << "-> Robot num " << robot_entry.first.robot_id()
 	                << " from team " << robot_entry.first.team_id()
-	                << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;}
+	                << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;*/
 	                /*std::cout << "-> Robot pos x : " << pos_in_img.x << " y : " << pos_in_img.y
 	                 << " pos fleche : " << pos_in_imgdir.x << " y : " << pos_in_imgdir.y
 	                 << " pos fleche new : " << fleche.x << " y : " << fleche.y << " hypo ==> " << hypo <<std::endl;*/
