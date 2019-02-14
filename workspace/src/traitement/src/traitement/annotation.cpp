@@ -6,6 +6,7 @@
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
 #include <traitement/position.h>
+#include <traitement/direction.h>
 
 
 #include <opencv2/imgproc.hpp>
@@ -123,22 +124,31 @@ namespace traitement{
 	                /* position du robot */
 	                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
 	                const PositionDistribution & position = weighted_pose.pose().position();
-	                cv::Point3f pos_in_field(position.x(), position.y(), 0.0);
+	               /* cv::Point3f pos_in_field(position.x(), position.y(), 0.0);
 	                cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	                int circle_size = 10;
-	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);
+	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);*/
+	                 Position pos;
+
+              		  pos.setPosition(position.x(), position.y());
+               		 cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+	               	 cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	                 int circle_size = 10;
+                         cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
+
+
 	                /* direction du robot */
 	                const AngleDistribution & dir = weighted_pose.pose().dir();
-	                float angle = dir.mean();
-	                cv :: Point3f pos_in_fielddir(position.x()+cos(angle), position.y()+sin(angle), 0.0);
+	                Direction direct;
+	                direct.SetMean(dir.mean());
+	                cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
 	                cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
 	                /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
-	                float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
-	                cv :: Point2f fleche;
-	                fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
-	                fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);
-	                /*Affichage couleur pour les angles de degrès bizarre*/
-	                if (angle > 2*CV_PI)
+ 					float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
+               		 cv :: Point2f fleche;
+                	fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
+                	fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);	                /*Affichage couleur pour les angles de degrès bizarre*/
+	                if (direct.mean > 2*CV_PI)
 	                  cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
 	                else
 	                  cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
