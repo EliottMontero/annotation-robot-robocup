@@ -4,6 +4,7 @@
 using namespace traitement;
 
 int main(int argc, char ** argv) {
+	Annotation manager;/*
 
 	TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
                      ' ', "0.9");
@@ -20,15 +21,15 @@ int main(int argc, char ** argv) {
 
   try {
     cmd.parse(argc, argv);
-    
+
   } catch (const TCLAP::ArgException & e) {
     std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
   }
   Annotation manager;
 
   std::string conf = config_arg.getValue();
-  std::string field = field_arg.getValue();
-  manager.launchAnnotation(conf, field, true);
+  std::string field = field_arg.getValue();*/
+  manager.launchAnnotation(argc, argv);
 
   return 0;
 }

@@ -18,6 +18,6 @@ namespace traitement{
 	  Annotation();
 	  ~Annotation();
 	 //void displayAnnotation();
-	 void launchAnnotation(std::string config_arg, std::string field_arg, bool affichage);
+	 void launchAnnotation(int argc, char ** argv);
 };
 }
