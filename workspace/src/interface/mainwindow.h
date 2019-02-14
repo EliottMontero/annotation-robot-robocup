@@ -1,6 +1,9 @@
 
 #ifndef WINDOW_H
 #define WINDOW_H
+
+#include <traitement/annotation.h>
+
 #include <iostream>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -25,7 +28,9 @@
 #include <opencv/cv.hpp>
 
 
+
 using namespace cv;
+using namespace traitement;
 
 class QDataWidgetMapper;
 class QLabel;
@@ -50,8 +55,11 @@ protected :
     QPushButton * bouton3;
     QPushButton * bouton4;
     QPushButton * bouton5;
-    cv::Mat cvImage;
+    cv::Mat * cvImage;
+
+
     bool play;
+    bool nextFrame;
     QPixmap pixmap;
     QLabel * label0;
     QLabel * label1;
@@ -64,8 +72,8 @@ protected :
     QLabel * label8;
     QLabel * label9;
     QImageReader *image;
-
-
+    //Annotation annotation;
+        Annotation * manager;
 public:
     Window(QWidget *parent = nullptr);
     //~Window();
@@ -77,7 +85,6 @@ public slots :
     void handleButton0();
     void handleButton1();
     void handleButton2();
-    void MatToImage();
     //void resize();
 };
 #endif // WINDOW_H

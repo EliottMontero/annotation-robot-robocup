@@ -6,11 +6,12 @@ Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
     x=static_cast<int>(dw.width()*0.8);
     y=static_cast<int>(dw.height()*0.8);
-
+    Annotation * manager;
     QSize initSize(x,y);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,initSize,qApp->desktop()->availableGeometry()));
     this->setStyleSheet("background-color: grey;");
 
+    //Annotation annotation=new Annotation();
 
     bouton0 = new QPushButton("PAUSE", this);
     bouton1 = new QPushButton("Position", this);
@@ -29,12 +30,12 @@ Window::Window(QWidget *parent) : QWidget(parent){
 }
 
 void Window::handleButton0(){
-    if (play){
-        play=false;
+    if (but0){
+        but0=false;
         bouton0->setText("PLAY");
     }
     else{
-        play=true;
+        but0=true;
         bouton0->setText("PAUSE");
     }
 }
@@ -64,13 +65,6 @@ void Window::handleButton2(){
     }
 }
 
-
-void Window::MatToImage(){
-         QImage *Qim= new QImage(cvImage.data, cvImage.cols, cvImage.rows, cvImage.step, QImage::Format_ARGB32);
-         QPixmap pix=QPixmap::fromImage(*Qim);
-         label1->setPixmap(pix);
-   }
-
 void Window::UpdateSpectatorInterface(){
     y = this->size().height();
     x = this->size().width();
@@ -85,6 +79,7 @@ void Window::UpdateSpectatorInterface(){
 
     int ZERO=0;
 
+    label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
     int posX_label1 = x/(2*x_marge);
     int posY_label1 = y-label1->height()-2*y/y_marge;
     int width_label1 = static_cast<int>(img_ratio*y*ratioL1);
@@ -156,6 +151,9 @@ void Window::UpdateSpectatorInterface(){
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
 
+
+    //cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
+
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
     label1->setAlignment(Qt::AlignCenter);
@@ -181,9 +179,11 @@ void Window::InitSpectatorInterface(){
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-     pixmap.load("../interface/a.jpeg");
-     img_ratio=(float)pixmap.width()/(float)pixmap.height();
-     label1->setPixmap(pixmap);
+
+     //pixmap.load("../interface/a.jpeg");
+     //img_ratio=(float)pixmap.width()/(float)pixmap.height();
+    img_ratio=640/480;
+    label1->setPixmap(pixmap);
      label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
 
      label1->setMask(pixmap.mask());
