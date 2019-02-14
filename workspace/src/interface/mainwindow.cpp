@@ -6,7 +6,7 @@ Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
     x=static_cast<int>(dw.width()*0.8);
     y=static_cast<int>(dw.height()*0.8);
-    Annotation * manager;
+
     QSize initSize(x,y);
     setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,initSize,qApp->desktop()->availableGeometry()));
     this->setStyleSheet("background-color: grey;");
@@ -78,6 +78,8 @@ void Window::UpdateSpectatorInterface(){
     float ratioL2=2.f/12.0f;
 
     int ZERO=0;
+
+
 
     label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
     int posX_label1 = x/(2*x_marge);
@@ -151,8 +153,25 @@ void Window::UpdateSpectatorInterface(){
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
 
+    cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
 
-    //cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
+
+    char** argV=(char**)malloc(8*sizeof(char*));
+    for(int i=0; i<8; i++){
+        argV[i]=(char*)malloc(100*sizeof(char));
+    }
+    sprintf(argV[0],"~/emmc2/workspace/devel/lib/traitement/test_traitement");
+    sprintf(argV[1],"-c");
+    sprintf(argV[2],"rep)lay.json");
+    sprintf(argV[3],"-f");
+    sprintf(argV[4],"eir)lab.json");
+    sprintf(argV[5],"-a");
+    sprintf(argV[6],"0");
+    sprintf(argV[7],"-a)");
+    sprintf(argV[8],"1");
+
+
+    //manager->launchAnnotation(8, *argV, true, *cvImage);
 
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
