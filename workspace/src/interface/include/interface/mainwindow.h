@@ -1,7 +1,7 @@
-
+/*
 #ifndef WINDOW_H
 #define WINDOW_H
-
+*/
 #include <traitement/annotation.h>
 #include "stdlib.h"
 #include "stdio.h"
@@ -18,6 +18,7 @@
 #include <QPixmap>
 #include <QSize>
 #include <QSlider>
+#include <QObject>
 #include <QStyle>
 #include <QWidget>
 #include <QWindow>
@@ -43,7 +44,7 @@ class QTextEdit;
 
 class Window : public QWidget
 {
-    Q_OBJECT
+    
 protected :
     QTimer *timer;
     float img_ratio;
@@ -76,7 +77,7 @@ protected :
     Annotation * manager;
 public:
     Window(QWidget *parent = nullptr);
-    //~Window();
+    ~Window();
 
 
 public slots :
@@ -86,4 +87,4 @@ public slots :
     void handleButton1();
     void handleButton2();
 };
-#endif // WINDOW_H
+//#endif // WINDOW_H

@@ -1,4 +1,6 @@
-#include "mainwindow.h"
+#include "interface/mainwindow.h"
+
+#include <traitement/annotation.h>
 
 #include <QtWidgets>
 
@@ -26,6 +28,10 @@ Window::Window(QWidget *parent) : QWidget(parent){
 
     InitSpectatorInterface();
     setWindowTitle(tr("CHOIX DU MODE"));
+}
+
+Window::~Window(){
+
 }
 
 void Window::handleButton0(){
@@ -152,7 +158,7 @@ void Window::UpdateSpectatorInterface(){
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
 
-    //cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
+    cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
 
 
     char** argV=(char**)malloc(8*sizeof(char*));
@@ -170,9 +176,8 @@ void Window::InitSpectatorInterface(){
     sprintf(argV[6],"0");
     sprintf(argV[7],"-a)");
     sprintf(argV[8],"1");
-
 */
-    //manager->launchAnnotation(8, argV, true, cvImage);
+    manager->launchAnnotation(8, argV, true, *cvImage);
 
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);

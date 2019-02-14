@@ -32,7 +32,7 @@ int main(int argc, char ** argv) {
 	//cv::Mat cvImg;
 
 	std::cout << "Score Début : " << manager.getScore() << std::endl;
-	manager.launchAnnotation(argc, argv, true);
+	manager.launchAnnotation(argc, argv, true,manager.display_img );
 
   return 0;
 }

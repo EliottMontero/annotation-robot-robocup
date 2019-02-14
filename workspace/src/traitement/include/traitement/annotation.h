@@ -35,6 +35,5 @@ namespace traitement{
 		cv::Scalar getColorByTeam(int num);
 		std::string getTime();
 	 	void displayAnnotation();
-	 	void launchAnnotation(int argc, char ** argv, bool affichage);
-};
+	 void launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat display_img);};
 }

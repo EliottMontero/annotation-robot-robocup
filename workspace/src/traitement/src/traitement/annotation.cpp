@@ -61,7 +61,7 @@ namespace traitement{
 		cv::imshow("annoted_video", display_img);
 	}
 
-	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage){
+	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat display_img){
 		TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
 	                     ' ', "0.9");
 
@@ -214,6 +214,7 @@ namespace traitement{
 	          }
 	        }
 	      }
+	      if (affichage)
 	      displayAnnotation();
 	    }
 	    char key = cv::waitKey(10);
