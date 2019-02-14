@@ -12,8 +12,8 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>hl_monitoring</build_depend>
+  <build_depend>traitement</build_depend>
 
-  <run_depend>hl_monitoring</run_depend>
+  <run_depend>traitement</run_depend>
 
 </package>
