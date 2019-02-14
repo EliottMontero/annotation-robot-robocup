@@ -7,6 +7,8 @@ find_package(OpenCV REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
   hl_monitoring
+  hl_communication
+  traitement
   )
 
 find_package(Qt5 REQUIRED COMPONENTS MultimediaWidgets)
