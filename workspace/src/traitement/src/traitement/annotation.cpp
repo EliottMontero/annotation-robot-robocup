@@ -25,10 +25,11 @@ namespace traitement{
 		field_name= "eirlab.json";
 		display_img ;
 
+		//Init Etat du Jeu
+		now = 0;
+
 		//Choix des Couleurs pour chaque équipe
 		team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-
-
 
 	}
 
@@ -42,6 +43,15 @@ namespace traitement{
 					<< score_by_team.find(TeamNumber[1])->second;
 		return score.str();
 	}
+
+	std::string Annotation::getTime(){
+		std::stringstream time;
+		time << (int) ((now - time_start)/1*exp(-9)/60/60)
+				 << " : "
+				 << (int) ((now - time_start)/1*exp(-9)/60);
+		return time.str();
+	}
+
 
 	void Annotation::displayAnnotation(){
 		cv::imshow("annoted_video", display_img);
@@ -71,7 +81,7 @@ namespace traitement{
 	  }
 	  std::vector<int> annot = annot_arg.getValue();
 
-	  MonitoringManager manager;
+		MonitoringManager manager;
 
 	  manager.loadConfig(config_arg.getValue());
 
@@ -79,10 +89,11 @@ namespace traitement{
 	  field.loadFile(field_arg.getValue());
 
 	  // While exit was not explicitly required, run
-	  uint64_t now = 0;
+
 	  uint64_t dt = 30 * 1000;//[microseconds]
 	  if (!manager.isLive()) {
 	    now = manager.getStart();
+			time_start = manager.getStart();
 	  }
 	  while(manager.isGood()) {
 	    manager.update();
@@ -93,12 +104,16 @@ namespace traitement{
 	    }
 
 	    MessageManager::Status status = manager.getStatus(now);
+			std::cout << "Temps de Jeu : " << getTime() << std::endl;
 
 	    for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
 				std::cout << " team size : " << status.gc_message.teams_size() << std::endl;
 	      const GCTeamMsg & team_msg = status.gc_message.teams(idx);
-	      if (team_msg.has_team_number() && team_msg.has_team_color()) {
-	        uint32_t team_number = team_msg.team_number();
+
+				if (team_msg.has_team_number() && team_msg.has_team_color()) {
+
+					//Lecture TeamMsg
+					uint32_t team_number = team_msg.team_number();
 	        uint32_t team_color = team_msg.team_color();
 	        uint32_t team_score = team_msg.score();
 
