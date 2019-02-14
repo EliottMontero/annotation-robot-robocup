@@ -12,7 +12,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <tclap/CmdLine.h>
-#include <string.h>
+#include <string>
+#include <sstream>
 
 using namespace hl_communication;
 using namespace hl_monitoring;
@@ -23,9 +24,27 @@ namespace traitement{
 		std::string config = "replay.json";
 		std::string field_name= "eirlab.json";
 		cv::Mat display_img ;
+
+		//Key pour retrouver plus facilement les Map avec info des Team
+		//Number Magic pour l'instant...
+		Team1 = 9;
+	 	Team2 = 12;
+
+
+		//Choix des Couleurs pour chaque équipe
+		team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
+
+
+
 	}
 
 	Annotation::~Annotation(){
+	}
+
+	std::string Annotation::getScore(){
+		std::stringstream score;
+		score << score_by_team.find(Team1)->second << " - " << score_by_team.find(Team2)->second;
+		return score.str();
 	}
 
 	void Annotation::displayAnnotation(){
@@ -78,15 +97,19 @@ namespace traitement{
 	    }
 
 	    MessageManager::Status status = manager.getStatus(now);
-	    std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-	    std::map<uint32_t,cv::Scalar> colors_by_team;
+
 	    for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
+				std::cout << " team size : " << status.gc_message.teams_size() << std::endl;
 	      const GCTeamMsg & team_msg = status.gc_message.teams(idx);
 	      if (team_msg.has_team_number() && team_msg.has_team_color()) {
 	        uint32_t team_number = team_msg.team_number();
 	        uint32_t team_color = team_msg.team_color();
 	        uint32_t team_score = team_msg.score();
+
+					//Sauvegarde du Score
+					score_by_team[team_number] = team_score;
 	        colors_by_team[team_number] = team_colors[team_color];
+
 	        std::cout << " team " << team_msg.team_number()
 	                  << " score : " << team_score << std::endl;
 	        /*for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
@@ -175,7 +198,7 @@ namespace traitement{
 	          }
 	        }
 	      }
-	      displayAnnotation();	
+	      displayAnnotation();
 	    }
 	    char key = cv::waitKey(10);
 	    if (key == 'q' || key == 'Q') break;

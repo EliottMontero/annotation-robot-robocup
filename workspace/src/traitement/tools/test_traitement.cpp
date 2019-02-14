@@ -29,7 +29,10 @@ int main(int argc, char ** argv) {
 
   std::string conf = config_arg.getValue();
   std::string field = field_arg.getValue();*/
-  manager.launchAnnotation(argc, argv, true);
+	//cv::Mat cvImg;
+
+	std::cout << "Score Début : " << manager.getScore() << std::endl;
+	manager.launchAnnotation(argc, argv, true);
 
   return 0;
 }
