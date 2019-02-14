@@ -7,16 +7,17 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#include <google/protobuf/message.h>
 
 namespace traitement{
 	class Annotation{
 	public:
 		std::string config;
 		std::string field_name;
-
+		 //cv::Mat display_img ;
 	  Annotation();
 	  ~Annotation();
-
-	 void launchAnnotation();
+	 //void displayAnnotation();
+	 void launchAnnotation(std::string config_arg, std::string field_arg, bool affichage);
 };
 }

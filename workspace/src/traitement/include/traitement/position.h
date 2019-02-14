@@ -14,9 +14,10 @@ class Position {
     float y;
     float uncertainty;
 
+
     Position();
     ~Position();
     void setPosition(float xp, float yp );
-    void annotePosition(cv::Mat* display_img, const ::google::protobuf::Message& from,cv::Scalar & color);
+    // cv::Point2f annotePosition();
   };
 }

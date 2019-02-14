@@ -5,6 +5,7 @@
 #include <hl_monitoring/monitoring_manager.h>
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
+#include <traitement/position.h>
 
 
 #include <opencv2/imgproc.hpp>
@@ -24,19 +25,23 @@ namespace traitement{
 	Annotation::~Annotation(){
 	}
 
-	void Annotation :: launchAnnotation(){
+	/*void Annotation::displayAnnotation(){
+		cv::imshow("annoted_video", display_img);
+	} 
+*/
+	void Annotation :: launchAnnotation(std::string config_arg, std::string field_arg, bool affichage){
 	MonitoringManager manager;
 
-	manager.loadConfig(config);
+	manager.loadConfig(config_arg);
 
 	Field field;
-	field.loadFile(field_name);
+	field.loadFile(field_arg);
 	uint64_t now = 0;
   	uint64_t dt = 30 * 1000;//[microseconds]
 	 if (!manager.isLive()) {
 	    now = manager.getStart();
 	 }
- while(manager.isGood()) {
+ 	while(manager.isGood()) {
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();
@@ -56,9 +61,45 @@ namespace traitement{
         colors_by_team[team_number] = team_colors[team_color];
       }
     }
-}
+
+    std::map<std::string, CalibratedImage> images_by_source =
+      manager.getCalibratedImages(now);
+    for (const auto & entry : images_by_source) {
+      cv ::Mat display_img = entry.second.getImg().clone();
+      if (entry.second.isFullySpecified()) {
+        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
+        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+        // Basic drawing of robot estimated position
+        for (const auto & robot_entry : status.robot_messages) {
+          uint32_t team_id = robot_entry.first.team_id();
+          if (colors_by_team.count(team_id) == 0) {
+          } else {
+            const cv::Scalar & color = colors_by_team[team_id];
+            if (robot_entry.second.has_perception()) {
+              const Perception & perception = robot_entry.second.perception();
+              for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
+                /* position du robot */
+                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
+                const PositionDistribution & position = weighted_pose.pose().position();
+
+                Position pos;
+
+                pos.setPosition(position.x(), position.y());
+                cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+                cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+                 int circle_size = 10;
+        		 cv::circle(display_img,pos_in_img, circle_size, color, cv::FILLED);
+              }
+            }
+          }
+        }
+      }
+	cv::imshow(entry.first, display_img);
+    }
+}		
 
    
 	  }
+
 }
 	/* on crée un monitoring, on load des messages, on appelle les classes pour afficher des annotations, ex = position, fleche etc */

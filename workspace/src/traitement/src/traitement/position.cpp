@@ -20,6 +20,7 @@ namespace traitement
 		float x = 0;
 		float y = 0;
 		float uncertainty = 0;
+		
 	}
 	Position::~Position(){
 	}
@@ -29,13 +30,10 @@ namespace traitement
 		y = yp;
 	}
 
-	void Position::annotePosition(cv::Mat* display_img,const ::google::protobuf::Message& from, cv::Scalar & color){
-		CameraMetaInformation camera_information;
-		 camera_information.CopyFrom(from);
+	/* cv::Point3f Position::PositionInField(){
 		 cv::Point3f pos_in_field(x, y, 0.0);
-         cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-         int circle_size = 10;
-         cv::circle(*display_img, pos_in_img, circle_size, color, cv::FILLED);
-	}
+         cv::Point2f pos_in_img = fieldToImg(pos_in_field, cam);
+        return pos_in_img;
+	}*/
 
 }/*on fait des position.get à partir des logs pui position.draw pour add à l'image*/
