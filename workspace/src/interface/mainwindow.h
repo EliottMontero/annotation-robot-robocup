@@ -3,7 +3,8 @@
 #define WINDOW_H
 
 #include <traitement/annotation.h>
-
+#include "stdlib.h"
+#include "stdio.h"
 #include <iostream>
 #include <QApplication>
 #include <QDesktopWidget>
