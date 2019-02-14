@@ -2,6 +2,8 @@
 
 #include <QtWidgets>
 
+using namespace traitement;
+
 Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
     x=static_cast<int>(dw.width()*0.8);
@@ -171,7 +173,7 @@ void Window::InitSpectatorInterface(){
     sprintf(argV[8],"1");
 
 
-    //manager->launchAnnotation(8, *argV, true, *cvImage);
+    //manager.launchAnnotation(8, argV, true, *cvImage);
 
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
@@ -213,5 +215,3 @@ void Window::InitSpectatorInterface(){
      connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
      timer->start(100);
 }
-
-

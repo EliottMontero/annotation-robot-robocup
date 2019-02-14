@@ -74,7 +74,7 @@ protected :
     QLabel * label9;
     QImageReader *image;
     //Annotation annotation;
-        Annotation * manager;
+    //Annotation manager;
 public:
     Window(QWidget *parent = nullptr);
     //~Window();
