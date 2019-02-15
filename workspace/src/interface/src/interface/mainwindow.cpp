@@ -1,6 +1,6 @@
-#include "interface/mainwindow.h"
+#include "mainwindow.h"
 
-#include <traitement/annotation.h>
+//#include <traitement/annotation.h>
 
 #include <QtWidgets>
 
@@ -18,9 +18,9 @@ Window::Window(QWidget *parent) : QWidget(parent){
     bouton1 = new QPushButton("Position", this);
     bouton2 = new QPushButton("Direction", this);
 
-    connect(bouton0, SIGNAL (released()), this, SLOT (handleButton0()));
-    connect(bouton1, SIGNAL (released()), this, SLOT (handleButton1()));
-    connect(bouton2, SIGNAL (released()), this, SLOT (handleButton2()));
+    QObject::connect(bouton0, SIGNAL (released()), this, SLOT (handleButton0()));
+    QObject::connect(bouton1, SIGNAL (released()), this, SLOT (handleButton1()));
+    QObject::connect(bouton2, SIGNAL (released()), this, SLOT (handleButton2()));
 
     bouton0->setVisible(false);
     bouton1->setVisible(false);
@@ -177,7 +177,7 @@ void Window::InitSpectatorInterface(){
     sprintf(argV[7],"-a)");
     sprintf(argV[8],"1");
 */
-    manager->launchAnnotation(8, argV, true, *cvImage);
+    //manager->launchAnnotation(8, argV, true, *cvImage);
 
     //label1 sera le label contenant l'image de la video
     label1=new QLabel(this);
@@ -215,7 +215,8 @@ void Window::InitSpectatorInterface(){
      label1->setScaledContents(true);
 
      setWindowTitle(tr("SPECTATOR MODE"));
+
      QTimer *timer = new QTimer(this);
-     connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
+     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
      timer->start(10);
 }
