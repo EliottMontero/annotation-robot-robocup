@@ -15,16 +15,19 @@
 #include <string>
 #include <sstream>
 
+#define SIZE_CIRCLE_POS 10
+#define SIZE_ARROW 50
+#define SIZE_CIRCLE_TRACE 5
+
+
+
 using namespace hl_communication;
 using namespace hl_monitoring;
 
 
 namespace traitement{
 	Annotation::Annotation(){
-		config = "replay.json";
-		field_name= "eirlab.json";
-		display_img ;
-
+	
 		//Init Etat du Jeu
 		now = 0;
 
@@ -66,7 +69,8 @@ namespace traitement{
 	}
 
 
-	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat display){
+	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat &display){
+
 		TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
 	                     ' ', "0.9");
 
@@ -143,7 +147,10 @@ namespace traitement{
 
 			    std::cout << " team " << team_msg.team_number()
 			              << " score : " << team_score << std::endl;
-			       /* for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
+
+			       // Le code en commentaire ci-dessous marche mais on ne l'utilise pas encore       
+
+			   /*  for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
 			           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
 			           if (robots_msg.has_penalty()) {
 			            uint32_t robot_penalty = robots_msg.penalty();
@@ -187,58 +194,54 @@ namespace traitement{
 	                /* position du robot */
 	                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
 	                const PositionDistribution & position = weighted_pose.pose().position();
-	               /* cv::Point3f pos_in_field(position.x(), position.y(), 0.0);
-	                cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	                int circle_size = 10;
-	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);*/
+	               
 	                Position pos;
               		pos.setPosition(position.x(), position.y());
+              		//Recuperation position pour l'affichage de l'historique des positions
               		if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
               		 	rb.update(pos);
-									}
+					}
 
-									cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+					cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
 	               	cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
-									//Position
-									if (annot[0] == 1){
-	                 	int circle_size = 10;
-                   	cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
-                  }
+					//Position
+					if (annot[0] == 1){
+                   		cv::circle(display_img,pos_in_img, SIZE_CIRCLE_POS, color,cv::FILLED);
+                  	}
 
-									//Direction
-                  if (annot[1] == 1){
+					//Direction
+                  	if (annot[1] == 1){
 	                	/* direction du robot */
-	                	const AngleDistribution & dir = weighted_pose.pose().dir();
+	                	const AngleDistribution & dir = weighted_pose.pose().dir(); 
+	                	/*La classe direction ne sert pas beaucoup pour l'instant, c'est ce qui explique les warnings lorsqu'on compile*/
 	                	Direction direct;
 	                	direct.SetMean(dir.mean());
 	                	cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
 	                	cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
 	                	/* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
- 										float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x)
-																		 + (pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
+ 						float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x)
+						 + (pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
                		 	cv :: Point2f fleche;
-                		fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
-                		fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);
+                		fleche.x =  pos_in_img.x + (SIZE_ARROW*(pos_in_imgdir.x - pos_in_img.x)/hypo);
+                		fleche.y= pos_in_img.y + (SIZE_ARROW*(pos_in_imgdir.y- pos_in_img.y)/hypo);
 
-										if (direct.mean > 2*CV_PI)
-	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+                		/*Affichage des valeurs qui ne font pas parties du cercle trigo en noir pour montrer l'erreur du robot*/
+						if (direct.mean > 2*CV_PI)
+	                	  	cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
 	                	else
-	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
- 										std::cout << "-> Robot num " << robot_entry.first.robot_id()
-															<< " de " << rb.getNumRobotInformation() << std::endl;
+	                  		cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
+ 						
 	              	}
-
+	              	/* Affichage de l'historique du robot*/
 	              	if (tr[0] != 0 &&robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
-	              		int circle_size = 5;
 	              		int qsize = rb.sizeOfQueue();
-
 	              		for (int i = 0; i<qsize; i++){
 	              			Position p;
 	              			p = rb.getPosition();
 	              			cv :: Point3f pos_in_fieldp(p.x, p.y, 0.0);
 	               		 	cv :: Point2f pos_in_imgp = fieldToImg(pos_in_fieldp, camera_information);
-                     	cv::circle(display_img,pos_in_imgp, circle_size, cv::Scalar(0,0,0),cv::FILLED);
+                     		cv::circle(display_img,pos_in_imgp, SIZE_CIRCLE_TRACE, cv::Scalar(0,0,0),cv::FILLED);
 	              		}
 	              	}
 
@@ -257,6 +260,7 @@ namespace traitement{
 	      }
 	      if (affichage)
 	      	displayAnnotation();
+	 
 	    }
 	    char key = cv::waitKey(10);
 	    if (key == 'q' || key == 'Q') break;

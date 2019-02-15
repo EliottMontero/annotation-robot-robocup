@@ -14,8 +14,6 @@
 namespace traitement{
 	class Annotation{
 	public:
-		std::string config;
-		std::string field_name;
 		cv::Mat display_img ;
 
 
@@ -24,7 +22,7 @@ namespace traitement{
 		uint64_t time_start;
 
 
-		//Gestion des TeamMsg
+		//Gestion des TeamMsg, stockage 
  		std::map<uint32_t, uint32_t> score_by_team;
 		std::map<uint32_t,cv::Scalar> colors_by_team;
 		std::vector<cv::Scalar> team_colors;
@@ -33,9 +31,12 @@ namespace traitement{
 
 	  Annotation();
 	  ~Annotation();
+
 		std::string getScore();
 		cv::Scalar getColorByTeam(int num);
 		std::string getTime();
+	 /*affiche*/
 	 	void displayAnnotation();
-	 	void launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat display_img);};
+	 /* monitoring, voircommentaires dans la fonction*/
+	 	void launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat &display_img);};
 }

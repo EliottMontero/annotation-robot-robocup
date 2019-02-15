@@ -1,5 +1,9 @@
 #include "traitement/robotInformation.h"
 
+
+#define NB_POSITION_STOCKEES 500
+
+
 namespace traitement
 {
 
@@ -38,6 +42,7 @@ int RobotInformation::sizeOfQueue(){
 	return oldPos.size();
 }
 
+/*Detail dans le .h si besoin*/
 Position RobotInformation :: getPosition(){
 	Position toSend = oldPos.front();
 	oldPos.pop();
@@ -46,7 +51,7 @@ Position RobotInformation :: getPosition(){
 }
 
 void RobotInformation::update(Position pos){
-  if (oldPos.size()>=500)
+  if (oldPos.size()>=NB_POSITION_STOCKEES)
   	oldPos.pop();
   oldPos.push(pos);
 }
