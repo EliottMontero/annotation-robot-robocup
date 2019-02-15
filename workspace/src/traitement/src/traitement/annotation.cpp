@@ -133,8 +133,8 @@ namespace traitement{
 
 					//Lecture TeamMsg
 					uint32_t team_number = team_msg.team_number();
-			        uint32_t team_color = team_msg.team_color();
-			        uint32_t team_score = team_msg.score();
+			    uint32_t team_color = team_msg.team_color();
+			    uint32_t team_score = team_msg.score();
 
 					//Sauvegarde du Score
 					TeamNumber[team_color] = team_number;
@@ -163,19 +163,23 @@ namespace traitement{
 	      }
 	    }
 
-	    std::map<std::string, CalibratedImage> images_by_source =
-	      manager.getCalibratedImages(now);
+	    std::map<std::string, CalibratedImage> images_by_source = manager.getCalibratedImages(now);
+
 	    for (const auto & entry : images_by_source) {
 	     	display_img = entry.second.getImg().clone();
-	      if (entry.second.isFullySpecified()) {
+
+				if (entry.second.isFullySpecified()) {
 	        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
 	        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-	        // Basic drawing of robot estimated position
+
+					// Basic drawing of robot estimated position
 	        for (const auto & robot_entry : status.robot_messages) {
 	          uint32_t team_id = robot_entry.first.team_id();
-	          if (colors_by_team.count(team_id) == 0) {
+
+						if (colors_by_team.count(team_id) == 0) {
 	            std::cerr << "Unknown color for team " << team_id << std::endl;
-	          } else {
+	          }
+						else {
 	            const cv::Scalar & color = colors_by_team[team_id];
 	            if (robot_entry.second.has_perception()) {
 	              const Perception & perception = robot_entry.second.perception();
@@ -187,44 +191,42 @@ namespace traitement{
 	                cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	                int circle_size = 10;
 	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);*/
+	                Position pos;
+              		pos.setPosition(position.x(), position.y());
+              		if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
+              		 	rb.update(pos);
+									}
 
+									cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+	               	cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
-	                 Position pos;
+									//Position
+									if (annot[0] == 1){
+	                 	int circle_size = 10;
+                   	cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
+                  }
 
-              		 pos.setPosition(position.x(), position.y());
-              		 if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
+									//Direction
+                  if (annot[1] == 1){
+	                	/* direction du robot */
+	                	const AngleDistribution & dir = weighted_pose.pose().dir();
+	                	Direction direct;
+	                	direct.SetMean(dir.mean());
+	                	cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
+	                	cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
+	                	/* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
+ 										float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x)
+																		 + (pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
+               		 	cv :: Point2f fleche;
+                		fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
+                		fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);
 
-              		 		rb.update(pos);
-
-              		 	std::cout << "-> ok " <<std::endl;
-						}
-               		 cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
-	               	 cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	               	 if (annot[0] == 1){
-	                 int circle_size = 10;
-                         cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
-                     }
-
-                     if (annot[1] == 1){
-
-	                /* direction du robot */
-	                const AngleDistribution & dir = weighted_pose.pose().dir();
-	                Direction direct;
-	                direct.SetMean(dir.mean());
-	                cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
-	                cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
-	                /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
- 					float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
-               		 cv :: Point2f fleche;
-                	fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
-                	fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);	                /*Affichage couleur pour les angles de degrès bizarre*/
-
-									if (direct.mean > 2*CV_PI)
-	                  cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
-	                else
-	                  cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
- 									std::cout << "-> Robot num " << robot_entry.first.robot_id()<<
-	              		 "de" << rb.getNumRobotInformation() <<std::endl;
+										if (direct.mean > 2*CV_PI)
+	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+	                	else
+	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
+ 										std::cout << "-> Robot num " << robot_entry.first.robot_id()
+															<< " de " << rb.getNumRobotInformation() << std::endl;
 	              	}
 
 	              	if (tr[0] != 0 &&robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
