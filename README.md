@@ -1,5 +1,12 @@
 ### ANNOTATIONS-ROBOT
 
+/!\------/!\
+
+Si vous aviez une version du git d'avant le 15/02/2019, vous allez perdre votre dossier 2vs1 en récupérant toute version postérieure, il faut donc le re-télécharger si vous le voulez, voir la fin de la partie INSTALLATION.
+
+/!\------/!\
+
+
 Le but de ce projet est d'afficher les logs des robots sur une vidéo qui a été prise en même temps que les logs, ce qui permet d'avoir des "logs augmentés", et de mieux comprendre les logs par rapport à ce qu'il s'est passé dans la vidéo, et donc le comportement des robots.
 Il y a deux packages important dans ce projet : traitement et interface, qui devront fonctionner ensemble dans le futur mais pour le moment nous avons des problèmes de fusion donc ils ne fonctionnent que chacun de leur côté. 
 
