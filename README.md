@@ -28,6 +28,12 @@ Pour l'installation, il y a plusieurs procédures à effectuer:
 
 Et normalement avec tout ça on a toutes les dépendances qu'il faut (il est possible qu'il faille télécharger QT 5.9.5 par le site officiel : https://www.qt.io/download pour compiler l'interface).
 
+On peut rajouter le fichier 2vs1 (qui contient les vidéos et les logs d'un match 2 robots vs 1 robot) dans le dépôt à côté de workspace pour lancer le côté traitement par exemple, en le récupérant du google drive suivant : https://drive.google.com/drive/folders/1euuFUpFEmJQSxWQ8DGrLt1pGioKHVwfI?usp=sharing 
+
+A la source du projet on aura donc les dossiers suivant : 2vs1, rapports et workspace.
+
+
+
 Maintenant reste seulement à se placer dans workspace et rentrer les commandes suivantes:
 
 			catkin init
@@ -44,6 +50,8 @@ Si on veut l'exécutable d'un package, il faut aller dans workspace/build/<packa
 Les exécutables se trouveront donc dans workspace/devel/lib/<package> .
 
 # LANCEMENT TRAITEMENT
+
+Pour lancer le traitement, il faut au préalable un dossier contenant des vidéos et logs associés, voir la partie INSTALLATION pour télécharger le dossier 2vs1 contenant lesdites vidéos/logs sur le drive.
 
 Après avoir passé le BUILD_TRAITEMENT_TOOLS:BOOL à ON dans workspace/build/traitement/CMakeCache.txt et compilé avec catkin build dans workspace, placez vous dans le dossier 2vs1 et entrez la ligne suivante dans le terminal :
 
