@@ -33,8 +33,10 @@ namespace traitement{
 
 	}
 
+
 	Annotation::~Annotation(){
 	}
+
 
 	std::string Annotation::getScore(){
 		std::stringstream score;
@@ -44,15 +46,17 @@ namespace traitement{
 		return score.str();
 	}
 
+
 	cv::Scalar Annotation::getColorByTeam(int num){
 		return colors_by_team[num];
 	}
+
 
 	std::string Annotation::getTime(){
 		std::stringstream time;
 		time << (int) ((now - time_start)/1*exp(-9)/60/60)
 				 << " : "
-				 << (int) ((now - time_start)/1*exp(-9)/60);
+				 << (int) (((now - time_start)/1*exp(-9)/60))%60;
 		return time.str();
 	}
 
@@ -60,6 +64,7 @@ namespace traitement{
 	void Annotation::displayAnnotation(){
 		cv::imshow("annoted_video", display_img);
 	}
+
 
 	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat display){
 		TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
@@ -70,11 +75,12 @@ namespace traitement{
 	  TCLAP::ValueArg<std::string> field_arg("f", "field", "The path to the json description of the file",
 	                                          true, "field.json", "string");
 	  TCLAP::MultiArg<int> trace_arg("t", "trace", "The trace of one robot on the video",
-	                                          false, "tracerobot", cmd); //multi arg en prevision de multiple robots 
-	  // -t 0 si on veut rien pour les trace  ou sinon un numéro de robot (1 pour l'instant)
+	                                          false, "tracerobot", cmd); //multi arg en prevision de multiple robots
+
+		// -t 0 si on veut rien pour les trace  ou sinon un numéro de robot (1 pour l'instant)
 	  // -a 0 si on ne veut pas d'annotation/ 1 si on la veut
 	  // dans l'ordre : -a position -a direction
-	 TCLAP::MultiArg<int> annot_arg("a", "annotation", "annotation to print",
+	 	TCLAP::MultiArg<int> annot_arg("a", "annotation", "annotation to print",
 	                                          true, "vector of annot", cmd);
 	  TCLAP::SwitchArg verbose_arg("v", "verbose", "If enabled display all messages received",
 	                               cmd, false);
@@ -87,10 +93,9 @@ namespace traitement{
 	  } catch (const TCLAP::ArgException & e) {
 	    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
 	  }
+
 	  std::vector<int> annot = annot_arg.getValue();
-
 	  std::vector<int> tr = trace_arg.getValue();
-
 
 		MonitoringManager manager;
 		RobotInformation rb;
@@ -100,6 +105,7 @@ namespace traitement{
 
 	  Field field;
 	  field.loadFile(field_arg.getValue());
+
 
 	  // While exit was not explicitly required, run
 
@@ -127,16 +133,16 @@ namespace traitement{
 
 					//Lecture TeamMsg
 					uint32_t team_number = team_msg.team_number();
-			        uint32_t team_color = team_msg.team_color();
-			        uint32_t team_score = team_msg.score();
+			    uint32_t team_color = team_msg.team_color();
+			    uint32_t team_score = team_msg.score();
 
 					//Sauvegarde du Score
 					TeamNumber[team_color] = team_number;
 					score_by_team[team_number] = team_score;
-			        colors_by_team[team_number] = team_colors[team_color];
+			    colors_by_team[team_number] = team_colors[team_color];
 
-			        std::cout << " team " << team_msg.team_number()
-			                  << " score : " << team_score << std::endl;
+			    std::cout << " team " << team_msg.team_number()
+			              << " score : " << team_score << std::endl;
 			       /* for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
 			           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
 			           if (robots_msg.has_penalty()) {
@@ -157,19 +163,23 @@ namespace traitement{
 	      }
 	    }
 
-	    std::map<std::string, CalibratedImage> images_by_source =
-	      manager.getCalibratedImages(now);
+	    std::map<std::string, CalibratedImage> images_by_source = manager.getCalibratedImages(now);
+
 	    for (const auto & entry : images_by_source) {
 	     	display_img = entry.second.getImg().clone();
-	      if (entry.second.isFullySpecified()) {
+
+				if (entry.second.isFullySpecified()) {
 	        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
 	        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-	        // Basic drawing of robot estimated position
+
+					// Basic drawing of robot estimated position
 	        for (const auto & robot_entry : status.robot_messages) {
 	          uint32_t team_id = robot_entry.first.team_id();
-	          if (colors_by_team.count(team_id) == 0) {
+
+						if (colors_by_team.count(team_id) == 0) {
 	            std::cerr << "Unknown color for team " << team_id << std::endl;
-	          } else {
+	          }
+						else {
 	            const cv::Scalar & color = colors_by_team[team_id];
 	            if (robot_entry.second.has_perception()) {
 	              const Perception & perception = robot_entry.second.perception();
@@ -181,55 +191,54 @@ namespace traitement{
 	                cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	                int circle_size = 10;
 	                cv::circle(display_img, pos_in_img, circle_size, color, cv::FILLED);*/
+	                Position pos;
+              		pos.setPosition(position.x(), position.y());
+              		if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
+              		 	rb.update(pos);
+									}
 
+									cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+	               	cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
-	                 Position pos;
-	                
-              		 pos.setPosition(position.x(), position.y());
-              		 if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
-              		
-              		 		rb.update(pos);
-              
-              		 	std::cout << "-> ok " <<std::endl;
-						}
-               		 cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
-	               	 cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	               	 if (annot[0] == 1){
-	                 int circle_size = 10;
-                         cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
-                     }
+									//Position
+									if (annot[0] == 1){
+	                 	int circle_size = 10;
+                   	cv::circle(display_img,pos_in_img, circle_size, color,cv::FILLED);
+                  }
 
-                     if (annot[1] == 1){
+									//Direction
+                  if (annot[1] == 1){
+	                	/* direction du robot */
+	                	const AngleDistribution & dir = weighted_pose.pose().dir();
+	                	Direction direct;
+	                	direct.SetMean(dir.mean());
+	                	cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
+	                	cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
+	                	/* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
+ 										float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x)
+																		 + (pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
+               		 	cv :: Point2f fleche;
+                		fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
+                		fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);
 
-	                /* direction du robot */
-	                const AngleDistribution & dir = weighted_pose.pose().dir();
-	                Direction direct;
-	                direct.SetMean(dir.mean());
-	                cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
-	                cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
-	                /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
- 					float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
-               		 cv :: Point2f fleche;
-                	fleche.x =  pos_in_img.x + (50*(pos_in_imgdir.x - pos_in_img.x)/hypo);
-                	fleche.y= pos_in_img.y + (50*(pos_in_imgdir.y- pos_in_img.y)/hypo);	                /*Affichage couleur pour les angles de degrès bizarre*/
-	                if (direct.mean > 2*CV_PI)
-	                  cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
-	                else
-	                  cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
- 					std::cout << "-> Robot num " << robot_entry.first.robot_id()<< 
-	              		 "de" << rb.getNumRobotInformation() <<std::endl;
+										if (direct.mean > 2*CV_PI)
+	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+	                	else
+	                  	cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
+ 										std::cout << "-> Robot num " << robot_entry.first.robot_id()
+															<< " de " << rb.getNumRobotInformation() << std::endl;
 	              	}
+
 	              	if (tr[0] != 0 &&robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
 	              		int circle_size = 5;
 	              		int qsize = rb.sizeOfQueue();
-	              		 std::cout << "-> ok bis" <<std::endl;
-	              		
+
 	              		for (int i = 0; i<qsize; i++){
 	              			Position p;
 	              			p = rb.getPosition();
-	              			 cv :: Point3f pos_in_fieldp(p.x, p.y, 0.0);
-	               			 cv :: Point2f pos_in_imgp = fieldToImg(pos_in_fieldp, camera_information);
-                         	cv::circle(display_img,pos_in_imgp, circle_size, cv::Scalar(0,0,0),cv::FILLED);
+	              			cv :: Point3f pos_in_fieldp(p.x, p.y, 0.0);
+	               		 	cv :: Point2f pos_in_imgp = fieldToImg(pos_in_fieldp, camera_information);
+                     	cv::circle(display_img,pos_in_imgp, circle_size, cv::Scalar(0,0,0),cv::FILLED);
 	              		}
 	              	}
 
@@ -247,7 +256,7 @@ namespace traitement{
 	        }
 	      }
 	      if (affichage)
-	      displayAnnotation();
+	      	displayAnnotation();
 	    }
 	    char key = cv::waitKey(10);
 	    if (key == 'q' || key == 'Q') break;

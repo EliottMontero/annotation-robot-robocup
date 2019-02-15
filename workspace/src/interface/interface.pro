@@ -28,11 +28,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        src/interface/main.cpp \
+        tools/main.cpp \
          src/interface/mainwindow.cpp
 
 HEADERS += \
-         src/interface/mainwindow.h
+         include/interface/mainwindow.h
+          ../traitement/include/annotation.h
 FORMS += \
         mainwindow.ui
 

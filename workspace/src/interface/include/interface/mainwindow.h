@@ -44,7 +44,7 @@ class QTextEdit;
 
 class Window : public QWidget
 {
-    
+    Q_OBJECT
 protected :
     QTimer *timer;
     float img_ratio;
