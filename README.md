@@ -51,7 +51,9 @@ Après avoir passé le BUILD_TRAITEMENT_TOOLS:BOOL à ON dans workspace/build/tr
 
 Le premier -a indique si vous souhaitez afficher la position des robots (-a 1 = ON, -a 0 = OFF)
 Le deuxième -a indique si vous souhaitez afficher l'orientation des robots (-a 1 = ON, -a 0 = OFF)
-Le premier -t indique si vous souhaitez afficher les anciennes positions des robots (-t <nb robot>)
+Le -t indique si vous souhaitez afficher l'ancienne position d'un robot (-t <numero_du_robot>) 
+
+Même si trace_arg (l'argument -t) est définit comme MultiArg<int>, on ne peut pas afficher plusieurs robots pour l'instant, nous verrons cette implémentation lorsque chaque robot aura son objet (pour l'instant on définit qu'un robot, celui que l'on affiche).
 
 # LANCEMENT INTERFACE
 
@@ -59,4 +61,4 @@ Après avoir passé le BUILD_TRAITEMENT_TOOLS:BOOL à ON dans workspace/build/in
 
 			workspace/devel/lib/interface/main
 
-
+A noter que pour l'instant l'interface est juste un interface, il n'y pas d'images affichées.
