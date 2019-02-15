@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 project(interface)
 
-
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOOUIC ON)
 
 find_package(OpenCV REQUIRED)
 
@@ -64,6 +66,6 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 option(BUILD_INTERFACE_TOOLS "Building interface tools" OFF)
 
 if (BUILD_INTERFACE_TOOLS)
-  add_executable(main tools/main.cpp)
+  add_executable(main src/interface/main.cpp)
   target_link_libraries(main ${PROJECT_NAME} ${catkin_LIBRARIES})
   endif()
