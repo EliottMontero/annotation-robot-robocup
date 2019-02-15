@@ -5,6 +5,15 @@
 #include <QtWidgets>
 
 
+#define LABEL_FONT_RATIO 100
+#define BUTTON_FONT_RATIO 120
+#define X_MARGE_SIZE 10
+#define Y_MARGE_SIZE 20
+
+#define CV_IMG_WIDTH 480
+#define CV_IMG_HEIGHT 640
+
+
 Window::Window(QWidget *parent) : QWidget(parent){
     QDesktopWidget dw;
     x=static_cast<int>(dw.width()*0.8);
@@ -74,11 +83,11 @@ void Window::UpdateSpectatorInterface(){
     y = this->size().height();
     x = this->size().width();
 
-    int label_font_size=x/100;
-    int button_font_size=x/120;
+    int label_font_size=x/LABEL_FONT_RATIO;
+    int button_font_size=x/BUTTON_FONT_RATIO;
 
-    int x_marge=10;
-    int y_marge=20;
+    int y_marge=Y_MARGE_SIZE;
+    int x_marge=X_MARGE_SIZE;
     float ratioL1=2.0f/3.0f;
     float ratioL2=2.f/12.0f;
 
@@ -158,8 +167,7 @@ void Window::UpdateSpectatorInterface(){
 //on initialise l'interface dans le style que lulu a propose
 void Window::InitSpectatorInterface(){
 
-    cvImage = new cv::Mat(480,640,CV_8UC4, Scalar(0,0,255));
-
+    cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
 
     char** argV=(char**)malloc(8*sizeof(char*));
     for(int i=0; i<8; i++){
@@ -207,7 +215,7 @@ void Window::InitSpectatorInterface(){
 
      //pixmap.load("../interface/a.jpeg");
      //img_ratio=(float)pixmap.width()/(float)pixmap.height();
-    img_ratio=640/480;
+    img_ratio=CV_IMG_HEIGHT/CV_IMG_WIDTH;
     label1->setPixmap(pixmap);
      label1->setStyleSheet("QLabel { background-color : red; color : blue; }");
 
