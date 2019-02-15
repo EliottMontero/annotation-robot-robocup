@@ -12,23 +12,24 @@ namespace traitement
 
   public:
     int numRobotInformation;
-    std::queue<Position> oldPos;
+
     RobotInformation();
     ~RobotInformation();
-
-    
 
     int getNumRobotInformation() const;
     int getPenalty() const;
     int getSecsTillUnpenalised() const;
     int getYellowCardCount() const;
     int getRedCardCount() const;
+
+    std::queue<Position> oldPos;
     int sizeOfQueue();
+
     Position getPosition();
     void update(Position pos);
 
   private:
-    
+
     int penalty;
     int secs_till_unpenalised;
     int yellow_card_count;

@@ -5,8 +5,8 @@ namespace traitement
 
 RobotInformation::RobotInformation(){
 	numRobotInformation = 0;
-  	penalty = 0;
-  	secs_till_unpenalised = 0;
+  penalty = 0;
+	secs_till_unpenalised = 0;
 	yellow_card_count = 0;
 	red_card_count = 0;
 }
@@ -35,7 +35,6 @@ int RobotInformation::getRedCardCount() const{
 }
 
 int RobotInformation::sizeOfQueue(){
-	//c'est pas la taille qui compte
 	return oldPos.size();
 }
 
