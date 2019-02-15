@@ -14,7 +14,6 @@ using namespace hl_monitoring;
 
 
 namespace traitement
-/*Afficher la position du robot depuis les logs*/
 {
 	Position::Position(){
 		x = 0;
@@ -30,10 +29,5 @@ namespace traitement
 		y = yp;
 	}
 
-	/* cv::Point3f Position::PositionInField(){
-		 cv::Point3f pos_in_field(x, y, 0.0);
-         cv::Point2f pos_in_img = fieldToImg(pos_in_field, cam);
-        return pos_in_img;
-	}*/
 
-}/*on fait des position.get à partir des logs pui position.draw pour add à l'image*/
+}

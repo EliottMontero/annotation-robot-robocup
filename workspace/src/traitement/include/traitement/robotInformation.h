@@ -1,13 +1,11 @@
 #pragma once
 
 #include <traitement/position.h>
-#include <queue>          // std::queue
-
+#include <queue>       
 
 namespace traitement
 {
-
-  //Class similaire à celle présente dans hl_communication
+  /* Dans cette classe, nous stockons les informations des robots que l'on obtient dans les messages*/
   class RobotInformation {
 
   public:
@@ -22,10 +20,15 @@ namespace traitement
     int getYellowCardCount() const;
     int getRedCardCount() const;
 
+    /*pour afficher les 500 anciennes positions du robot afin d'avoir la trace du robot*/
     std::queue<Position> oldPos;
     int sizeOfQueue();
-
+    /*retourne la position en haut de la queue, la place en bas de la queue
+     lorsqu'on lance cette fonction on la lance sizeOfQueue fois,
+    le fait de lire le haut et de le mettre ensuite au bout de la queue
+    nous permet de lire chaque position une fois puis de revenir comme avant la lecture*/
     Position getPosition();
+    /*ajoute une position dans la queue*/
     void update(Position pos);
 
   private:

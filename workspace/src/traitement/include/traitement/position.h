@@ -8,6 +8,8 @@
 
 namespace traitement
 {
+	/*Créer des positions pour la facilité de stockage */
+
 class Position {
   public:
     float x;
@@ -18,6 +20,5 @@ class Position {
     Position();
     ~Position();
     void setPosition(float xp, float yp );
-    // cv::Point2f annotePosition();
   };
 }
