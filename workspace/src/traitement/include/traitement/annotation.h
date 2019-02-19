@@ -11,32 +11,28 @@
 
 #include <google/protobuf/message.h>
 
+using namespace hl_monitoring;
+using namespace hl_communication;
+
+
 namespace traitement{
 	class Annotation{
 	public:
-		cv::Mat display_img ;
+		
+		std::map<std::string, bool>annotation_choice;
+		int sizecircle;
+		int sizearrow;
+		cv::Scalar color1;
+		cv::Scalar color2;
 
 
-		//Etat du Jeu
-		uint64_t now;
-		uint64_t time_start;
-
-
-		//Gestion des TeamMsg, stockage 
- 		std::map<uint32_t, uint32_t> score_by_team;
-		std::map<uint32_t,cv::Scalar> colors_by_team;
-		std::vector<cv::Scalar> team_colors;
-		uint32_t TeamNumber[2];
-
-
-	  Annotation();
+	  Annotation(std::string);
 	  ~Annotation();
 
-		std::string getScore();
-		cv::Scalar getColorByTeam(int num);
-		std::string getTime();
-	 /*affiche*/
-	 	void displayAnnotation();
-	 /* monitoring, voircommentaires dans la fonction*/
-	 	void launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat &display_img);};
+
+	 	cv::Mat annotePosition(Position pos,  CameraMetaInformation camera_information, int team_id,cv::Mat display);
+	 	cv::Mat annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, int team_id,cv::Mat display);
+ 		cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  int team_id,cv::Mat display);
+
+	 };
 }

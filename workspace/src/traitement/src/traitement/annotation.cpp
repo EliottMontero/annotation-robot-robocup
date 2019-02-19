@@ -14,6 +14,10 @@
 #include <tclap/CmdLine.h>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <json/value.h>
+#include <jsoncpp/json/json.h>
+#include <fstream>
 
 #define SIZE_CIRCLE_POS 10
 #define SIZE_ARROW 50
@@ -26,245 +30,75 @@ using namespace hl_monitoring;
 
 
 namespace traitement{
-	Annotation::Annotation(){
-	
-		//Init Etat du Jeu
-		now = 0;
+	Annotation::Annotation(std::string){
+		Json::Reader reader;	
+	    Json::Value root;
 
-		//Choix des Couleurs pour chaque équipe
-		team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
+	    std::ifstream annotation_settings("annotation_settings.json");
+	    annotation_settings >> root;
 
+	    
+	     annotation_choice["position"]=root["position"]["write"].asBool();
+	     annotation_choice["direction"]=root["direction"]["write"].asBool();
+	     
+	     sizecircle = root["position"]["circle_size"].asUInt();
+	     sizearrow = root["direction"]["arrow_size"].asUInt();
+	  
+	    color1 = {root["color_team_1"]["r"].asUInt(), root["color_team_1"]["g"].asUInt(), root["color_team_1"]["b"].asUInt()};
+	    color2 = {root["color_team_2"]["r"].asUInt(), root["color_team_2"]["g"].asUInt(), root["color_team_2"]["b"].asUInt()};
 	}
+
 
 
 	Annotation::~Annotation(){
 	}
 
 
-	std::string Annotation::getScore(){
-		std::stringstream score;
-		score << score_by_team.find(TeamNumber[0])->second
-					<< " - "
-					<< score_by_team.find(TeamNumber[1])->second;
-		return score.str();
+	cv::Mat  Annotation::annotePosition(Position pos, CameraMetaInformation camera_information, int team_id,cv::Mat display){
+		cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+	    cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	   // cv::Point2f pos_in_img(pos.x, pos.y);
+	    printf("%d\n", team_id );
+	    if (team_id == 9)
+			cv::circle(display,pos_in_img, sizecircle,  color1,cv::FILLED);
+		else
+			cv::circle(display,pos_in_img, sizecircle,  color2,cv::FILLED);
+		
+	  	return display;
+	}
+	cv::Mat  Annotation::annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, int team_id,cv::Mat display){
+		// calcul pos
+		cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
+	    cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	    //calcul dir
+		cv :: Point3f pos_in_fielddir(pos.x+cos(dir.mean), pos.y+sin(dir.mean), 0.0);
+        cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
+        /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
+        float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
+        cv :: Point2f fleche;
+        fleche.x =  pos_in_img.x + (sizearrow*(pos_in_imgdir.x - pos_in_img.x)/hypo);
+        fleche.y= pos_in_img.y + (sizearrow*(pos_in_imgdir.y- pos_in_img.y)/hypo);
+        /*Affichage couleur pour les angles de degrès bizarre*/
+        if (dir.mean > 2*CV_PI) 
+            cv :: arrowedLine(display, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+        else
+        	if (team_id == 9)
+            	cv :: arrowedLine(display, pos_in_img, fleche, color1, 2, 0, 0.1);
+            else
+            	cv :: arrowedLine(display, pos_in_img, fleche, color2, 2, 0, 0.1);
+
+	  	return display;
 	}
 
+	cv::Mat Annotation::AddAnnotation(Position pos,Direction dir, CameraMetaInformation camera_information, int team_id,cv::Mat display){
+		if (annotation_choice["position"]=true)
+			display = annotePosition(pos, camera_information, team_id, display);
+		if (annotation_choice["direction"]=true)
+			display = annoteDirection(pos, dir, camera_information, team_id, display);
 
-	cv::Scalar Annotation::getColorByTeam(int num){
-		return colors_by_team[num];
+		return display;
 	}
 
-
-	std::string Annotation::getTime(){
-		std::stringstream time;
-		time << (int) ((now - time_start)/1*exp(-9)/60/60)
-				 << " : "
-				 << (int) (((now - time_start)/1*exp(-9)/60))%60;
-		return time.str();
-	}
-
-
-	void Annotation::displayAnnotation(){
-		cv::imshow("annoted_video", display_img);
-	}
-
-
-	void Annotation :: launchAnnotation(int argc, char ** argv, bool affichage, cv::Mat &display){
-
-		TCLAP::CmdLine cmd("Acquire and display one or multiple streams along with meta-information",
-	                     ' ', "0.9");
-
-	  TCLAP::ValueArg<std::string> config_arg("c", "config", "The path to the json configuration file",
-	                                          true, "config.json", "string");
-	  TCLAP::ValueArg<std::string> field_arg("f", "field", "The path to the json description of the file",
-	                                          true, "field.json", "string");
-	  TCLAP::MultiArg<int> trace_arg("t", "trace", "The trace of one robot on the video",
-	                                          false, "tracerobot", cmd); //multi arg en prevision de multiple robots
-
-		// -t 0 si on veut rien pour les trace  ou sinon un numéro de robot (1 pour l'instant)
-	  // -a 0 si on ne veut pas d'annotation/ 1 si on la veut
-	  // dans l'ordre : -a position -a direction
-	 	TCLAP::MultiArg<int> annot_arg("a", "annotation", "annotation to print",
-	                                          true, "vector of annot", cmd);
-	  TCLAP::SwitchArg verbose_arg("v", "verbose", "If enabled display all messages received",
-	                               cmd, false);
-	  cmd.add(config_arg);
-	  cmd.add(field_arg);
-
-	  try {
-	    cmd.parse(argc, argv);
-
-	  } catch (const TCLAP::ArgException & e) {
-	    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-	  }
-
-	  std::vector<int> annot = annot_arg.getValue();
-	  std::vector<int> tr = trace_arg.getValue();
-
-		MonitoringManager manager;
-		RobotInformation rb;
-		rb.numRobotInformation = tr[0];
-
-	  manager.loadConfig(config_arg.getValue());
-
-	  Field field;
-	  field.loadFile(field_arg.getValue());
-
-
-	  // While exit was not explicitly required, run
-
-	  uint64_t dt = 30 * 1000;//[microseconds]
-	  if (!manager.isLive()) {
-	    now = manager.getStart();
-			time_start = manager.getStart();
-	  }
-	  while(manager.isGood()) {
-	    manager.update();
-	    if (manager.isLive()) {
-	      now = getTimeStamp();
-	    } else {
-	      now += dt;
-	    }
-
-	    MessageManager::Status status = manager.getStatus(now);
-			std::cout << "Temps de Jeu : " << getTime() << std::endl;
-
-	    for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
-				std::cout << " team size : " << status.gc_message.teams_size() << std::endl;
-	      const GCTeamMsg & team_msg = status.gc_message.teams(idx);
-
-				if (team_msg.has_team_number() && team_msg.has_team_color()) {
-
-					//Lecture TeamMsg
-					uint32_t team_number = team_msg.team_number();
-			    uint32_t team_color = team_msg.team_color();
-			    uint32_t team_score = team_msg.score();
-
-					//Sauvegarde du Score
-					TeamNumber[team_color] = team_number;
-					score_by_team[team_number] = team_score;
-			    colors_by_team[team_number] = team_colors[team_color];
-
-			    std::cout << " team " << team_msg.team_number()
-			              << " score : " << team_score << std::endl;
-
-			       // Le code en commentaire ci-dessous marche mais on ne l'utilise pas encore       
-
-			   /*  for (int idxr = 0; idxr < team_msg.robots_size(); idxr++) {
-			           const GCRobotMsg & robots_msg =team_msg.robots(idxr);
-			           if (robots_msg.has_penalty()) {
-			            uint32_t robot_penalty = robots_msg.penalty();
-			            uint32_t robot_secs_till_unpenalised = robots_msg.secs_till_unpenalised();
-			             std::cout << "-> Message from robot " << idxr << " of team  " << team_number
-			                  << " -> penalty " << robot_penalty  << " secs_till_unpenalised : " << robot_secs_till_unpenalised   << std::endl;
-			           }
-			         }*/
-	      }
-	    }
-
-	    if (verbose_arg.getValue()) {
-	      std::cout << "Time: " <<  now << std::endl;
-	      for (const auto & robot_entry : status.robot_messages) {
-	        std::cout << "-> Message from robot " << robot_entry.first.robot_id()
-	                  << " from team " << robot_entry.first.team_id() << std::endl;
-	      }
-	    }
-
-	    std::map<std::string, CalibratedImage> images_by_source = manager.getCalibratedImages(now);
-
-	    for (const auto & entry : images_by_source) {
-	     	display_img = entry.second.getImg().clone();
-
-				if (entry.second.isFullySpecified()) {
-	        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-	        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-
-					// Basic drawing of robot estimated position
-	        for (const auto & robot_entry : status.robot_messages) {
-	          uint32_t team_id = robot_entry.first.team_id();
-
-						if (colors_by_team.count(team_id) == 0) {
-	            std::cerr << "Unknown color for team " << team_id << std::endl;
-	          }
-						else {
-	            const cv::Scalar & color = colors_by_team[team_id];
-	            if (robot_entry.second.has_perception()) {
-	              const Perception & perception = robot_entry.second.perception();
-	              for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
-	                /* position du robot */
-	                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-	                const PositionDistribution & position = weighted_pose.pose().position();
-	               
-	                Position pos;
-              		pos.setPosition(position.x(), position.y());
-              		//Recuperation position pour l'affichage de l'historique des positions
-              		if (robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
-              		 	rb.update(pos);
-					}
-
-					cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
-	               	cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-
-					//Position
-					if (annot[0] == 1){
-                   		cv::circle(display_img,pos_in_img, SIZE_CIRCLE_POS, color,cv::FILLED);
-                  	}
-
-					//Direction
-                  	if (annot[1] == 1){
-	                	/* direction du robot */
-	                	const AngleDistribution & dir = weighted_pose.pose().dir(); 
-	                	/*La classe direction ne sert pas beaucoup pour l'instant, c'est ce qui explique les warnings lorsqu'on compile*/
-	                	Direction direct;
-	                	direct.SetMean(dir.mean());
-	                	cv :: Point3f pos_in_fielddir(pos.x+cos(direct.mean),pos.x+sin(direct.mean), 0.0);
-	                	cv :: Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
-	                	/* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
- 						float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x)
-						 + (pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
-               		 	cv :: Point2f fleche;
-                		fleche.x =  pos_in_img.x + (SIZE_ARROW*(pos_in_imgdir.x - pos_in_img.x)/hypo);
-                		fleche.y= pos_in_img.y + (SIZE_ARROW*(pos_in_imgdir.y- pos_in_img.y)/hypo);
-
-                		/*Affichage des valeurs qui ne font pas parties du cercle trigo en noir pour montrer l'erreur du robot*/
-						if (direct.mean > 2*CV_PI)
-	                	  	cv :: arrowedLine(display_img, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
-	                	else
-	                  		cv :: arrowedLine(display_img, pos_in_img, fleche, color, 2, 0, 0.1);
- 						
-	              	}
-	              	/* Affichage de l'historique du robot*/
-	              	if (tr[0] != 0 &&robot_entry.first.robot_id() == (unsigned)rb.getNumRobotInformation()){
-	              		int qsize = rb.sizeOfQueue();
-	              		for (int i = 0; i<qsize; i++){
-	              			Position p;
-	              			p = rb.getPosition();
-	              			cv :: Point3f pos_in_fieldp(p.x, p.y, 0.0);
-	               		 	cv :: Point2f pos_in_imgp = fieldToImg(pos_in_fieldp, camera_information);
-                     		cv::circle(display_img,pos_in_imgp, SIZE_CIRCLE_TRACE, cv::Scalar(0,0,0),cv::FILLED);
-	              		}
-	              	}
-
-
-	                /* Affichage du message pour vérifications */
-	               /*std::cout << "-> Robot num " << robot_entry.first.robot_id()
-	                << " from team " << robot_entry.first.team_id()
-	                << "and pos x : " << position.x() << " y : " <<position.y() << " dir  == > " << dir.mean() <<std::endl;*/
-	                /*std::cout << "-> Robot pos x : " << pos_in_img.x << " y : " << pos_in_img.y
-	                 << " pos fleche : " << pos_in_imgdir.x << " y : " << pos_in_imgdir.y
-	                 << " pos fleche new : " << fleche.x << " y : " << fleche.y << " hypo ==> " << hypo <<std::endl;*/
-	              }
-	            }
-	          }
-	        }
-	      }
-	      if (affichage)
-	      	displayAnnotation();
-	 
-	    }
-	    char key = cv::waitKey(10);
-	    if (key == 'q' || key == 'Q') break;
-	  }
-	}
+	
 }
 	/* on crée un monitoring, on load des messages, on appelle les classes pour afficher des annotations, ex = position, fleche etc */
