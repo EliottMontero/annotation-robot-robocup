@@ -117,7 +117,7 @@ int main(int argc, char ** argv) {
         }
       }
    
-    cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
+    cv::namedWindow(entry.first, cv::WINDOW_NORMAL);
     cv::imshow(entry.first, display_img);
     cv::waitKey(10);
     }
