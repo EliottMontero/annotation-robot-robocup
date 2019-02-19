@@ -95,7 +95,7 @@ void Window::UpdateSpectatorInterface(){
 	int x_marge=X_MARGE_SIZE;
 	float ratioL1=2.0f/3.0f;
 	float ratioL2=2.f/12.0f;
-	//initialisation des tailles et positions des labels et boutons 
+	//initialisation des tailles et positions des labels et boutons
 	label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
 	int width_label1 = static_cast<int>(img_ratio*y*ratioL1);
 	int height_label1 = static_cast<int>(y*ratioL1);
@@ -133,7 +133,7 @@ void Window::UpdateSpectatorInterface(){
 	int width_button2 = width_button1;
 	int height_button2 = height_button1;
 
-	// on assigne aux widgets leurs tailles et positions. 
+	// on assigne aux widgets leurs tailles et positions.
 
 	QSize sizeL1(width_label1, height_label1);
 	label1->setFixedSize(sizeL1);
@@ -141,7 +141,7 @@ void Window::UpdateSpectatorInterface(){
 	label2->setGeometry(posX_label2, posY_label2, width_label2, height_label2);
 	label3->setGeometry(posX_label3, posY_label3, width_label3, height_label3);
 	label4->setGeometry(posX_label4, posY_label4, width_label4, height_label4);
-	
+
 	//les labels ont la meme taille de police qui dépend de la taille de la fenetre.
 	QFont font = label2->font();
 	font.setPointSize(label_font_size);
@@ -156,12 +156,12 @@ void Window::UpdateSpectatorInterface(){
 	bouton0->setFont(font);
 	bouton1->setFont(font);
 	bouton2->setFont(font);
-	
+
 	bouton0->setGeometry(posX_button0, posY_button0, width_button0, height_button0);
 	bouton1->setGeometry(posX_button1, posY_button1, width_button1, height_button1);
 	bouton2->setGeometry(posX_button2, posY_button2, width_button2, height_button2);
-	
-	//pour etre bien certain de les afficher 
+
+	//pour etre bien certain de les afficher
 	label1->setVisible(true);
 	label2->setVisible(true);
 	label3->setVisible(true);
@@ -175,7 +175,7 @@ void Window::UpdateSpectatorInterface(){
 void Window::InitSpectatorInterface(){
 
 	cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
-	
+
 	/*
 	Ne fonctionne pas encore, partie qui récuperera l'image annotée du module traitement.
 
@@ -202,34 +202,34 @@ void Window::InitSpectatorInterface(){
 	//label2 = SCORE
 	label2=new QLabel(this);
 	label2->setAlignment(Qt::AlignCenter);
-	label2->setText("SCORE : \n\n 12 millions");
+	label2->setText("SCORE : \n\n Score");
 	label2->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
 	label2->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
 	//label3 = Equipe en possession & action en cours
 	label3=new QLabel(this);
 	label3->setAlignment(Qt::AlignCenter);
-	label3->setText("ACTION EN COURS : \n \n pas nous.");
+	label3->setText("ACTION EN COURS : \n \n Action");
 	label3->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
 	label3->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
 	//label4 = Robots en touche
 	label4=new QLabel(this);
 	label4->setAlignment(Qt::AlignCenter);
-	label4->setText("EN TOUCHE : \n\n on s'touche");
+	label4->setText("EN TOUCHE : \n\n En touche");
 	label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
 	label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
 	//détermine le le ratio de l'image à afficher dans l'interface pour ne pas qu'elle soit crop, ou déformée.
 	img_ratio=CV_IMG_HEIGHT/CV_IMG_WIDTH;
-	
+
 	label1->setStyleSheet("QLabel { background-color : red}");
 
 	label1->setScaledContents(true);
 
 	setWindowTitle(tr("SPECTATOR MODE"));
 
-	//rafraichit l'interface toutes les WINDOW_REFRESH_RATE millisecondes 
+	//rafraichit l'interface toutes les WINDOW_REFRESH_RATE millisecondes
 	QTimer *timer = new QTimer(this);
 	QObject::connect(timer, SIGNAL(timeout()), this, SLOT(UpdateSpectatorInterface()));
 	timer->start(WINDOW_REFRESH_RATE);
