@@ -1,12 +1,26 @@
+#include <QApplication>
 #include "mainwindow.h"
 
-#include <QApplication>
+#include <QTranslator>
+#include <QLocale>
+#include <QLibraryInfo>
+#include <QLayout>
+#include <QtWidgets>
+#include <QPushButton>
 
-int main(int argc, char **argv)
+
+#include <QLineEdit>
+#include <QFormLayout>
+
+int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-    Window window;
+
+    MainWindow window;
+
+
     window.show();
     return app.exec();
 }
+
+
