@@ -148,7 +148,7 @@ namespace traitement{
     ball = rb.getPosBall();
     cv::Point2f position;
     position.x = pos.x + ball.x*cos(dir.mean)-ball.y*sin(dir.mean);
-    position.y = pos.y + ball.x*sin(dir.mean)+ball.y*sin(dir.mean);
+    position.y = pos.y + ball.x*sin(dir.mean)+ball.y*cos(dir.mean);
     cv :: Point3f pos_in_field(position.x, position.y, 0.0);
     cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
     cv::circle(display,pos_in_img, ballsize, cv::Scalar(125,125,125),cv::FILLED);
