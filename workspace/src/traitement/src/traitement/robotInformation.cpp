@@ -24,6 +24,13 @@ namespace traitement
     numRobotInformation=robot_id;
   }
 
+  void RobotInformation::setPosBall(Position pos){
+    ball_pos = pos;
+  }
+  Position RobotInformation::getPosBall(){
+    return ball_pos;
+  }
+  
   int RobotInformation::getTeam() const{
     return team;
   }

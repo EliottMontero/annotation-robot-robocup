@@ -22,8 +22,10 @@ namespace traitement{
     std::map<std::string, bool>annotation_choice;
     int sizecircle;
     int sizecircletrace;
+    int ballsize;
     int sizearrow;
     int robottrace;
+    int robotball;
     std::map<int ,cv::Scalar> color;
 
 
@@ -33,7 +35,8 @@ namespace traitement{
 
     cv::Mat annotePosition(Position pos,  CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
     cv::Mat annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
-    cv::Mat  annoteTrace(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat  annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat  annoteBall(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
     cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display);
 
   };

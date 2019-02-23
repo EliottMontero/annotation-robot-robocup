@@ -39,7 +39,8 @@ namespace traitement
     robots[robot_id].update(pos);
   }
 
-  /*  Position Team::getRobotPosition(int robot_id){
-    return robots[robot_id].getPosition();
-  }*/
+  void Team::setRobotPosBall(int robot_id, Position pos){
+    robots[robot_id].setPosBall(pos);
+  }
+  
 }

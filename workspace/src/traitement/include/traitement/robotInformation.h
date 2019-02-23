@@ -15,6 +15,8 @@ namespace traitement
     ~RobotInformation();
     void setTeam(int team_id);
     void setnumRobotInformation(int robot_id);
+    void setPosBall(Position pos);
+    Position getPosBall();
     int getTeam() const;
     int getNumRobotInformation() const;
     int getPenalty() const;
@@ -39,6 +41,7 @@ namespace traitement
     int secs_till_unpenalised;
     int yellow_card_count;
     int red_card_count;
+    Position ball_pos;
 
 
 

@@ -31,10 +31,15 @@ using namespace traitement;
 int main(int argc, char ** argv) {
   Json::Reader reader;
   Json::Value root;
+  
 
   std::ifstream match_settings("match_settings.json");
+  if (!match_settings.good())
+    throw std::runtime_error("failde to open file match_settings.json");
   match_settings >> root;
 
+  checkMember(root["match_setting"], "config");
+  checkMember(root["match_setting"], "field");
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
@@ -48,7 +53,7 @@ int main(int argc, char ** argv) {
 
   std::cout << f << std::endl;
 
-  Annotation annotation("Annotation_settings.json");
+  Annotation annotation("annotation_settings.json");
     std::map<int, Team>teams;
 // While exit was not explicitly required, run
   uint64_t now = 0;
@@ -92,10 +97,9 @@ int main(int argc, char ** argv) {
        for (const auto & robot_entry : status.robot_messages) {
 	 uint32_t team_id = robot_entry.first.team_id();
          if (robot_entry.second.has_perception()) {
-	   const Perception & perception = robot_entry.second.perception();
+	   const Perception & perception = robot_entry.second.perception();			
 	   for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
-
-
+	     
 	     /* init des robots présent sur le jeu*/
 	     if (teams.find(team_id)==teams.end()){
 	       Team t1;
@@ -120,7 +124,10 @@ int main(int argc, char ** argv) {
 	     Direction direction;
 	     direction.SetMean (dir.mean())  ;
 
-	     
+	     const PositionDistribution & ball = perception.ball_in_self();
+	     Position pos_ball;
+	     pos_ball.setPosition(ball.x(), ball.y());
+	     teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
 		
 	     display_img =annotation.AddAnnotation(pos,direction, camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
 	   }
@@ -129,7 +136,7 @@ int main(int argc, char ** argv) {
        }
      }
    
-     cv::namedWindow(entry.first, cv::WINDOW_NORMAL);
+     cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
      cv::imshow(entry.first, display_img);
      cv::waitKey(10);
   

@@ -19,7 +19,7 @@ namespace traitement
     void setRobotTeam(int robot_id, int team_id);
     void RobotUpdate(int robot_id, Position pos);
     void setRobotNum(int robot_id);
-    //    Position getRobotPosition(int robot_id);
+    void setRobotPosBall(int robot_id, Position pos);
   private:
     std::map<int, RobotInformation>robots;
   };

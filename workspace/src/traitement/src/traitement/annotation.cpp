@@ -30,23 +30,55 @@ using namespace hl_monitoring;
 
 
 namespace traitement{
-  Annotation::Annotation(std::string){
+  Annotation::Annotation(std::string file){
     Json::Reader reader;	
     Json::Value root;
 
-    std::ifstream annotation_settings("annotation_settings.json");
+    std::ifstream annotation_settings(file);
+    if (!annotation_settings.good())
+      throw std::runtime_error("failed to open file" + file);
     annotation_settings >> root;
 
-	    
+    checkMember(root, "position");
+    checkMember(root["position"], "write");
+    checkMember(root, "direction");
+    checkMember(root["direction"], "write");
+    checkMember(root, "trace");
+    checkMember(root["trace"], "write");
+    checkMember(root, "ball");
+    checkMember(root["ball"], "write");
+    
     annotation_choice["position"]=root["position"]["write"].asBool();
     annotation_choice["direction"]=root["direction"]["write"].asBool();
     annotation_choice["trace"]=root["trace"]["write"].asBool();
-	     
+    annotation_choice["ball"]=root["ball"]["write"].asBool();
+
+    checkMember(root["position"], "circle_size");
+    checkMember(root["trace"], "circle_size");
+    checkMember(root["direction"], "arrow_size");
+    checkMember(root["trace"], "robot_num");
+    checkMember(root["ball"], "ball_size");
+    checkMember(root["ball"], "robot_num");
+    
+    
     sizecircle = root["position"]["circle_size"].asUInt();
     sizecircletrace = root["trace"]["circle_size"].asUInt();
     sizearrow = root["direction"]["arrow_size"].asUInt();
     robottrace = root["trace"]["robot_num"].asUInt();
-	  
+    ballsize = root["ball"]["ball_size"].asUInt();
+    robotball = root["ball"]["robot_num"].asUInt();
+
+    checkMember(root["color_team_1"], "num");
+    checkMember(root["color_team_1"], "r");
+    checkMember(root["color_team_1"], "b");
+    checkMember(root["color_team_1"], "g");
+
+    checkMember(root["color_team_2"], "num");
+    checkMember(root["color_team_2"], "r");
+    checkMember(root["color_team_2"], "b");
+    checkMember(root["color_team_2"], "g");
+
+    
     cv::Scalar color1 = {root["color_team_1"]["r"].asUInt(), root["color_team_1"]["g"].asUInt(), root["color_team_1"]["b"].asUInt()};
     
     cv::Scalar color2 = {root["color_team_2"]["r"].asUInt(), root["color_team_2"]["g"].asUInt(), root["color_team_2"]["b"].asUInt()};
@@ -97,7 +129,7 @@ namespace traitement{
   }
 
   
-  cv::Mat  Annotation::annoteTrace(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+  cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
     int qsize = rb.sizeOfQueue();
     for (int i = 0; i<qsize; i++){
       Position p;
@@ -111,14 +143,30 @@ namespace traitement{
  
   }
 
+  cv::Mat  Annotation::annoteBall(Position pos,  Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+    Position ball;
+    ball = rb.getPosBall();
+    cv::Point2f position;
+    position.x = pos.x + ball.x*cos(dir.mean)-ball.y*sin(dir.mean);
+    position.y = pos.y + ball.x*sin(dir.mean)+ball.y*sin(dir.mean);
+    cv :: Point3f pos_in_field(position.x, position.y, 0.0);
+    cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+    cv::circle(display,pos_in_img, ballsize, cv::Scalar(125,125,125),cv::FILLED);
+    return display;
+  }
+    
+
   cv::Mat Annotation::AddAnnotation(Position pos,Direction dir, CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
     if (annotation_choice["position"])
       display = annotePosition(pos, camera_information, rb , display);
     if (annotation_choice["direction"])
       display = annoteDirection(pos, dir, camera_information, rb, display);
     if (annotation_choice["trace"] && rb.getNumRobotInformation() == robottrace){
-      display = annoteTrace(pos, dir, camera_information, rb, display);
+      display = annoteTrace(camera_information, rb, display);
     }
+    if (annotation_choice["ball"] && rb.getNumRobotInformation() == robotball){
+      display = annoteBall(pos, dir, camera_information, rb, display);
+      }
     return display;
   }
 
