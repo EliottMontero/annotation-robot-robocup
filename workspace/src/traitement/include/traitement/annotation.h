@@ -16,23 +16,25 @@ using namespace hl_communication;
 
 
 namespace traitement{
-	class Annotation{
-	public:
+  class Annotation{
+  public:
 		
-		std::map<std::string, bool>annotation_choice;
-		int sizecircle;
-		int sizearrow;
-		cv::Scalar color1;
-		cv::Scalar color2;
+    std::map<std::string, bool>annotation_choice;
+    int sizecircle;
+    int sizecircletrace;
+    int sizearrow;
+    int robottrace;
+    std::map<int ,cv::Scalar> color;
 
 
-	  Annotation(std::string);
-	  ~Annotation();
+    Annotation(std::string);
+    ~Annotation();
 
 
-	 	cv::Mat annotePosition(Position pos,  CameraMetaInformation camera_information, int team_id,cv::Mat display);
-	 	cv::Mat annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, int team_id,cv::Mat display);
- 		cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  int team_id,cv::Mat display);
+    cv::Mat annotePosition(Position pos,  CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat  annoteTrace(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display);
 
-	 };
+  };
 }

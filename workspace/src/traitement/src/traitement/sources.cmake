@@ -3,4 +3,5 @@ set(SOURCES
 	position.cpp
 	direction.cpp
 	robotInformation.cpp
+	team.cpp
 	)

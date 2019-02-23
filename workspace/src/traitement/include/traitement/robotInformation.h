@@ -13,7 +13,9 @@ namespace traitement
 
     RobotInformation();
     ~RobotInformation();
-
+    void setTeam(int team_id);
+    void setnumRobotInformation(int robot_id);
+    int getTeam() const;
     int getNumRobotInformation() const;
     int getPenalty() const;
     int getSecsTillUnpenalised() const;
@@ -32,7 +34,7 @@ namespace traitement
     void update(Position pos);
 
   private:
-
+    int team;
     int penalty;
     int secs_till_unpenalised;
     int yellow_card_count;

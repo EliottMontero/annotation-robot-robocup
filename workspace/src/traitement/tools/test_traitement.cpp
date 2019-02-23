@@ -9,6 +9,7 @@
 #include <hl_monitoring/field.h>
 #include <traitement/position.h>
 #include <traitement/direction.h>
+#include <traitement/team.h>
 
 
 
@@ -47,9 +48,9 @@ int main(int argc, char ** argv) {
 
   std::cout << f << std::endl;
 
-  Annotation annotation("annotation_settings.json");
-
-  // While exit was not explicitly required, run
+  Annotation annotation("Annotation_settings.json");
+    std::map<int, Team>teams;
+// While exit was not explicitly required, run
   uint64_t now = 0;
   uint64_t dt = 30 * 1000;//[microseconds]
   if (!manager.isLive()) {
@@ -62,16 +63,13 @@ int main(int argc, char ** argv) {
       now = getTimeStamp();
     } else {
       now += dt;
-      std::cout << "add time : "  << std::endl;
-    }
-    std::cout << " tiomr size : " << now << std::endl;
+      }
     MessageManager::Status status = manager.getStatus(now);
     std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
     std::map<uint32_t,cv::Scalar> colors_by_team;
 
     //std::cout << "Temps de Jeu : " << manager.getTime() << std::endl;
-    std::cout << status.gc_message.teams_size() << std::endl;
-    for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
+    /*  for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
       std::cout << " team size : " << idx  << std::endl;  
       const GCTeamMsg & team_msg = status.gc_message.teams(idx);
       if (team_msg.has_team_number() && team_msg.has_team_color()) {
@@ -80,47 +78,64 @@ int main(int argc, char ** argv) {
         colors_by_team[team_number] = team_colors[team_color];
       }
     }
-  
+    */
 
 
    std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
-    for (const auto & entry : images_by_source) {
-      cv::Mat display_img = entry.second.getImg().clone();
-      if (entry.second.isFullySpecified()) {
-        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-        // Basic drawing of robot estimated position
-        for (const auto & robot_entry : status.robot_messages) {
-          uint32_t team_id = robot_entry.first.team_id();
-          if (colors_by_team.count(team_id) == 0) {
-            std::cerr << "Unknown color for team " << team_id << std::endl;
-          } else {
-            const cv::Scalar & color = colors_by_team[team_id];
-            if (robot_entry.second.has_perception()) {
-              const Perception & perception = robot_entry.second.perception();
-              for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
-                /* position du robot */
-                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-                const PositionDistribution & position = weighted_pose.pose().position();
-                Position pos;
-                pos.setPosition(position.x(),position.y());
+   for (const auto & entry : images_by_source) {
+     cv::Mat display_img = entry.second.getImg().clone();
+     if (entry.second.isFullySpecified()) {
+       const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
+       field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+       // Basic drawing of robot estimated position
+       for (const auto & robot_entry : status.robot_messages) {
+	 uint32_t team_id = robot_entry.first.team_id();
+         if (robot_entry.second.has_perception()) {
+	   const Perception & perception = robot_entry.second.perception();
+	   for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
 
-                const AngleDistribution & dir = weighted_pose.pose().dir();
-                Direction direction;
-                direction.SetMean (dir.mean())  ;
 
-                display_img =annotation.AddAnnotation(pos,direction, camera_information, team_id, display_img);
-              }
-            }
-          }
-        }
-      }
+	     /* init des robots présent sur le jeu*/
+	     if (teams.find(team_id)==teams.end()){
+	       Team t1;
+	       teams[team_id]=t1;
+	     }
+	     if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
+	       teams[team_id].AddRobot(robot_entry.first.robot_id());
+	       teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
+	       teams[team_id].setRobotNum(robot_entry.first.robot_id());
+
+	     }
+
+
+	     /* position du robot */
+	     const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
+	     const PositionDistribution & position = weighted_pose.pose().position();
+	     Position pos;
+	     pos.setPosition(position.x(),position.y());
+	     teams[team_id].RobotUpdate(robot_entry.first.robot_id(),pos);
+
+	     const AngleDistribution & dir = weighted_pose.pose().dir();
+	     Direction direction;
+	     direction.SetMean (dir.mean())  ;
+
+	     
+		
+	     display_img =annotation.AddAnnotation(pos,direction, camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
+	   }
+            
+	 }
+       }
+     }
    
-    cv::namedWindow(entry.first, cv::WINDOW_NORMAL);
-    cv::imshow(entry.first, display_img);
-    cv::waitKey(10);
-    }
+     cv::namedWindow(entry.first, cv::WINDOW_NORMAL);
+     cv::imshow(entry.first, display_img);
+     cv::waitKey(10);
+  
+   }
+
+ 
   }
   return 0;
 }
