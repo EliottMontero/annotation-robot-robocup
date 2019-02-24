@@ -5,15 +5,19 @@
 
 MainWindow::MainWindow()
 {
-
+    tour = 0;
     cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
+    cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
+    cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
+    cv::cvtColor(*cvImage2, *cvImage2, CV_BGR2RGB);
+
 
     QWidget * zoneCentral = new QWidget;
     QGridLayout * layout = new QGridLayout;
 
 
     //label1 sera le label contenant l'image de la video
-    QLabel * label1 = new QLabel();
+    label1 = new QLabel();
     label1->setAlignment(Qt::AlignCenter);
 
     //label2 = SCORE
@@ -61,8 +65,24 @@ MainWindow::MainWindow()
     layout->addWidget(bouton1,0,2,1,1);
     layout->addWidget(bouton2,0,4,1,1);
 
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
+    timer->start(1000);
+
 
 
     zoneCentral->setLayout(layout);
     setCentralWidget(zoneCentral);
+}
+
+void MainWindow::changeImage(){
+  tour++;
+  if(tour%2==1){
+    this->label1->setPixmap(QPixmap::fromImage(QImage(cvImage2->data, cvImage2->cols, cvImage2->rows, cvImage2->step, QImage::Format_RGB888)));
+  }
+  else{
+    this->label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
+  }
+
+
 }

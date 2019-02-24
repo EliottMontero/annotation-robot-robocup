@@ -7,6 +7,7 @@
 #include <QLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QTimer>
 
 
 #include "opencv2/core.hpp"
@@ -25,10 +26,17 @@ class MainWindow : public QMainWindow
         MainWindow();
 
         cv::Mat * cvImage;
+        cv::Mat * cvImage2;
+
+        QLabel * label1;
+
+        int tour;
+
 
     signals:
 
     public slots:
+        void changeImage();
 };
 
 #endif // MAINWINDOW_H
