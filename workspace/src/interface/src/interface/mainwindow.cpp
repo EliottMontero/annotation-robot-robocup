@@ -59,20 +59,28 @@ MainWindow::MainWindow()
     layout->addWidget(label4,4,6,1,1);
 
 
-    QPushButton * bouton0 = new QPushButton("PAUSE");
-    QPushButton * bouton1 = new QPushButton("Position");
-    QPushButton * bouton2 = new QPushButton("Direction");
+    bouton0 = new QPushButton("PAUSE");
+    bouton1 = new QPushButton("Position : ON");
+    bouton2 = new QPushButton("Direction : ON");
+
+    boolPause = false;
+    boolPosition = true;
+    boolDirection = true;
+
+    connect(bouton0, SIGNAL (released()), this, SLOT (togglePause()));
+    connect(bouton1, SIGNAL (released()), this, SLOT (togglePosition()));
+    connect(bouton2, SIGNAL (released()), this, SLOT (toggleDirection()));
 
     layout->addWidget(bouton0,7,3,1,1);
     layout->addWidget(bouton1,0,2,1,1);
     layout->addWidget(bouton2,0,4,1,1);
 
 
-
-
-
     zoneCentral->setLayout(layout);
     setCentralWidget(zoneCentral);
+
+
+
 
     //Partie communication avec traitement
 
@@ -116,6 +124,9 @@ MainWindow::MainWindow()
 
 }
 
+/*
+  Slot qui affiche l'image traitée sur label1
+*/
 void MainWindow::changeImage(){
 
   if(!manager.isGood()){
@@ -129,80 +140,89 @@ void MainWindow::changeImage(){
       now = getTimeStamp();
     } else {
       now += dt;
-      }
+    }
     MessageManager::Status status = manager.getStatus(now);
     std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
     std::map<uint32_t,cv::Scalar> colors_by_team;
+    std::map<std::string, CalibratedImage> images_by_source =
+    manager.getCalibratedImages(now);
+    for (const auto & entry : images_by_source) {
+      cv::Mat display_img = entry.second.getImg().clone();
+      if (entry.second.isFullySpecified()) {
+        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
+        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+// Basic drawing of robot estimated position
+        for (const auto & robot_entry : status.robot_messages) {
+          uint32_t team_id = robot_entry.first.team_id();
+          if (robot_entry.second.has_perception()) {
+            const Perception & perception = robot_entry.second.perception();
+            for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
+              /* init des robots présent sur le jeu*/
+              if (teams.find(team_id)==teams.end()){
+                Team t1;
+                teams[team_id]=t1;
+              }
+              if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
+                teams[team_id].AddRobot(robot_entry.first.robot_id());
+      	        teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
+      	        teams[team_id].setRobotNum(robot_entry.first.robot_id());
+      	     }
+      	     /* position du robot */
+      	     const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
+      	     const PositionDistribution & position = weighted_pose.pose().position();
+      	     Position pos;
+      	     pos.setPosition(position.x(),position.y());
+      	     teams[team_id].RobotUpdate(robot_entry.first.robot_id(),pos);
 
-   std::map<std::string, CalibratedImage> images_by_source =
-      manager.getCalibratedImages(now);
-   for (const auto & entry : images_by_source) {
-     cv::Mat display_img = entry.second.getImg().clone();
-     if (entry.second.isFullySpecified()) {
-       const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-       field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-       // Basic drawing of robot estimated position
-       for (const auto & robot_entry : status.robot_messages) {
-	 uint32_t team_id = robot_entry.first.team_id();
-         if (robot_entry.second.has_perception()) {
-	   const Perception & perception = robot_entry.second.perception();
-	   for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
+      	     const AngleDistribution & dir = weighted_pose.pose().dir();
+      	     Direction direction;
+      	     direction.SetMean (dir.mean())  ;
 
-	     /* init des robots présent sur le jeu*/
-	     if (teams.find(team_id)==teams.end()){
-	       Team t1;
-	       teams[team_id]=t1;
-	     }
-	     if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
-	       teams[team_id].AddRobot(robot_entry.first.robot_id());
-	       teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
-	       teams[team_id].setRobotNum(robot_entry.first.robot_id());
+      	     const PositionDistribution & ball = perception.ball_in_self();
+      	     Position pos_ball;
+      	     pos_ball.setPosition(ball.x(), ball.y());
+      	     teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
 
-	     }
-
-
-	     /* position du robot */
-	     const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-	     const PositionDistribution & position = weighted_pose.pose().position();
-	     Position pos;
-	     pos.setPosition(position.x(),position.y());
-	     teams[team_id].RobotUpdate(robot_entry.first.robot_id(),pos);
-
-	     const AngleDistribution & dir = weighted_pose.pose().dir();
-	     Direction direction;
-	     direction.SetMean (dir.mean())  ;
-
-	     const PositionDistribution & ball = perception.ball_in_self();
-	     Position pos_ball;
-	     pos_ball.setPosition(ball.x(), ball.y());
-	     teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
-
-	     display_img =annotation->AddAnnotation(pos,direction, camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
-	   }
-
-	 }
+      	     display_img =annotation->AddAnnotation(pos,direction, camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
+           }
+         }
        }
      }
-
      cv::cvtColor(display_img, display_img, CV_BGR2RGB);
      this->label1->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
-
-
    }
+ }
+}
 
-
-  }
-
-
-  /*
-  tour++;
-  if(tour%2==1){
-    this->label1->setPixmap(QPixmap::fromImage(QImage(cvImage2->data, cvImage2->cols, cvImage2->rows, cvImage2->step, QImage::Format_RGB888)));
+void MainWindow::togglePause(){
+  if(boolPause){ //boolPause -> on est en pause, donc on veut restart
+    this->bouton0->setText("PAUSE");
   }
   else{
-    this->label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
+    this->bouton0->setText("START");
   }
-  */
+  boolPause = !boolPause;
 
+}
+
+void MainWindow::togglePosition(){
+  if(boolPosition){ //boolPosition -> on affiche, donc on ne veut plus afficher
+    this->bouton1->setText("Position : OFF");
+  }
+  else{
+    this->bouton1->setText("Position : ON");
+  }
+  boolPosition = !boolPosition;
+
+}
+
+void MainWindow::toggleDirection(){
+  if(boolDirection){ //boolDirection -> on affiche, donc on ne veut plus afficher
+    this->bouton2->setText("Direction : OFF");
+  }
+  else{
+    this->bouton2->setText("Direction : ON");
+  }
+  boolDirection = !boolDirection;
 
 }

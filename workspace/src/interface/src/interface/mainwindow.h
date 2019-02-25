@@ -55,8 +55,14 @@ class MainWindow : public QMainWindow
 
         cv::Mat * cvImage;
         cv::Mat * cvImage2;
-
+        QPushButton * bouton0;
+        QPushButton * bouton1;
+        QPushButton * bouton2;
         QLabel * label1;
+
+        bool boolPause;
+        bool boolPosition;
+        bool boolDirection;
 
         MonitoringManager manager;
         uint64_t now;
@@ -73,6 +79,9 @@ class MainWindow : public QMainWindow
 
     public slots:
         void changeImage();
+        void togglePause();
+        void togglePosition();
+        void toggleDirection();
 };
 
 #endif // MAINWINDOW_H
