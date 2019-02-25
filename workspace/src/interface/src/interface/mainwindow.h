@@ -58,11 +58,15 @@ class MainWindow : public QMainWindow
         QPushButton * bouton0;
         QPushButton * bouton1;
         QPushButton * bouton2;
+        QPushButton * bouton3;
+        QPushButton * bouton4;
         QLabel * label1;
 
         bool boolPause;
         bool boolPosition;
         bool boolDirection;
+        bool boolTrace;
+        bool boolBall;
 
         MonitoringManager manager;
         uint64_t now;
@@ -71,10 +75,6 @@ class MainWindow : public QMainWindow
         Annotation *annotation;
         std::map<int, Team> teams;
 
-
-        int tour;
-
-
     signals:
 
     public slots:
@@ -82,6 +82,8 @@ class MainWindow : public QMainWindow
         void togglePause();
         void togglePosition();
         void toggleDirection();
+        void toggleTrace();
+        void toggleBall();
 };
 
 #endif // MAINWINDOW_H

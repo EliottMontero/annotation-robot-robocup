@@ -7,7 +7,6 @@
 
 MainWindow::MainWindow()
 {
-    tour = 0;
     cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
     cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
     cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
@@ -62,18 +61,26 @@ MainWindow::MainWindow()
     bouton0 = new QPushButton("PAUSE");
     bouton1 = new QPushButton("Position : ON");
     bouton2 = new QPushButton("Direction : ON");
+    bouton3 = new QPushButton("Trace : ON");
+    bouton4 = new QPushButton("Ball : ON");
 
     boolPause = false;
     boolPosition = true;
     boolDirection = true;
+    boolTrace = true;
+    boolBall = true;
 
     connect(bouton0, SIGNAL (released()), this, SLOT (togglePause()));
     connect(bouton1, SIGNAL (released()), this, SLOT (togglePosition()));
     connect(bouton2, SIGNAL (released()), this, SLOT (toggleDirection()));
+    connect(bouton3, SIGNAL (released()), this, SLOT (toggleTrace()));
+    connect(bouton4, SIGNAL (released()), this, SLOT (toggleBall()));
 
     layout->addWidget(bouton0,7,3,1,1);
-    layout->addWidget(bouton1,0,2,1,1);
-    layout->addWidget(bouton2,0,4,1,1);
+    layout->addWidget(bouton1,0,1,1,1);
+    layout->addWidget(bouton2,0,2,1,1);
+    layout->addWidget(bouton3,0,3,1,1);
+    layout->addWidget(bouton4,0,4,1,1);
 
 
     zoneCentral->setLayout(layout);
@@ -227,5 +234,29 @@ void MainWindow::toggleDirection(){
   }
   annotation->toggleDirectionChoice();
   boolDirection = !boolDirection;
+
+}
+
+void MainWindow::toggleTrace(){
+  if(boolTrace){ //boolDirection -> on affiche, donc on ne veut plus afficher
+    this->bouton3->setText("Trace : OFF");
+  }
+  else{
+    this->bouton3->setText("Trace : ON");
+  }
+  annotation->toggleTraceChoice();
+  boolTrace = !boolTrace;
+
+}
+
+void MainWindow::toggleBall(){
+  if(boolBall){ //boolDirection -> on affiche, donc on ne veut plus afficher
+    this->bouton4->setText("Ball : OFF");
+  }
+  else{
+    this->bouton4->setText("Ball : ON");
+  }
+  annotation->toggleBallChoice();
+  boolBall = !boolBall;
 
 }
