@@ -18,7 +18,7 @@ using namespace hl_communication;
 namespace traitement{
   class Annotation{
   public:
-		
+
     std::map<std::string, bool>annotation_choice;
     int sizecircle;
     int sizecircletrace;
@@ -38,6 +38,10 @@ namespace traitement{
     cv::Mat  annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
     cv::Mat  annoteBall(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
     cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display);
+    void togglePositionChoice();
+    void toggleDirectionChoice();
+    void toggleTraceChoice();
+    void toggleBallChoice();
 
   };
 }
