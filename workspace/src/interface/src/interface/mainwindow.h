@@ -53,16 +53,19 @@ class MainWindow : public QMainWindow
     public:
         MainWindow();
 
+        QTimer * timer;
         cv::Mat * cvImage;
         cv::Mat * cvImage2;
-        QPushButton * bouton0;
-        QPushButton * bouton1;
-        QPushButton * bouton2;
-        QPushButton * bouton3;
-        QPushButton * bouton4;
+        QPushButton * boutonPause;
+        QPushButton * boutonFF;
+        QPushButton * boutonPosition;
+        QPushButton * boutonDirection;
+        QPushButton * boutonTrace;
+        QPushButton * boutonBall;
         QLabel * label1;
 
         bool boolPause;
+        bool boolFF;
         bool boolPosition;
         bool boolDirection;
         bool boolTrace;
@@ -80,6 +83,7 @@ class MainWindow : public QMainWindow
     public slots:
         void changeImage();
         void togglePause();
+        void toggleFF();
         void togglePosition();
         void toggleDirection();
         void toggleTrace();

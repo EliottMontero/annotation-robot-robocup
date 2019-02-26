@@ -4,6 +4,8 @@
 
 #define CV_IMG_WIDTH 480
 #define CV_IMG_HEIGHT 640
+#define SPD_INTERVAL 30
+#define SPD_INTERVAL_FF 1
 
 MainWindow::MainWindow()
 {
@@ -58,29 +60,33 @@ MainWindow::MainWindow()
     layout->addWidget(label4,4,6,1,1);
 
 
-    bouton0 = new QPushButton("PAUSE");
-    bouton1 = new QPushButton("Position : ON");
-    bouton2 = new QPushButton("Direction : ON");
-    bouton3 = new QPushButton("Trace : ON");
-    bouton4 = new QPushButton("Ball : ON");
+    boutonPause = new QPushButton("PAUSE");
+    boutonFF = new QPushButton(">>");
+    boutonPosition = new QPushButton("Position : ON");
+    boutonDirection = new QPushButton("Direction : ON");
+    boutonTrace = new QPushButton("Trace : ON");
+    boutonBall = new QPushButton("Ball : ON");
 
     boolPause = false;
+    boolFF = false;
     boolPosition = true;
     boolDirection = true;
     boolTrace = true;
     boolBall = true;
 
-    connect(bouton0, SIGNAL (released()), this, SLOT (togglePause()));
-    connect(bouton1, SIGNAL (released()), this, SLOT (togglePosition()));
-    connect(bouton2, SIGNAL (released()), this, SLOT (toggleDirection()));
-    connect(bouton3, SIGNAL (released()), this, SLOT (toggleTrace()));
-    connect(bouton4, SIGNAL (released()), this, SLOT (toggleBall()));
+    connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
+    connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
+    connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
+    connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
+    connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
+    connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
 
-    layout->addWidget(bouton0,7,3,1,1);
-    layout->addWidget(bouton1,0,1,1,1);
-    layout->addWidget(bouton2,0,2,1,1);
-    layout->addWidget(bouton3,0,3,1,1);
-    layout->addWidget(bouton4,0,4,1,1);
+    layout->addWidget(boutonPause,7,3,1,1);
+    layout->addWidget(boutonFF,7,5,1,1);
+    layout->addWidget(boutonPosition,0,1,1,1);
+    layout->addWidget(boutonDirection,0,2,1,1);
+    layout->addWidget(boutonTrace,0,3,1,1);
+    layout->addWidget(boutonBall,0,4,1,1);
 
 
     zoneCentral->setLayout(layout);
@@ -123,9 +129,9 @@ MainWindow::MainWindow()
       now = manager.getStart();
     }
 
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
-    timer->start(10);
+    timer->start(SPD_INTERVAL);
 
 
 }
@@ -204,10 +210,10 @@ void MainWindow::changeImage(){
 
 void MainWindow::togglePause(){
   if(boolPause){ //boolPause -> on est en pause, donc on veut restart
-    this->bouton0->setText("PAUSE");
+    this->boutonPause->setText("PAUSE");
   }
   else{
-    this->bouton0->setText("START");
+    this->boutonPause->setText("START");
   }
   boolPause = !boolPause;
 
@@ -215,22 +221,34 @@ void MainWindow::togglePause(){
 
 void MainWindow::togglePosition(){
   if(boolPosition){ //boolPosition -> on affiche, donc on ne veut plus afficher
-    this->bouton1->setText("Position : OFF");
+    this->boutonPosition->setText("Position : OFF");
   }
   else{
-    this->bouton1->setText("Position : ON");
+    this->boutonPosition->setText("Position : ON");
   }
   annotation->togglePositionChoice();
   boolPosition = !boolPosition;
 
 }
 
+void MainWindow::toggleFF(){
+  if(boolFF){//boolFF ->On est en FF, on veut passer en normal
+    this->boutonFF->setText(">>");
+    timer->setInterval(SPD_INTERVAL);
+  }
+  else {
+    this->boutonFF->setText(">");
+    timer->setInterval(SPD_INTERVAL_FF);
+  }
+  boolFF = !boolFF;
+}
+
 void MainWindow::toggleDirection(){
   if(boolDirection){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->bouton2->setText("Direction : OFF");
+    this->boutonDirection->setText("Direction : OFF");
   }
   else{
-    this->bouton2->setText("Direction : ON");
+    this->boutonDirection->setText("Direction : ON");
   }
   annotation->toggleDirectionChoice();
   boolDirection = !boolDirection;
@@ -239,10 +257,10 @@ void MainWindow::toggleDirection(){
 
 void MainWindow::toggleTrace(){
   if(boolTrace){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->bouton3->setText("Trace : OFF");
+    this->boutonTrace->setText("Trace : OFF");
   }
   else{
-    this->bouton3->setText("Trace : ON");
+    this->boutonTrace->setText("Trace : ON");
   }
   annotation->toggleTraceChoice();
   boolTrace = !boolTrace;
@@ -251,10 +269,10 @@ void MainWindow::toggleTrace(){
 
 void MainWindow::toggleBall(){
   if(boolBall){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->bouton4->setText("Ball : OFF");
+    this->boutonBall->setText("Ball : OFF");
   }
   else{
-    this->bouton4->setText("Ball : ON");
+    this->boutonBall->setText("Ball : ON");
   }
   annotation->toggleBallChoice();
   boolBall = !boolBall;
