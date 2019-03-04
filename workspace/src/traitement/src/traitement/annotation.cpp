@@ -93,7 +93,9 @@ namespace traitement{
   }
 
 
-  cv::Mat  Annotation::annotePosition(Position pos, CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
+  cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
+    Position pos;
+    pos = rb.getPosRobot();
     cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
     // cv::Point2f pos_in_img(pos.x, pos.y);
@@ -104,7 +106,11 @@ namespace traitement{
 
     return display;
   }
-  cv::Mat  Annotation::annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+  cv::Mat  Annotation::annoteDirection( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+    Position pos;
+    pos = rb.getPosRobot();
+    Direction dir;
+    dir = rb.getDirRobot();
     // calcul pos
     cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
@@ -133,7 +139,7 @@ namespace traitement{
     int qsize = rb.sizeOfQueue();
     for (int i = 0; i<qsize; i++){
       Position p;
-      p = rb.getPosition();
+      p = rb.getTraceRobot();
       //      display = annotePosition(p, camera_information, rb, display);
       cv :: Point3f pos_in_field(p.x, p.y, 0.0);
       cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
@@ -143,12 +149,16 @@ namespace traitement{
 
   }
 
-  cv::Mat  Annotation::annoteBall(Position pos,  Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+  cv::Mat  Annotation::annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
     Position ball;
     ball = rb.getPosBall();
+    Position robot;
+    robot = rb.getPosRobot();
+    Direction dir;
+    dir = rb.getDirRobot();
     cv::Point2f position;
-    position.x = pos.x + ball.x*cos(dir.mean)-ball.y*sin(dir.mean);
-    position.y = pos.y + ball.x*sin(dir.mean)+ball.y*cos(dir.mean);
+    position.x = robot.x + ball.x*cos(dir.mean)-ball.y*sin(dir.mean);
+    position.y = robot.y + ball.x*sin(dir.mean)+ball.y*cos(dir.mean);
     cv :: Point3f pos_in_field(position.x, position.y, 0.0);
     cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
     cv::circle(display,pos_in_img, ballsize, cv::Scalar(125,125,125),cv::FILLED);
@@ -156,16 +166,16 @@ namespace traitement{
   }
 
 
-  cv::Mat Annotation::AddAnnotation(Position pos,Direction dir, CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
+  cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
     if (annotation_choice["position"])
-      display = annotePosition(pos, camera_information, rb , display);
+      display = annotePosition(camera_information, rb , display);
     if (annotation_choice["direction"])
-      display = annoteDirection(pos, dir, camera_information, rb, display);
+      display = annoteDirection( camera_information, rb, display);
     if (annotation_choice["trace"] && rb.getNumRobotInformation() == robottrace){
       display = annoteTrace(camera_information, rb, display);
     }
     if (annotation_choice["ball"] && rb.getNumRobotInformation() == robotball){
-      display = annoteBall(pos, dir, camera_information, rb, display);
+      display = annoteBall( camera_information, rb, display);
       }
     return display;
   }
@@ -188,4 +198,4 @@ namespace traitement{
 
 
 }
-/* on crée un monitoring, on load des messages, on appelle les classes pour afficher des annotations, ex = position, fleche etc */
+

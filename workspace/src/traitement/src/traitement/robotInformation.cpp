@@ -23,12 +23,25 @@ namespace traitement
   void RobotInformation::setnumRobotInformation(int robot_id){
     numRobotInformation=robot_id;
   }
-
+  
   void RobotInformation::setPosBall(Position pos){
-    ball_pos = pos;
+   ball_pos = pos;
   }
+
+  void RobotInformation::setDirRobot(Direction dir){
+    robot_dir = dir;
+  }
+
   Position RobotInformation::getPosBall(){
     return ball_pos;
+  }
+
+  Position RobotInformation::getPosRobot(){
+    return robot_pos;
+  }
+
+  Direction RobotInformation::getDirRobot(){
+    return robot_dir;
   }
   
   int RobotInformation::getTeam() const{
@@ -59,7 +72,7 @@ namespace traitement
   }
 
   /*Detail dans le .h si besoin*/
-  Position RobotInformation::getPosition(){
+  Position RobotInformation::getTraceRobot(){
     Position toSend = oldPos.front();
     oldPos.pop();
     oldPos.push(toSend);
@@ -67,6 +80,7 @@ namespace traitement
   }
 
   void RobotInformation::update(Position pos){
+    robot_pos = pos;
     if (oldPos.size()>=NB_POSITION_STOCKEES)
       oldPos.pop();
     oldPos.push(pos);

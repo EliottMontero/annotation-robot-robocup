@@ -33,11 +33,11 @@ namespace traitement{
     ~Annotation();
 
 
-    cv::Mat annotePosition(Position pos,  CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
-    cv::Mat annoteDirection(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat annotePosition( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat annoteDirection( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
     cv::Mat  annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
-    cv::Mat  annoteBall(Position pos, Direction dir, CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
-    cv::Mat AddAnnotation(Position pos, Direction dir,CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display);
+    cv::Mat  annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display);
+    cv::Mat AddAnnotation(CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display);
     void togglePositionChoice();
     void toggleDirectionChoice();
     void toggleTraceChoice();

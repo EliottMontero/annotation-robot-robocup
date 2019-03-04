@@ -189,14 +189,15 @@ void MainWindow::changeImage(){
 
         	     const AngleDistribution & dir = weighted_pose.pose().dir();
         	     Direction direction;
-        	     direction.SetMean (dir.mean())  ;
+        	     direction.SetMean (dir.mean());
+		     teams[team_id].setRobotDirRobot(robot_entry.first.robot_id(),direction);
 
         	     const PositionDistribution & ball = perception.ball_in_self();
         	     Position pos_ball;
         	     pos_ball.setPosition(ball.x(), ball.y());
         	     teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
 
-        	     display_img =annotation->AddAnnotation(pos,direction, camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
+        	     display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
              }
            }
          }

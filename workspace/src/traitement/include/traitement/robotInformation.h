@@ -1,6 +1,7 @@
 #pragma once
 
 #include <traitement/position.h>
+#include <traitement/direction.h>
 #include <queue>       
 
 namespace traitement
@@ -16,7 +17,11 @@ namespace traitement
     void setTeam(int team_id);
     void setnumRobotInformation(int robot_id);
     void setPosBall(Position pos);
+    void setPosRobot(Position pos);
+    void setDirRobot(Direction dir);
     Position getPosBall();
+    Position getPosRobot();
+    Direction getDirRobot();
     int getTeam() const;
     int getNumRobotInformation() const;
     int getPenalty() const;
@@ -31,7 +36,7 @@ namespace traitement
      lorsqu'on lance cette fonction on la lance sizeOfQueue fois,
     le fait de lire le haut et de le mettre ensuite au bout de la queue
     nous permet de lire chaque position une fois puis de revenir comme avant la lecture*/
-    Position getPosition();
+    Position getTraceRobot();
     /*ajoute une position dans la queue*/
     void update(Position pos);
 
@@ -42,6 +47,8 @@ namespace traitement
     int yellow_card_count;
     int red_card_count;
     Position ball_pos;
+    Position robot_pos;
+    Direction robot_dir;
 
 
 
