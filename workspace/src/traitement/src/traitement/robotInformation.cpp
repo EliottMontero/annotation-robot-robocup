@@ -1,6 +1,4 @@
 #include "traitement/robotInformation.h"
-#define NB_POSITION_STOCKEES 500
-
 
 namespace traitement
 {
@@ -79,12 +77,13 @@ namespace traitement
     return toSend;
   }
 
-  void RobotInformation::update(Position pos){
+  void RobotInformation::stockPos(Position pos){
     robot_pos = pos;
-    if (oldPos.size()>=NB_POSITION_STOCKEES)
-      oldPos.pop();
     oldPos.push(pos);
   }
 
+  void RobotInformation::removePos(){
+    oldPos.pop();
+  }
 
 }

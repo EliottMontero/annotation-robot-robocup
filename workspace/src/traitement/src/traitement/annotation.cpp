@@ -1,17 +1,6 @@
 #include "traitement/annotation.h"
 
 
-#include <hl_communication/utils.h>
-#include <hl_monitoring/monitoring_manager.h>
-#include <hl_monitoring/utils.h>
-#include <hl_monitoring/field.h>
-#include <traitement/position.h>
-#include <traitement/direction.h>
-
-
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include <tclap/CmdLine.h>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -57,6 +46,7 @@ namespace traitement{
     checkMember(root["trace"], "circle_size");
     checkMember(root["direction"], "arrow_size");
     checkMember(root["trace"], "robot_num");
+    checkMember(root["trace"], "old_pos_number");
     checkMember(root["ball"], "ball_size");
     checkMember(root["ball"], "robot_num");
 
@@ -65,6 +55,7 @@ namespace traitement{
     sizecircletrace = root["trace"]["circle_size"].asUInt();
     sizearrow = root["direction"]["arrow_size"].asUInt();
     robottrace = root["trace"]["robot_num"].asUInt();
+    nbtrace = root["trace"]["old_pos_number"].asUInt();
     ballsize = root["ball"]["ball_size"].asUInt();
     robotball = root["ball"]["robot_num"].asUInt();
 
@@ -137,6 +128,10 @@ namespace traitement{
 
   cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
     int qsize = rb.sizeOfQueue();
+    //if we have too many old position we delete the oldest.
+    if (qsize>nbtrace)
+      for (int i = 0; i<(qsize-nbtrace); i++)
+	rb.removePos();
     for (int i = 0; i<qsize; i++){
       Position p;
       p = rb.getTraceRobot();
@@ -145,6 +140,7 @@ namespace traitement{
       cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
       cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
     }
+   
     return display;
 
   }

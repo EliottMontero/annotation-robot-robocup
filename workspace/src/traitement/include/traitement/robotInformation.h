@@ -29,7 +29,7 @@ namespace traitement
     int getYellowCardCount() const;
     int getRedCardCount() const;
 
-    /*pour afficher les 500 anciennes positions du robot afin d'avoir la trace du robot*/
+    /*pour afficher les x anciennes positions du robot afin d'avoir la trace du robot*/
     std::queue<Position> oldPos;
     int sizeOfQueue();
     /*retourne la position en haut de la queue, la place en bas de la queue
@@ -38,7 +38,8 @@ namespace traitement
     nous permet de lire chaque position une fois puis de revenir comme avant la lecture*/
     Position getTraceRobot();
     /*ajoute une position dans la queue*/
-    void update(Position pos);
+    void stockPos(Position pos);
+    void removePos();
 
   private:
     int team;

@@ -185,7 +185,7 @@ void MainWindow::changeImage(){
         	     const PositionDistribution & position = weighted_pose.pose().position();
         	     Position pos;
         	     pos.setPosition(position.x(),position.y());
-        	     teams[team_id].RobotUpdate(robot_entry.first.robot_id(),pos);
+        	     teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
 
         	     const AngleDistribution & dir = weighted_pose.pose().dir();
         	     Direction direction;

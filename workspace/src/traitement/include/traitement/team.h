@@ -18,7 +18,7 @@ namespace traitement
     bool IsRobot(int robot_id);
     RobotInformation GetRobot(int robot_id);
     void setRobotTeam(int robot_id, int team_id);
-    void RobotUpdate(int robot_id, Position pos);
+    void setRobotPos(int robot_id, Position pos);
     void setRobotNum(int robot_id);
     void setRobotPosBall(int robot_id, Position pos);
     //    void setRobotPosRobot(int robot_id, Position pos);

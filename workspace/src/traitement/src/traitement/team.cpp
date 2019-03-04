@@ -35,8 +35,8 @@ namespace traitement
   void Team::setRobotNum(int robot_id){
     robots[robot_id].setnumRobotInformation(robot_id);
   }
-  void Team::RobotUpdate(int robot_id, Position pos){
-    robots[robot_id].update(pos);
+  void Team::setRobotPos(int robot_id, Position pos){
+    robots[robot_id].stockPos(pos);
   }
 
   void Team::setRobotPosBall(int robot_id, Position pos){
