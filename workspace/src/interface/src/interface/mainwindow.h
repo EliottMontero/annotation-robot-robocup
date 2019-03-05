@@ -61,14 +61,22 @@ class MainWindow : public QMainWindow
         QPushButton * boutonPosition;
         QPushButton * boutonDirection;
         QPushButton * boutonTrace;
-        QPushButton * boutonBall;
+	QPushButton * boutonChangeTrace;
+	QPushButton * boutonBall;
+	QPushButton * boutonChangeBall;
         QLabel * label1;
+	QLabel * label2;
+	QLabel * label3;
+	QLabel * label4;
 
         bool boolPause;
         bool boolFF;
         bool boolPosition;
         bool boolDirection;
         bool boolTrace;
+	bool addRobot;
+	std::queue<int> robot_trace;
+	std::queue<int> robot_ball;
         bool boolBall;
 
         MonitoringManager manager;
@@ -88,6 +96,8 @@ class MainWindow : public QMainWindow
         void toggleDirection();
         void toggleTrace();
         void toggleBall();
+	void changeTrace();
+	void changeBall();
 };
 
 #endif // MAINWINDOW_H

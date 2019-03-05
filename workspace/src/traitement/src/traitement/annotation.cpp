@@ -192,6 +192,20 @@ namespace traitement{
     annotation_choice["ball"] = !annotation_choice["ball"];
   }
 
+  void Annotation::changeRobotTrace(int robot){
+    robottrace = robot;
+  }
 
+  int Annotation::getRobotTrace(){
+    return robottrace;
+  }
+
+   void Annotation::changeRobotBall(int robot){
+    robotball = robot;
+  }
+
+  int Annotation::getRobotBall(){
+    return robotball;
+  }
 }
 
