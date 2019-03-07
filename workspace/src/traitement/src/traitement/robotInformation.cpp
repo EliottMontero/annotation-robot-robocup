@@ -22,10 +22,19 @@ namespace traitement
     numRobotInformation=robot_id;
   }
   
+  void RobotInformation::setPosRobot(Position pos){
+   robot_pos = pos;
+  }
+
+    
   void RobotInformation::setPosBall(Position pos){
    ball_pos = pos;
   }
-
+  
+  void RobotInformation::setPosTarget(Position pos){
+   target_pos = pos;
+  }
+  
   void RobotInformation::setDirRobot(Direction dir){
     robot_dir = dir;
   }
@@ -38,6 +47,10 @@ namespace traitement
     return robot_pos;
   }
 
+  Position RobotInformation::getPosTarget(){
+    return target_pos;
+  }
+  
   Direction RobotInformation::getDirRobot(){
     return robot_dir;
   }
@@ -78,7 +91,7 @@ namespace traitement
   }
 
   void RobotInformation::stockPos(Position pos){
-    robot_pos = pos;
+    setPosRobot(pos);
     oldPos.push(pos);
   }
 

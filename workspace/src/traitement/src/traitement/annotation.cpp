@@ -84,20 +84,26 @@ namespace traitement{
   }
 
 
-  cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
+  cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
+    cv::Mat overlay;
+    display.copyTo(overlay);
     Position pos;
     pos = rb.getPosRobot();
     cv :: Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-    // cv::Point2f pos_in_img(pos.x, pos.y);
     if (color.find(rb.getTeam())!=color.end())
-      cv::circle(display,pos_in_img, sizecircle,  color[rb.getTeam()],cv::FILLED);
+      cv::circle(overlay,pos_in_img, sizecircle, color[rb.getTeam()],cv::FILLED);
+    
     else
-      cv::circle(display,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
-
+      cv::circle(overlay,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
+    //calcul compliqué à cause du time stamp
+    float opacity = (5000000.0-(now-pos.time_stamp))/5000000.0;
+    cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
+    //cv::circle(display,pos_in_img, sizecircle, color[rb.getTeam()],cv::FILLED);
     return display;
   }
-  cv::Mat  Annotation::annoteDirection( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+
+  cv::Mat  Annotation::annoteDirection( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display, uint64_t now){
     Position pos;
     pos = rb.getPosRobot();
     Direction dir;
@@ -126,26 +132,36 @@ namespace traitement{
   }
 
 
-  cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+  cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now){
     int qsize = rb.sizeOfQueue();
-    //if we have too many old position we delete the oldest.
-    if (qsize>nbtrace)
-      for (int i = 0; i<(qsize-nbtrace); i++)
-	rb.removePos();
-    for (int i = 0; i<qsize; i++){
+    Position old_pos;
+    for (int i = 0; i<qsize; i++){      
+      cv::Mat overlay;
+      display.copyTo(overlay);
       Position p;
       p = rb.getTraceRobot();
-      //      display = annotePosition(p, camera_information, rb, display);
-      cv :: Point3f pos_in_field(p.x, p.y, 0.0);
-      cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-      cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
-    }
    
-    return display;
-
+      float opacity = (5000000.0-(now-p.time_stamp))/5000000.0;
+      if (opacity < 0)
+	rb.removePos();
+      else{
+	if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>0.1 || abs(old_pos.y-p.y)>0.1))){
+	  old_pos=p;
+	  cv :: Point3f pos_in_field(p.x, p.y, 0.0);
+	  cv :: Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	  
+	  cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
+	  
+	  cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
+	}
+      }
+      
   }
-
-  cv::Mat  Annotation::annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display){
+    return display;
+    
+  }
+  
+  cv::Mat  Annotation::annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now){
     Position ball;
     ball = rb.getPosBall();
     Position robot;
@@ -162,16 +178,21 @@ namespace traitement{
   }
 
 
-  cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display){
+  cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
+    /*  int qsize = rb.sizeOfQueue();
+    //if we have too many old position we delete the oldest.
+    if (qsize>nbtrace)
+      for (int i = 0; i<(qsize-nbtrace); i++)
+      rb.removePos();*/
     if (annotation_choice["position"])
-      display = annotePosition(camera_information, rb , display);
+      display = annotePosition(camera_information, rb , display, now);
     if (annotation_choice["direction"])
-      display = annoteDirection( camera_information, rb, display);
+      display = annoteDirection( camera_information, rb, display, now);
     if (annotation_choice["trace"] && rb.getNumRobotInformation() == robottrace){
-      display = annoteTrace(camera_information, rb, display);
+      display = annoteTrace(camera_information, rb, display, now);
     }
     if (annotation_choice["ball"] && rb.getNumRobotInformation() == robotball){
-      display = annoteBall( camera_information, rb, display);
+      display = annoteBall( camera_information, rb, display, now);
       }
     return display;
   }

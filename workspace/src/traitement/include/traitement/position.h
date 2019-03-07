@@ -15,10 +15,10 @@ class Position {
     float x;
     float y;
     float uncertainty;
-
+    uint64_t time_stamp;
 
     Position();
     ~Position();
-    void setPosition(float xp, float yp );
+    void setPosition(float xp, float yp,  uint64_t time_stamp);
   };
 }

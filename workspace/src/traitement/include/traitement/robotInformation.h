@@ -16,11 +16,13 @@ namespace traitement
     ~RobotInformation();
     void setTeam(int team_id);
     void setnumRobotInformation(int robot_id);
-    void setPosBall(Position pos);
     void setPosRobot(Position pos);
+    void setPosBall(Position pos);
+    void setPosTarget(Position pos);
     void setDirRobot(Direction dir);
     Position getPosBall();
     Position getPosRobot();
+    Position getPosTarget();
     Direction getDirRobot();
     int getTeam() const;
     int getNumRobotInformation() const;
@@ -49,6 +51,7 @@ namespace traitement
     int red_card_count;
     Position ball_pos;
     Position robot_pos;
+    Position target_pos;
     Direction robot_dir;
 
 

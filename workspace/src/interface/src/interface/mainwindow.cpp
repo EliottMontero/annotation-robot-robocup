@@ -213,7 +213,7 @@ void MainWindow::changeImage(){
 		const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
 		const PositionDistribution & position = weighted_pose.pose().position();
 		Position pos;
-		pos.setPosition(position.x(),position.y());
+		pos.setPosition(position.x(),position.y(), now);
 		teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
 		
 		const AngleDistribution & dir = weighted_pose.pose().dir();
@@ -223,10 +223,10 @@ void MainWindow::changeImage(){
 		
 		const PositionDistribution & ball = perception.ball_in_self();
 		Position pos_ball;
-		pos_ball.setPosition(ball.x(), ball.y());
+		pos_ball.setPosition(ball.x(), ball.y(), now);
 		teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
 		
-		display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img);
+		display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
 		
 		robots_in_game = robots_in_game + "robot "
 		  +  QString::number(robot_entry.first.robot_id())
