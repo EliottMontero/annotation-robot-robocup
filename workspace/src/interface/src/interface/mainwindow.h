@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include "teamBoard.h"
 
 #include "opencv2/core.hpp"
 #include <opencv/cv.hpp>
@@ -61,22 +62,19 @@ class MainWindow : public QMainWindow
         QPushButton * boutonPosition;
         QPushButton * boutonDirection;
         QPushButton * boutonTrace;
-	QPushButton * boutonChangeTrace;
-	QPushButton * boutonBall;
-	QPushButton * boutonChangeBall;
+      	QPushButton * boutonChangeTrace;
+      	QPushButton * boutonBall;
+      	QPushButton * boutonChangeBall;
         QLabel * label1;
-	QLabel * label2;
-	QLabel * label3;
-	QLabel * label4;
 
         bool boolPause;
         bool boolFF;
         bool boolPosition;
         bool boolDirection;
         bool boolTrace;
-	bool addRobot;
-	std::queue<int> robot_trace;
-	std::queue<int> robot_ball;
+      	bool addRobot;
+      	std::queue<int> robot_trace;
+      	std::queue<int> robot_ball;
         bool boolBall;
 
         MonitoringManager manager;
@@ -85,6 +83,11 @@ class MainWindow : public QMainWindow
         Field field;
         Annotation *annotation;
         std::map<int, Team> teams;
+
+        QWidget * zoneCentral;
+        QGridLayout * layout;
+
+        std::map<int, TeamBoard*> teamBoards;
 
     signals:
 
@@ -96,8 +99,8 @@ class MainWindow : public QMainWindow
         void toggleDirection();
         void toggleTrace();
         void toggleBall();
-	void changeTrace();
-	void changeBall();
+      	void changeTrace();
+      	void changeBall();
 };
 
 #endif // MAINWINDOW_H

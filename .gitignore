@@ -4,11 +4,12 @@
 **.bin
 **.o
 **.pro.user*
+**.user
 
 
 **/2vs1
 
-
+**/catkin
 **/.catkin_tools/
 **/build
 **/devel
