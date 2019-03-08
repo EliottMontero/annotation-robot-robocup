@@ -151,26 +151,21 @@ MainWindow::MainWindow()
 
 void MainWindow::robotChoice(){
 	QMessageBox msgBox;
-	msgBox.setText("The document has been modified.");
 	msgBox.setInformativeText("Do you want to save your changes?");
-	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-	msgBox.setDefaultButton(QMessageBox::Save);
+msgBox.setText(tr("Confirm?"));
+QAbstractButton* rob1 = msgBox.addButton(tr("Robot 1"), QMessageBox::YesRole);
+msgBox.addButton(tr("Nope"), QMessageBox::NoRole);
+
+
 	int ret = msgBox.exec();
 
-	switch (ret) {
-  case QMessageBox::Save:
-      // Save was clicked
-      break;
-  case QMessageBox::Discard:
-      // Don't Save was clicked
-      break;
-  case QMessageBox::Cancel:
-      // Cancel was clicked
-      break;
-  default:
-      // should never be reached
-      break;
-}
+
+	if (msgBox.clickedButton()==rob1) {
+      printf("oulala\n");
+	}
+	else{
+		printf("nonononon\n");
+	}
 
 }  
 
