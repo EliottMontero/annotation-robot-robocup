@@ -46,6 +46,10 @@ MainWindow::MainWindow()
   addRobot = false;
   boolBall = true;
 
+  zoneCentral->setLayout(layout);
+  setCentralWidget(zoneCentral);
+
+  connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
   connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
   connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
   connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
@@ -56,6 +60,7 @@ MainWindow::MainWindow()
   connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
 
   layout->addWidget(boutonPause,7,3,1,1);
+  layout->addWidget(boutonRobotChoice,7,4,1,1);
   layout->addWidget(boutonFF,7,5,1,1);
   layout->addWidget(boutonPosition,0,1,1,1);
   layout->addWidget(boutonDirection,0,2,1,1);
@@ -63,10 +68,6 @@ MainWindow::MainWindow()
   layout->addWidget(boutonBall,0,4,1,1);
   layout->addWidget(boutonChangeTrace,0,5,1,1);
   layout->addWidget(boutonChangeBall,0,6,1,1);
-
-  zoneCentral->setLayout(layout);
-  setCentralWidget(zoneCentral);
-
 
 
 
@@ -113,6 +114,31 @@ MainWindow::MainWindow()
 
 
 }
+
+
+void MainWindow::robotChoice(){
+  QMessageBox msgBox;
+  msgBox.setInformativeText("Do you want to save your changes?");
+  msgBox.setText(tr("Confirm?"));
+  QAbstractButton* rob1 = msgBox.addButton(tr("Robot 1"), QMessageBox::YesRole);
+  msgBox.addButton(tr("Nope"), QMessageBox::NoRole);
+
+
+  int ret = msgBox.exec();
+
+
+  if (msgBox.clickedButton()==rob1) {
+    printf("oulala\n");
+  }
+  else{
+    printf("nonononon\n");
+  }
+
+}
+
+
+
+
 
 /*
 Slot qui affiche l'image traitée sur label1
