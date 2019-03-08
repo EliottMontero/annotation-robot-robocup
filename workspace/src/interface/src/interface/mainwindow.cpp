@@ -59,7 +59,7 @@ MainWindow::MainWindow()
     layout->addWidget(label3,3,6,1,1);
     layout->addWidget(label4,4,6,1,1);
 
-
+    boutonRobotChoice = new QPushButton("Choix Robot");
     boutonPause = new QPushButton("PAUSE");
     boutonFF = new QPushButton(">>");
     boutonPosition = new QPushButton("Position : ON");
@@ -77,6 +77,7 @@ MainWindow::MainWindow()
     addRobot = false;
     boolBall = true;
 
+    connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
     connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
     connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
     connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
@@ -87,6 +88,7 @@ MainWindow::MainWindow()
     connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
     
     layout->addWidget(boutonPause,7,3,1,1);
+    layout->addWidget(boutonRobotChoice,7,4,1,1);
     layout->addWidget(boutonFF,7,5,1,1);
     layout->addWidget(boutonPosition,0,1,1,1);
     layout->addWidget(boutonDirection,0,2,1,1);
@@ -144,7 +146,37 @@ MainWindow::MainWindow()
     timer->start(SPD_INTERVAL);
 
 
+} 
+
+
+void MainWindow::robotChoice(){
+	QMessageBox msgBox;
+	msgBox.setText("The document has been modified.");
+	msgBox.setInformativeText("Do you want to save your changes?");
+	msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Save);
+	int ret = msgBox.exec();
+
+	switch (ret) {
+  case QMessageBox::Save:
+      // Save was clicked
+      break;
+  case QMessageBox::Discard:
+      // Don't Save was clicked
+      break;
+  case QMessageBox::Cancel:
+      // Cancel was clicked
+      break;
+  default:
+      // should never be reached
+      break;
 }
+
+}  
+
+
+
+
 
 /*
   Slot qui affiche l'image traitée sur label1

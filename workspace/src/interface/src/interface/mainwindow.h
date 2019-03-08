@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
+#include <QMessageBox>
 
 
 #include "opencv2/core.hpp"
@@ -50,54 +51,56 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    public:
-        MainWindow();
+public:
+    MainWindow();
 
-        QTimer * timer;
-        cv::Mat * cvImage;
-        cv::Mat * cvImage2;
-        QPushButton * boutonPause;
-        QPushButton * boutonFF;
-        QPushButton * boutonPosition;
-        QPushButton * boutonDirection;
-        QPushButton * boutonTrace;
-	QPushButton * boutonChangeTrace;
-	QPushButton * boutonBall;
-	QPushButton * boutonChangeBall;
-        QLabel * label1;
-	QLabel * label2;
-	QLabel * label3;
-	QLabel * label4;
+    QTimer * timer;
+    cv::Mat * cvImage;
+    cv::Mat * cvImage2;
+    QPushButton * boutonRobotChoice;
+    QPushButton * boutonPause;
+    QPushButton * boutonFF;
+    QPushButton * boutonPosition;
+    QPushButton * boutonDirection;
+    QPushButton * boutonTrace;
+    QPushButton * boutonChangeTrace;
+    QPushButton * boutonBall;
+    QPushButton * boutonChangeBall;
+    QLabel * label1;
+    QLabel * label2;
+    QLabel * label3;
+    QLabel * label4;
 
-        bool boolPause;
-        bool boolFF;
-        bool boolPosition;
-        bool boolDirection;
-        bool boolTrace;
-	bool addRobot;
-	std::queue<int> robot_trace;
-	std::queue<int> robot_ball;
-        bool boolBall;
+    bool boolPause;
+    bool boolFF;
+    bool boolPosition;
+    bool boolDirection;
+    bool boolTrace;
+    bool addRobot;
+    std::queue<int> robot_trace;
+    std::queue<int> robot_ball;
+    bool boolBall;
 
-        MonitoringManager manager;
-        uint64_t now;
-        uint64_t dt;
-        Field field;
-        Annotation *annotation;
-        std::map<int, Team> teams;
+    MonitoringManager manager;
+    uint64_t now;
+    uint64_t dt;
+    Field field;
+    Annotation *annotation;
+    std::map<int, Team> teams;
 
     signals:
 
     public slots:
-        void changeImage();
-        void togglePause();
-        void toggleFF();
-        void togglePosition();
-        void toggleDirection();
-        void toggleTrace();
-        void toggleBall();
-	void changeTrace();
-	void changeBall();
+    void robotChoice();
+    void changeImage();
+    void togglePause();
+    void toggleFF();
+    void togglePosition();
+    void toggleDirection();
+    void toggleTrace();
+    void toggleBall();
+    void changeTrace();
+    void changeBall();
 };
 
 #endif // MAINWINDOW_H
