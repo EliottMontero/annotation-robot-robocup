@@ -127,9 +127,21 @@ namespace traitement{
     pos = rb.getPosTarget();
     cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+    Position robot;
+    robot = rb.getPosRobot();
+    cv::Point3f pos_in_fieldr(robot.x, robot.y, 0.0);
+    cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
     if (color.find(rb.getTeam())!=color.end()){
       cv::Scalar s =  color[rb.getTeam()];
-      cv::circle(overlay,pos_in_img, targetsize,cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+      cv::drawMarker (overlay,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, 10, 2, 8);
+      cv::LineIterator it(overlay, pos_in_img, pos_in_imgr, 8);            // get a line iterator
+      for(int i = 0; i < it.count; i++,it++)
+	if ( i%10<5 ) {
+	  (*it)[0] = s[0]/2;
+	  (*it)[1] = s[1]/2;
+	  (*it)[2] = s[2]/2;
+	}   
+      
     }
     
     else
