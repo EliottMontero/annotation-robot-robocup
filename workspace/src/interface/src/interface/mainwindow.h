@@ -8,9 +8,9 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
+#include <QSlider>
 #include <QMessageBox>
 
-#include "teamBoard.h"
 
 #include "opencv2/core.hpp"
 #include <opencv/cv.hpp>
@@ -69,10 +69,12 @@ public:
     QPushButton * boutonChangeTrace;
     QPushButton * boutonBall;
     QPushButton * boutonChangeBall;
+    QSlider * slider;
     QLabel * label1;
     QLabel * label2;
     QLabel * label3;
     QLabel * label4;
+    QLabel * label5;
 
     bool boolPause;
     bool boolFF;
@@ -91,24 +93,20 @@ public:
     Annotation *annotation;
     std::map<int, Team> teams;
 
-        QWidget * zoneCentral;
-        QGridLayout * layout;
-
-        std::map<int, TeamBoard*> teamBoards;
-
     signals:
 
     public slots:
-      void robotChoice();
-      void changeImage();
-      void togglePause();
-      void toggleFF();
-      void togglePosition();
-      void toggleDirection();
-      void toggleTrace();
-      void toggleBall();
-      void changeTrace();
-      void changeBall();
+    void sliderControl(int i);
+    void robotChoice();
+    void changeImage();
+    void togglePause();
+    void toggleFF();
+    void togglePosition();
+    void toggleDirection();
+    void toggleTrace();
+    void toggleBall();
+    void changeTrace();
+    void changeBall();
 };
 
 #endif // MAINWINDOW_H

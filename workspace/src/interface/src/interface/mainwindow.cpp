@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 
+
+
 #define CV_IMG_WIDTH 480
 #define CV_IMG_HEIGHT 640
 #define SPD_INTERVAL 30
@@ -7,132 +9,179 @@
 
 MainWindow::MainWindow()
 {
-  cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
-  cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
-  cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
-  cv::cvtColor(*cvImage2, *cvImage2, CV_BGR2RGB);
+    cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
+    cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
+    cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
+    cv::cvtColor(*cvImage2, *cvImage2, CV_BGR2RGB);
 
 
-  zoneCentral = new QWidget;
-  layout = new QGridLayout;
+    QWidget * zoneCentral = new QWidget;
+    QGridLayout * layout = new QGridLayout;
 
 
-  //label1 sera le label contenant l'image de la video
-  label1 = new QLabel();
-  label1->setAlignment(Qt::AlignCenter);
-  label1->setStyleSheet("QLabel { background-color : red}");
-  label1->setScaledContents(true);
-  label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
+    //label1 sera le label contenant l'image de la video
+    label1 = new QLabel();
+    label1->setAlignment(Qt::AlignCenter);
 
-  layout->addWidget(label1,1,1,5,5);
+    //label2 = SCORE
+    label2=new QLabel();
+    label2->setAlignment(Qt::AlignCenter);
+    label2->setText("SCORE : \n\n Score");
+    label2->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
+    label2->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-  setWindowTitle(tr("SPECTATOR MODE"));
+    //label3 = Equipe en possession & action en cours
+    label3=new QLabel();
+    label3->setAlignment(Qt::AlignCenter);
+    label3->setText("ACTION EN COURS : \n \n Action");
+    label3->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
+    label3->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
+    //label4 = Robots en touche
+    label4=new QLabel(this);
+    label4->setAlignment(Qt::AlignCenter);
+    label4->setText("EN TOUCHE : \n\n En touche");
+    label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
+    label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
-  boutonPause = new QPushButton("PAUSE");
-  boutonFF = new QPushButton(">>");
-  boutonPosition = new QPushButton("Position : ON");
-  boutonDirection = new QPushButton("Direction : ON");
-  boutonTrace = new QPushButton("Trace : ON");
-  boutonChangeTrace = new QPushButton("Trace : Change Robot");
-  boutonChangeBall = new QPushButton("Ball : Change Robot");
-  boutonBall = new QPushButton("Ball : ON");
+    label5=new QLabel(this);
+    label5->setText("0");
 
-  boolPause = false;
-  boolFF = false;
-  boolPosition = true;
-  boolDirection = true;
-  boolTrace = true;
-  addRobot = false;
-  boolBall = true;
+    label1->setStyleSheet("QLabel { background-color : red}");
+    label1->setScaledContents(true);
+    label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
 
-  zoneCentral->setLayout(layout);
-  setCentralWidget(zoneCentral);
+    slider = new QSlider(Qt::Horizontal, this);
 
-  connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
-  connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
-  connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
-  connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
-  connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
-  connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
-  connect(boutonChangeTrace, SIGNAL (released()), this, SLOT (changeTrace()));
-  connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
-  connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
-
-  layout->addWidget(boutonPause,7,3,1,1);
-  layout->addWidget(boutonRobotChoice,7,4,1,1);
-  layout->addWidget(boutonFF,7,5,1,1);
-  layout->addWidget(boutonPosition,0,1,1,1);
-  layout->addWidget(boutonDirection,0,2,1,1);
-  layout->addWidget(boutonTrace,0,3,1,1);
-  layout->addWidget(boutonBall,0,4,1,1);
-  layout->addWidget(boutonChangeTrace,0,5,1,1);
-  layout->addWidget(boutonChangeBall,0,6,1,1);
+    setWindowTitle(tr("SPECTATOR MODE"));
 
 
 
-  //Partie communication avec traitement
+    layout->addWidget(label1,1,1,5,5);
+    layout->addWidget(label2,2,6,1,1);
+    layout->addWidget(label3,3,6,1,1);
+    layout->addWidget(label4,4,6,1,1);
 
-  Json::Reader reader;
-  Json::Value root;
+    boutonRobotChoice = new QPushButton("Choix Robot");
+    boutonPause = new QPushButton("PAUSE");
+    boutonFF = new QPushButton(">>");
+    boutonPosition = new QPushButton("Position : ON");
+    boutonDirection = new QPushButton("Direction : ON");
+    boutonTrace = new QPushButton("Trace : ON");
+    boutonChangeTrace = new QPushButton("Trace : Change Robot");
+    boutonChangeBall = new QPushButton("Ball : Change Robot");
+    boutonBall = new QPushButton("Ball : ON");
+
+    boolPause = false;
+    boolFF = false;
+    boolPosition = true;
+    boolDirection = true;
+    boolTrace = true;
+    addRobot = false;
+    boolBall = true;
+
+    connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
+    connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
+    connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
+    connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
+    connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
+    connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
+    connect(boutonChangeTrace, SIGNAL (released()), this, SLOT (changeTrace()));
+    connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
+    connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
+
+	connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
 
-  std::ifstream match_settings("match_settings.json");
-  if (!match_settings.good())
-  throw std::runtime_error("failde to open file match_settings.json");
-  match_settings >> root;
+    layout->addWidget(boutonPause,7,3,1,1);
+    layout->addWidget(boutonRobotChoice,7,4,1,1);
+    layout->addWidget(slider,8,3,1,1);
+    layout->addWidget(label5,8,2,1,1);
 
-  checkMember(root["match_setting"], "config");
-  checkMember(root["match_setting"], "field");
-  std::string conf = root["match_setting"]["config"].asString();
-  std::cout << conf << std::endl;
+    layout->addWidget(boutonFF,7,5,1,1);
+    layout->addWidget(boutonPosition,0,1,1,1);
+    layout->addWidget(boutonDirection,0,2,1,1);
+    layout->addWidget(boutonTrace,0,3,1,1);
+    layout->addWidget(boutonBall,0,4,1,1);
+    layout->addWidget(boutonChangeTrace,0,5,1,1);
+    layout->addWidget(boutonChangeBall,0,6,1,1);
+
+    zoneCentral->setLayout(layout);
+    setCentralWidget(zoneCentral);
 
 
 
-  manager.loadConfig(conf);
 
-  std::string f = root["match_setting"]["field"].asString();
-  field.loadFile(f);
+    //Partie communication avec traitement
 
-  std::cout << f << std::endl;
 
-  annotation = new Annotation("annotation_settings.json");
-  robot_trace.push(annotation->getRobotTrace());
-  robot_ball.push(annotation->getRobotBall());
+    Json::Reader reader;
+    Json::Value root;
+
+
+    std::ifstream match_settings("match_settings.json");
+    if (!match_settings.good())
+      throw std::runtime_error("failde to open file match_settings.json");
+    match_settings >> root;
+
+    checkMember(root["match_setting"], "config");
+    checkMember(root["match_setting"], "field");
+    std::string conf = root["match_setting"]["config"].asString();
+    std::cout << conf << std::endl;
+
+
+
+    manager.loadConfig(conf);
+
+    std::string f = root["match_setting"]["field"].asString();
+    field.loadFile(f);
+
+    std::cout << f << std::endl;
+
+    annotation = new Annotation("annotation_settings.json");
+    robot_trace.push(annotation->getRobotTrace());
+    robot_ball.push(annotation->getRobotBall());
   // While exit was not explicitly required, run
-  now = 0;
-  dt = 30 * 1000;//[microseconds]
-  if (!manager.isLive()) {
-    now = manager.getStart();
-  }
+    now = 0;
+    dt = 30 * 1000;//[microseconds]
+    if (!manager.isLive()) {
+      now = manager.getStart();
+    }
 
 
 
-  timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
-  timer->start(SPD_INTERVAL);
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
+    timer->start(SPD_INTERVAL);
 
 
 }
 
 
+void MainWindow::sliderControl(int value){
+	char str[10];
+	sprintf(str, "%d", value);
+	label5->setText(str);
+}
+
+
 void MainWindow::robotChoice(){
-  QMessageBox msgBox;
-  msgBox.setInformativeText("Do you want to save your changes?");
-  msgBox.setText(tr("Confirm?"));
-  QAbstractButton* rob1 = msgBox.addButton(tr("Robot 1"), QMessageBox::YesRole);
-  msgBox.addButton(tr("Nope"), QMessageBox::NoRole);
+	QMessageBox msgBox;
+	msgBox.setInformativeText("Do you want to save your changes?");
+msgBox.setText(tr("Confirm?"));
+QAbstractButton* rob1 = msgBox.addButton(tr("Robot 1"), QMessageBox::YesRole);
+msgBox.addButton(tr("Nope"), QMessageBox::NoRole);
 
 
-  int ret = msgBox.exec();
+	int ret = msgBox.exec();
 
 
-  if (msgBox.clickedButton()==rob1) {
-    printf("oulala\n");
-  }
-  else{
-    printf("nonononon\n");
-  }
+	if (msgBox.clickedButton()==rob1) {
+      printf("oulala\n");
+	}
+	else{
+		printf("nonononon\n");
+	}
 
 }
 
@@ -141,7 +190,7 @@ void MainWindow::robotChoice(){
 
 
 /*
-Slot qui affiche l'image traitée sur label1
+  Slot qui affiche l'image traitÃ©e sur label1
 */
 void MainWindow::changeImage(){
 
