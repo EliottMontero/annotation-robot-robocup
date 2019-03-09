@@ -134,11 +134,12 @@ int main(int argc, char ** argv) {
 	  
 	   }
 	   //pour l'affichage de la position souhaitée mais pas encore fini.
-	   /*const Intention & intention = robot_entry.second.intention();
+	   const Intention & intention = robot_entry.second.intention();
 	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
 
 	   Position pos_target;
-	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);*/
+	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
+	   teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_target);
 	   
 	   display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
             

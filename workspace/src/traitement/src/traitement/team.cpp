@@ -43,6 +43,10 @@ namespace traitement
     robots[robot_id].setPosBall(pos);
   }
 
+  void Team::setRobotPosTarget(int robot_id, Position pos){
+    robots[robot_id].setPosTarget(pos);
+  }
+  
   void Team::setRobotDirRobot(int robot_id, Direction dir){
     robots[robot_id].setDirRobot(dir);
   }

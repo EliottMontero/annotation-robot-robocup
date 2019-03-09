@@ -21,7 +21,7 @@ namespace traitement
     void setRobotPos(int robot_id, Position pos);
     void setRobotNum(int robot_id);
     void setRobotPosBall(int robot_id, Position pos);
-    //    void setRobotPosRobot(int robot_id, Position pos);
+    void setRobotPosTarget(int robot_id, Position pos);
     void setRobotDirRobot(int robot_id, Direction dir);
   private:
     std::map<int, RobotInformation>robots;
