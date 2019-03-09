@@ -237,7 +237,6 @@ void MainWindow::changeImage(){
 							for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
 
                 /* position du robot */
-<<<<<<< HEAD
 								const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
 								const PositionDistribution & position = weighted_pose.pose().position();
 								Position pos;
@@ -265,39 +264,6 @@ void MainWindow::changeImage(){
 			}
 		}
 	}
-=======
-                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-                const PositionDistribution & position = weighted_pose.pose().position();
-                Position pos;
-                pos.setPosition(position.x(),position.y(), now);
-                teams[team_id].setRobotPos(robot_id,pos);
-
-                const AngleDistribution & dir = weighted_pose.pose().dir();
-                Direction direction;
-                direction.SetMean (dir.mean());
-                teams[team_id].setRobotDirRobot(robot_id,direction);
-
-                const PositionDistribution & ball = perception.ball_in_self();
-                Position pos_ball;
-                pos_ball.setPosition(ball.x(), ball.y(), now);
-                teams[team_id].setRobotPosBall(robot_id, pos_ball);
-
-                display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
-              }
-            }
-          }
-        }
-        cv::cvtColor(display_img, display_img, CV_BGR2RGB);
-        this->label1->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
-
-      }
-    }
-    for(auto it : teamBoards){
-      (it.second)->updateAnnotation(boolPosition, boolDirection,robot_trace.front(),robot_ball.front());
-    }
-
-  }
->>>>>>> a9750b7e68fabf1b3d5fb8e54eb55c583b2326cc
 }
 
 
