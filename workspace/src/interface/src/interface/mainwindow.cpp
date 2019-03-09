@@ -245,15 +245,19 @@ void MainWindow::changeImage(){
                 teams[team_id].setRobotPosBall(robot_id, pos_ball);
 
                 display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
-                teamBoards[team_id]->updateAnnotation(robot_trace.front(),robot_ball.front());
               }
             }
           }
         }
         cv::cvtColor(display_img, display_img, CV_BGR2RGB);
         this->label1->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
+
       }
     }
+    for(auto it : teamBoards){
+      (it.second)->updateAnnotation(boolPosition, boolDirection,robot_trace.front(),robot_ball.front());
+    }
+
   }
 }
 
