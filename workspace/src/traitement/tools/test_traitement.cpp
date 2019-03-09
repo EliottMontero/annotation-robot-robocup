@@ -139,7 +139,7 @@ int main(int argc, char ** argv) {
 
 	   Position pos_target;
 	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
-	   teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_target);
+	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 	   
 	   display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
             

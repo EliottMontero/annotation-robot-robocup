@@ -38,13 +38,17 @@ namespace traitement{
     checkMember(root["trace"], "optimized");
     checkMember(root, "ball");
     checkMember(root["ball"], "write");
+    checkMember(root, "target");
+    checkMember(root["target"], "write");
 
+    
     annotation_choice["position"]=root["position"]["write"].asBool();
     annotation_choice["number"]=root["position"]["number"].asBool();
     annotation_choice["direction"]=root["direction"]["write"].asBool();
     annotation_choice["trace"]=root["trace"]["write"].asBool();
     annotation_choice["optimized"]=root["trace"]["optimized"].asBool();
     annotation_choice["ball"]=root["ball"]["write"].asBool();
+    annotation_choice["target"]=root["target"]["write"].asBool();
 
     checkMember(root["position"], "circle_size");
     checkMember(root["trace"], "circle_size");
@@ -53,6 +57,8 @@ namespace traitement{
     checkMember(root["trace"], "old_pos_number");
     checkMember(root["ball"], "ball_size");
     checkMember(root["ball"], "robot_num");
+    checkMember(root["target"], "target_size");
+    checkMember(root["target"], "robot_num");
 
 
     sizecircle = root["position"]["circle_size"].asUInt();
@@ -62,6 +68,8 @@ namespace traitement{
     nbtrace = root["trace"]["old_pos_number"].asUInt();
     ballsize = root["ball"]["ball_size"].asUInt();
     robotball = root["ball"]["robot_num"].asUInt();
+    targetsize = root["target"]["target_size"].asUInt();
+    robottarget = root["target"]["robot_num"].asUInt();
 
     checkMember(root["color_team_1"], "num");
     checkMember(root["color_team_1"], "r");
@@ -101,13 +109,37 @@ namespace traitement{
     else
       cv::circle(overlay,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
     //calcul compliqué à cause du time stamp
-    float opacity = (nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0;
+    float sec = nbtrace*1000000.0;
+    float opacity = (sec-(now-pos.time_stamp))/sec;
     cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
     if (annotation_choice["number"]){
       cv::putText(display, std::to_string(rb.numRobotInformation), cv::Point2f(pos_in_img.x-sizecircle*3/4,pos_in_img.y+sizecircle*3/4), cv::FONT_HERSHEY_TRIPLEX ,0.7,cv::Scalar(0,0,0),2);
     }
 
     //cv::circle(display,pos_in_img, sizecircle, color[rb.getTeam()],cv::FILLED);
+    return display;
+  }
+
+  cv::Mat  Annotation::annoteTarget(CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
+    cv::Mat overlay;
+    display.copyTo(overlay);
+    Position pos;
+    pos = rb.getPosTarget();
+    cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
+    cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+    if (color.find(rb.getTeam())!=color.end()){
+      cv::Scalar s =  color[rb.getTeam()];
+      cv::circle(overlay,pos_in_img, targetsize,cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+    }
+    
+    else
+      cv::circle(overlay,pos_in_img, targetsize, cv::Scalar(0,0,0),cv::FILLED);
+    //calcul compliqué à cause du time stamp
+    float sec = nbtrace*1000000.0;
+    float opacity = (sec-(now-pos.time_stamp))/sec;
+    cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
+   
+
     return display;
   }
 
@@ -151,14 +183,19 @@ namespace traitement{
 	Position p;
 	p = rb.getTraceRobot();
 	
-	float opacity = (nbtrace*1000000.0-(now-p.time_stamp))/nbtrace*1000000.0;
-
+	float sec = nbtrace*1000000.0;
+	float opacity = (sec-(now-p.time_stamp))/sec;
 	if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
 	    old_pos=p;
 	    cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	    cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	    cv::Scalar s =  color[rb.getTeam()];
-	    cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	    if (color.find(rb.getTeam())!=color.end()){
+	      cv::Scalar s =  color[rb.getTeam()];
+	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	    }
+	    else{
+	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
+	    }
 	    
 	    cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
 	}
@@ -171,10 +208,12 @@ namespace traitement{
               
 	cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	cv::Scalar s =  color[rb.getTeam()];
-
-	cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
-
+	if (color.find(rb.getTeam())!=color.end()){
+	  cv::Scalar s =  color[rb.getTeam()];
+	  cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	}
+	else 
+	  cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
       }
     }
     return display;
@@ -196,7 +235,8 @@ namespace traitement{
     cv::Point3f pos_in_field(position.x, position.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
     cv::circle(overlay,pos_in_img, ballsize, cv::Scalar(125,125,125),cv::FILLED);
-    float opacity = (nbtrace*1000000.0-(now-ball.time_stamp))/nbtrace*1000000.0;
+    float sec = nbtrace*1000000.0;
+    float opacity = (sec-(now-ball.time_stamp))/sec;
     cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
     return display;
   }
@@ -219,6 +259,9 @@ namespace traitement{
     }
     if (annotation_choice["ball"] && rb.getNumRobotInformation() == robotball){
       display = annoteBall( camera_information, rb, display, now);
+    }
+    if (annotation_choice["target"] && rb.getNumRobotInformation() == robottarget){
+      display = annoteTarget( camera_information, rb, display, now);
     }
     return display;
   }
