@@ -17,6 +17,8 @@
 
 #include <traitement/annotation.h>
 
+#include "teamBoard.h"
+
 
 #include <hl_communication/utils.h>
 
@@ -71,9 +73,6 @@ public:
     QPushButton * boutonChangeBall;
     QSlider * slider;
     QLabel * label1;
-    QLabel * label2;
-    QLabel * label3;
-    QLabel * label4;
     QLabel * label5;
 
     bool boolPause;
@@ -92,6 +91,10 @@ public:
     Field field;
     Annotation *annotation;
     std::map<int, Team> teams;
+    std::map<int, TeamBoard*> teamBoards;
+
+    QWidget * zoneCentral;
+    QGridLayout * layout;
 
     signals:
 
