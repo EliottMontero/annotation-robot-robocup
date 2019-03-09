@@ -1,3 +1,4 @@
+
 \documentclass[a4paper,12pt]{report}
 
 \usepackage[francais]{babel}
@@ -28,13 +29,36 @@ sorting=ynt
 \date{1\up{er} février 2019}
 
 \begin{document}
-\begin{figure}[!b]
-\centering 
-\includegraphics[scale=0.25]{bx.jpg}
-\end{figure}  
 
 \maketitle
 
 \newpage
+\chapter{Introduction}
+
+La robocup est une compétition de football dans laquelle des équipes de robots autonomes se rencontrent pour disputer des matchs. Une fois le match commencé, les robots sont livrés à eux mêmes. Chacun a une perception de sa position sur le terrain et du monde qui l'entoure. Il peut arriver que cette perception ne soit pas conforme à la réalité, ce qui entraine un comportement erratique du robot. 
+\\
+
+Notre projet consiste à intégrer des informations sur la perception des robots et la partie sur une vidéo de match. 
+\\
+
+\chapter{Architecture}
+
+\chapter{Annotations}
+
+
+\chapter{Interface}
+Nous ajoutons des annotations sur une vidéo de match. Cependant, étant donné le grand nombre d'informations, l'image peut se trouver saturée et devenir illisible. Notre interface doit résoudre ce problème en proposant des options d'affichage qui conviennent à différents usages.
+\\
+
+Nous avons donc créé plusieurs interface avec des options et des affichages différents, pour s'adapter aux différents besoin des clients.
+
+\subsection{Interface Débug}
+Cette interface est celle qui propose le plus d'options. L'utilisateur choisit quelles annotations seront affichées et pour quel(s) robot(s). 
+\\
+
+Pour alléger l'interface, la sélection des éléments à afficher se fait dans une fenêtre surgissante. L'utilisateur coche les annotations qui l'intéressent, valide, puis choisit les robots sur la fenêtre principale. Le changement prend effet dès l'image suivante.  
+
+
+
 
 \end{document}
