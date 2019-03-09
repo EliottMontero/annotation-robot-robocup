@@ -84,6 +84,7 @@ public:
     std::queue<int> robot_trace;
     std::queue<int> robot_ball;
     bool boolBall;
+    bool boolMove=false;
 
     MonitoringManager manager;
     uint64_t now;
