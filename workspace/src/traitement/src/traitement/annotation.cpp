@@ -101,7 +101,7 @@ namespace traitement{
     else
       cv::circle(overlay,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
     //calcul compliqué à cause du time stamp
-    float opacity = (5000000.0-(now-pos.time_stamp))/5000000.0;
+    float opacity = (nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0;
     cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
     if (annotation_choice["number"]){
       cv::putText(display, std::to_string(rb.numRobotInformation), cv::Point2f(pos_in_img.x-sizecircle*3/4,pos_in_img.y+sizecircle*3/4), cv::FONT_HERSHEY_TRIPLEX ,0.7,cv::Scalar(0,0,0),2);
@@ -151,11 +151,9 @@ namespace traitement{
 	Position p;
 	p = rb.getTraceRobot();
 	
-	float opacity = (5000000.0-(now-p.time_stamp))/5000000.0;
-	if (opacity < 0)
-	  rb.removePos();
-	else{
-	  if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
+	float opacity = (nbtrace*1000000.0-(now-p.time_stamp))/nbtrace*1000000.0;
+
+	if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
 	    old_pos=p;
 	    cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	    cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
@@ -163,14 +161,14 @@ namespace traitement{
 	    cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
 	    
 	    cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
-	  }
 	}
+      
       }
       else{
 	
 	Position p;
 	p = rb.getTraceRobot();
-       
+              
 	cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	cv::Scalar s =  color[rb.getTeam()];
@@ -198,19 +196,20 @@ namespace traitement{
     cv::Point3f pos_in_field(position.x, position.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
     cv::circle(overlay,pos_in_img, ballsize, cv::Scalar(125,125,125),cv::FILLED);
-    float opacity = (5000000.0-(now-ball.time_stamp))/5000000.0;
+    float opacity = (nbtrace*1000000.0-(now-ball.time_stamp))/nbtrace*1000000.0;
     cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
     return display;
   }
 
 
   cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
-    /*  int qsize = rb.sizeOfQueue();
-    //if we have too many old position we delete the oldest.
-    if (qsize>nbtrace)
-      for (int i = 0; i<(qsize-nbtrace); i++)
-      rb.removePos();*/
-   
+    //delete old pose
+    Position p = rb.oldPos.front();
+    while (((nbtrace*1000000.0-(now-p.time_stamp))/nbtrace*1000000.0) <0){
+      rb.removePos();
+      p = rb.oldPos.front();
+    }
+    
     if (annotation_choice["direction"])
       display = annoteDirection( camera_information, rb, display, now);
     if (annotation_choice["position"])
@@ -220,7 +219,7 @@ namespace traitement{
     }
     if (annotation_choice["ball"] && rb.getNumRobotInformation() == robotball){
       display = annoteBall( camera_information, rb, display, now);
-      }
+    }
     return display;
   }
 
@@ -248,7 +247,7 @@ namespace traitement{
     return robottrace;
   }
 
-   void Annotation::changeRobotBall(int robot){
+  void Annotation::changeRobotBall(int robot){
     robotball = robot;
   }
 
