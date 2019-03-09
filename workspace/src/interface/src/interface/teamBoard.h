@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QGroupBox>
+#include <QScrollArea>
 
 #include <string>
 #include <fstream>
@@ -20,10 +21,17 @@ class TeamBoard : public QWidget
 
   public:
     TeamBoard();
-    void setGridLayout(QGridLayout * layout, bool isLeft);
+    void setGridLayout(QGridLayout * layout_main, bool isLeft);
+    void setSizeRobotArea();
 
     QGroupBox * robotBox;
     std::map<int, RobotBoard*> robotBoards;
+
+    QScrollArea * scrollAreaRobot;
+    QVBoxLayout * layout_robot;
+
+    QGridLayout * layout;
+
 
     QLabel * label_TeamNumber;
     QLabel * label_score;

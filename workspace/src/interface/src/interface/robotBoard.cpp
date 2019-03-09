@@ -3,7 +3,7 @@
 RobotBoard::RobotBoard()
 {
   QLayout * layout = new QVBoxLayout;
-  
+
   label_number = new QLabel;
 
   label_position = new QLabel;

@@ -281,6 +281,8 @@ void MainWindow::createTeam(int id){
   Team t1;
   teams[id] = t1;
 
+  teamBoards[id]->setSizeRobotArea();
+
 }
 
 void MainWindow::createRobot(int robotId, int teamId){
@@ -381,4 +383,13 @@ void MainWindow::changeBall(){
   robot_ball.pop();
   robot_ball.push(old_robot);
   annotation->changeRobotBall(robot_ball.front());
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event){
+  QMainWindow::resizeEvent(event);
+
+  for(auto it : teamBoards){
+    (it.second)->setSizeRobotArea();
+  }
+
 }

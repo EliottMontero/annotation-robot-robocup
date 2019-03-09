@@ -112,6 +112,10 @@ public:
     void toggleBall();
     void changeTrace();
     void changeBall();
+
+protected:
+  void resizeEvent(QResizeEvent *event) override;
+
 };
 
 #endif // MAINWINDOW_H

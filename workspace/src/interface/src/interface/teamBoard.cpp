@@ -3,7 +3,7 @@
 TeamBoard::TeamBoard()
 {
     //QVBoxLayout * layout = new QVBoxLayout;
-    QVBoxLayout * layout_robot = new QVBoxLayout;
+    layout_robot = new QVBoxLayout;
     QVBoxLayout * layout_head = new QVBoxLayout;
 
 
@@ -21,9 +21,17 @@ TeamBoard::TeamBoard()
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
 
+    scrollAreaRobot = new QScrollArea;
+    scrollAreaRobot->setFixedSize(10,10);
+
     robotBox = new QGroupBox();
     robotBox->setTitle("Robots");
-    robotBox->setLayout(layout_robot);
+
+    QWidget * robotFrame = new QWidget;
+    //robotBox->addWidget(robotFrame);
+    robotFrame->setLayout(layout_robot);
+
+    //scrollAreaRobot->setWidget(robotFrame);
 
     layout_head->addWidget(label_TeamNumber);
     layout_head->addWidget(label_score);
@@ -33,18 +41,28 @@ TeamBoard::TeamBoard()
 
 }
 
-void TeamBoard::setGridLayout(QGridLayout * layout, bool isLeft){
+void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
+  layout = layout_main;
   if(isLeft){
     layout->addWidget(head_Widget,1,0,1,1);
     layout->addWidget(line,2,0,1,1);
-    layout->addWidget(robotBox,3,0,1,1);
+    layout->addWidget(scrollAreaRobot,3,0,3,1);
   }else{
     layout->addWidget(head_Widget,1,5,1,1);
     layout->addWidget(line,2,5,1,1);
-    layout->addWidget(robotBox,3,5,1,1);
+    layout->addWidget(scrollAreaRobot,3,5,3,1);
   }
 
-  //this->setLayout(layout);
+}
+
+void TeamBoard::setSizeRobotArea(){
+  QRect cell = layout->cellRect(0,3);
+  QRect cellLabel1 = layout->cellRect(1,2);
+  if(cell.isValid()){
+    int w = cell.width();
+    int h = cellLabel1.height();
+    scrollAreaRobot->setFixedSize(w,h*3);
+  }
 }
 
 void TeamBoard::setTeamNumber(int number){
@@ -65,7 +83,32 @@ void TeamBoard::updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRob
 
 void TeamBoard::addRobot(int new_robot){
     robotBoards[new_robot] = new RobotBoard;
-    QLayout * layout = robotBox->layout();
-    layout->addWidget(robotBoards[new_robot]);
+    layout_robot->addWidget(robotBoards[new_robot]);
     robotBoards[new_robot]->updateNumber(new_robot);
+
+    robotBoards[new_robot+1] = new RobotBoard;
+    layout_robot->addWidget(robotBoards[new_robot+1]);
+    robotBoards[new_robot+1]->updateNumber(new_robot+1);
+
+    robotBoards[new_robot-1] = new RobotBoard;
+    layout_robot->addWidget(robotBoards[new_robot-1]);
+    robotBoards[new_robot-1]->updateNumber(new_robot-1);
+
+    new_robot = 15;
+    robotBoards[new_robot] = new RobotBoard;
+    layout_robot->addWidget(robotBoards[new_robot]);
+    robotBoards[new_robot]->updateNumber(new_robot);
+
+    robotBoards[new_robot+1] = new RobotBoard;
+    layout_robot->addWidget(robotBoards[new_robot+1]);
+    robotBoards[new_robot+1]->updateNumber(new_robot+1);
+
+    robotBoards[new_robot-1] = new RobotBoard;
+    layout_robot->addWidget(robotBoards[new_robot-1]);
+    robotBoards[new_robot-1]->updateNumber(new_robot-1);
+
+
+    QWidget * robotFrame = new QWidget;
+    robotFrame->setLayout(layout_robot);
+    scrollAreaRobot->setWidget(robotFrame);
 }
