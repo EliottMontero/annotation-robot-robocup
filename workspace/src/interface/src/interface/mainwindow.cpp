@@ -44,11 +44,14 @@ MainWindow::MainWindow()
     label4->setStyleSheet("margin-left: 10px; border-radius: 25px; background: #9F9072; color: #4A0C46;");
     label4->setFrameStyle(QFrame::Panel | QFrame::Raised);
 
+    label5=new QLabel(this);
+    label5->setText("0");
 
     label1->setStyleSheet("QLabel { background-color : red}");
     label1->setScaledContents(true);
     label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
 
+    slider = new QSlider(Qt::Horizontal, this);
 
     setWindowTitle(tr("SPECTATOR MODE"));
 
@@ -87,8 +90,14 @@ MainWindow::MainWindow()
     connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
     connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
     
+	connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
+
+
     layout->addWidget(boutonPause,7,3,1,1);
     layout->addWidget(boutonRobotChoice,7,4,1,1);
+    layout->addWidget(slider,8,3,1,1);
+    layout->addWidget(label5,8,2,1,1);
+
     layout->addWidget(boutonFF,7,5,1,1);
     layout->addWidget(boutonPosition,0,1,1,1);
     layout->addWidget(boutonDirection,0,2,1,1);
@@ -147,6 +156,13 @@ MainWindow::MainWindow()
 
 
 } 
+
+
+void MainWindow::sliderControl(int value){
+	char str[10];
+	sprintf(str, "%d", value);
+	label5->setText(str);
+}
 
 
 void MainWindow::robotChoice(){

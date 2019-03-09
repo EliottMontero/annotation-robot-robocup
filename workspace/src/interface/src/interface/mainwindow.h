@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
+#include <QSlider>
 #include <QMessageBox>
 
 
@@ -66,10 +67,12 @@ public:
     QPushButton * boutonChangeTrace;
     QPushButton * boutonBall;
     QPushButton * boutonChangeBall;
+    QSlider * slider;
     QLabel * label1;
     QLabel * label2;
     QLabel * label3;
     QLabel * label4;
+    QLabel * label5;
 
     bool boolPause;
     bool boolFF;
@@ -91,6 +94,7 @@ public:
     signals:
 
     public slots:
+    void sliderControl(int i);
     void robotChoice();
     void changeImage();
     void togglePause();
