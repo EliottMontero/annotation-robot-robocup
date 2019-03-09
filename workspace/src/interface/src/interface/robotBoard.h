@@ -27,7 +27,7 @@ class RobotBoard : public QWidget
     QLabel * label_ball;
 
     void updateNumber(int i);
-    void updateAnnotation(int idRobotTrace, int idRobotBall);
+    void updateAnnotation(bool pos, bool dir,int idRobotTrace, int idRobotBall);
 
   signals:
 

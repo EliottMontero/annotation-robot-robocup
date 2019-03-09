@@ -42,9 +42,9 @@ void TeamBoard::updateScore(int score){
   label_score->setText(QString::number(score));
 }
 
-void TeamBoard::updateAnnotation(int idRobotTrace, int idRobotBall){
+void TeamBoard::updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRobotBall){
   for(auto it : robotBoards){
-    (it.second)->updateAnnotation(idRobotTrace, idRobotBall);
+    (it.second)->updateAnnotation(pos, dir, idRobotTrace, idRobotBall);
   }
 }
 

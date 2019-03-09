@@ -6,16 +6,16 @@ RobotBoard::RobotBoard()
   label_number = new QLabel;
 
   label_position = new QLabel;
-  label_position->setText("POS : OFF");
+  label_position->setText("   POS : OFF");
 
   label_direction = new QLabel;
-  label_direction->setText("DIR : OFF");
+  label_direction->setText("   DIR : OFF");
 
   label_trace = new QLabel;
-  label_trace->setText("TRACE : OFF");
+  label_trace->setText("   TRACE : OFF");
 
   label_ball = new QLabel;
-  label_ball->setText("Ball : OFF");
+  label_ball->setText("   Ball : OFF");
 
 
   layout->addWidget(label_number);
@@ -33,16 +33,28 @@ void RobotBoard::updateNumber(int i){
   idRobot = i;
 }
 
-void RobotBoard::updateAnnotation(int idRobotTrace, int idRobotBall){
+void RobotBoard::updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRobotBall){
   if(idRobot == idRobotTrace){
-    label_trace->setText("TRACE : ON");
+    label_trace->setText("   TRACE : ON");
   }else {
-    label_trace->setText("TRACE : OFF");
+    label_trace->setText("   TRACE : OFF");
   }
 
   if(idRobot == idRobotBall){
-    label_ball->setText("BALL : ON");
+    label_ball->setText("   BALL : ON");
   }else {
-    label_ball->setText("BALL : OFF");
+    label_ball->setText("   BALL : OFF");
+  }
+
+  if(pos){
+    label_position->setText("   POS : ON");
+  }else {
+    label_position->setText("   POS :OFF");
+  }
+
+  if(dir){
+    label_direction->setText("   DIR : ON");
+  }else{
+    label_direction->setText("   DIR : OFF");
   }
 }

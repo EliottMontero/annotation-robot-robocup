@@ -29,7 +29,7 @@ class TeamBoard : public QWidget
 
     void setTeamNumber(int number);
     void updateScore(int score);
-    void updateAnnotation(int idRobotTrace, int idRobotBall);
+    void updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRobotBall);
     void addRobot(int new_robot);
 
 
