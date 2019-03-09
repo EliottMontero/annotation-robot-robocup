@@ -97,6 +97,7 @@ public:
     QWidget * zoneCentral;
     QGridLayout * layout;
 
+
     signals:
 
     public slots:

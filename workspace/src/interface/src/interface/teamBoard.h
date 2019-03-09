@@ -20,12 +20,15 @@ class TeamBoard : public QWidget
 
   public:
     TeamBoard();
+    void setGridLayout(QGridLayout * layout, bool isLeft);
 
     QGroupBox * robotBox;
     std::map<int, RobotBoard*> robotBoards;
 
     QLabel * label_TeamNumber;
     QLabel * label_score;
+    QWidget * head_Widget;
+    QFrame * line;
 
     void setTeamNumber(int number);
     void updateScore(int score);

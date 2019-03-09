@@ -35,9 +35,6 @@ MainWindow::MainWindow()
   setWindowTitle(tr("SPECTATOR MODE"));
 
 
-
-  layout->addWidget(label1,1,1,5,5);
-
   boutonRobotChoice = new QPushButton("Choix Robot");
   boutonPause = new QPushButton("PAUSE");
   boutonFF = new QPushButton(">>");
@@ -68,25 +65,25 @@ MainWindow::MainWindow()
 
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
+  layout->addWidget(label1,1,1,5,4);
+  layout->addWidget(slider,7,1,1,4);
 
-  layout->addWidget(boutonPause,7,3,1,1);
-  layout->addWidget(boutonRobotChoice,7,4,1,1);
-  layout->addWidget(slider,8,3,1,1);
-  layout->addWidget(label5,8,2,1,1);
+  layout->addWidget(boutonPause,8,2,1,1);
+  layout->addWidget(boutonFF,8,3,1,1);
+  layout->addWidget(boutonRobotChoice,8,4,1,1);
+  layout->addWidget(label5,8,1,1,1);
 
-  layout->addWidget(boutonFF,7,5,1,1);
-  layout->addWidget(boutonPosition,0,1,1,1);
-  layout->addWidget(boutonDirection,0,2,1,1);
-  layout->addWidget(boutonTrace,0,3,1,1);
-  layout->addWidget(boutonBall,0,4,1,1);
-  layout->addWidget(boutonChangeTrace,0,5,1,1);
-  layout->addWidget(boutonChangeBall,0,6,1,1);
+
+  layout->addWidget(boutonPosition,0,0,1,1);
+  layout->addWidget(boutonDirection,0,1,1,1);
+  layout->addWidget(boutonTrace,0,2,1,1);
+  layout->addWidget(boutonBall,0,3,1,1);
+  layout->addWidget(boutonChangeTrace,0,4,1,1);
+  layout->addWidget(boutonChangeBall,0,5,1,1);
+
 
   zoneCentral->setLayout(layout);
   setCentralWidget(zoneCentral);
-
-
-
 
   //Partie communication avec traitement
 
@@ -275,10 +272,10 @@ void MainWindow::createTeam(int id){
   teamBoards[id]->setTeamNumber(id);
 
   if(teamBoards.size() == 1){
-    layout->addWidget(teamBoards[id],1,0,3,1);
+    teamBoards[id]->setGridLayout(layout,true);
   }
   if(teamBoards.size() == 2){
-    layout->addWidget(teamBoards[id],1,6,3,1);
+    teamBoards[id]->setGridLayout(layout,false);
   }
 
   Team t1;
