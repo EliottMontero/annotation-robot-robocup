@@ -11,6 +11,8 @@
 #include <string>
 #include <fstream>
 
+#include "robotBoard.h"
+
 
 class TeamBoard : public QWidget
 {
@@ -20,13 +22,17 @@ class TeamBoard : public QWidget
     TeamBoard();
 
     QGroupBox * robotBox;
+    std::map<int, RobotBoard*> robotBoards;
 
     QLabel * label_TeamNumber;
     QLabel * label_score;
 
     void setTeamNumber(int number);
     void updateScore(int score);
-    void updateRobot(int new_robot);
+    void updateAnnotation(int idRobotTrace, int idRobotBall);
+    void addRobot(int new_robot);
+
+
 
   signals:
 

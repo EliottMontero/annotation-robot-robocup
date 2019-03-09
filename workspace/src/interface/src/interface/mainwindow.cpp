@@ -161,115 +161,66 @@ void MainWindow::changeImage(){
       MessageManager::Status status = manager.getStatus(now);
       std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
       std::map<uint32_t,cv::Scalar> colors_by_team;
-      std::map<uint32_t,cv::Scalar> score_by_team;;
+      std::map<uint32_t,cv::Scalar> score_by_team;
 
-      QString text = "";
-
+      //Team Msg
       for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
         const GCTeamMsg & team_msg = status.gc_message.teams(idx);
+        uint32_t team_id = team_msg.team_number();
+
+        if(teamBoards.find(team_id) == teamBoards.end()){
+          createTeam(team_id);
+        }
+
         if (team_msg.has_score()) {
-          uint32_t team_number = team_msg.team_number();
           uint32_t team_score = team_msg.score();
-          text = text + "team n°" +  QString::number(team_number) +
-          " : " + QString::number(team_score) + "\n";
-
-          //Recuperation du Team_Board (ou création)
-          //Duplication plus bas, il faudrait gérer Création Team avant
-          auto iterator = teamBoards.find(team_number);
-          if(iterator == teamBoards.end()){
-            teamBoards[team_number] =  new TeamBoard();
-            teamBoards[team_number]->setTeamNumber(team_number);
-
-            if(teamBoards.size() == 1){
-              layout->addWidget(teamBoards[team_number],1,0,3,1);
-            }
-            if(teamBoards.size() == 2){
-              layout->addWidget(teamBoards[team_number],1,6,3,1);
-            }
-          }
-
-          teamBoards[team_number]->updateScore(team_score);
-
-
+          teamBoards[team_id]->updateScore(team_score);
         }
       }
 
-
-      QString robots_in_game = "";
-      std::map<std::string, CalibratedImage> images_by_source =
-      manager.getCalibratedImages(now);
+      std::map<std::string, CalibratedImage> images_by_source;
+      images_by_source = manager.getCalibratedImages(now);
       for (const auto & entry : images_by_source) {
         cv::Mat display_img = entry.second.getImg().clone();
         if (entry.second.isFullySpecified()) {
           const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
           field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-          // Basic drawing of robot estimated position
+
+          //Robot Msg
           for (const auto & robot_entry : status.robot_messages) {
             uint32_t team_id = robot_entry.first.team_id();
+            if(teamBoards.find(team_id) == teamBoards.end()){
+              createTeam(team_id);
+            }
+
+            uint32_t robot_id = robot_entry.first.robot_id();
+            if(!teams[team_id].IsRobot(robot_id)){
+              createRobot(robot_id, team_id);
+            }
+
             if (robot_entry.second.has_perception()) {
               const Perception & perception = robot_entry.second.perception();
               for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
-                /* init des robots présent sur le jeu*/
-                if (teams.find(team_id)==teams.end()){
-                  Team t1;
-                  teams[team_id]=t1;
-                  //Recuperation du Team_Board (ou création)
-                  //Duplication ici, il faudrait gerer les créations Team avant
-                  auto iterator = teamBoards.find(team_id);
-                  if(iterator == teamBoards.end()){
-                    teamBoards[team_id] =  new TeamBoard();
-                    teamBoards[team_id]->setTeamNumber(team_id);
 
-                    if(teamBoards.size() == 1){
-                      layout->addWidget(teamBoards[team_id],1,0,3,1);
-                    }
-                    if(teamBoards.size() == 2){
-                      layout->addWidget(teamBoards[team_id],1,6,3,1);
-                    }
-                  }
-                }
-                if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
-                  teams[team_id].AddRobot(robot_entry.first.robot_id());
-                  teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
-                  teams[team_id].setRobotNum(robot_entry.first.robot_id());
-                  addRobot=true;
-                }
                 /* position du robot */
                 const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
                 const PositionDistribution & position = weighted_pose.pose().position();
                 Position pos;
                 pos.setPosition(position.x(),position.y(), now);
-                teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
+                teams[team_id].setRobotPos(robot_id,pos);
 
                 const AngleDistribution & dir = weighted_pose.pose().dir();
                 Direction direction;
                 direction.SetMean (dir.mean());
-                teams[team_id].setRobotDirRobot(robot_entry.first.robot_id(),direction);
+                teams[team_id].setRobotDirRobot(robot_id,direction);
 
                 const PositionDistribution & ball = perception.ball_in_self();
                 Position pos_ball;
                 pos_ball.setPosition(ball.x(), ball.y(), now);
-                teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
+                teams[team_id].setRobotPosBall(robot_id, pos_ball);
 
-                display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
-
-                robots_in_game = robots_in_game + "robot "
-                +  QString::number(robot_entry.first.robot_id())
-                + " team " +  QString::number(team_id) + "\n";
-
-
-                if (addRobot){
-                  int i = robot_entry.first.robot_id();
-                  teamBoards[team_id]->updateRobot(i);
-
-                  if (i != robot_trace.front())
-                  robot_trace.push(robot_entry.first.robot_id());
-
-                  if (i!= robot_ball.front())
-                  robot_ball.push(robot_entry.first.robot_id());
-                  addRobot =false;
-                }
-
+                display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
+                teamBoards[team_id]->updateAnnotation(robot_trace.front(),robot_ball.front());
               }
             }
           }
@@ -278,9 +229,41 @@ void MainWindow::changeImage(){
         this->label1->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
         //this->label4->setText(" ROBOT IN GAME : \n\n" + robots_in_game);
         //this->label3->setText(" ROBOT TRACE : \n " + QString::number(robot_trace.front())+ " \n ROBOT BALL : \n" + QString::number(robot_ball.front()));
+
       }
     }
   }
+}
+
+
+void MainWindow::createTeam(int id){
+  teamBoards[id] =  new TeamBoard();
+  teamBoards[id]->setTeamNumber(id);
+
+  if(teamBoards.size() == 1){
+    layout->addWidget(teamBoards[id],1,0,3,1);
+  }
+  if(teamBoards.size() == 2){
+    layout->addWidget(teamBoards[id],1,6,3,1);
+  }
+
+  Team t1;
+  teams[id] = t1;
+
+}
+
+void MainWindow::createRobot(int robotId, int teamId){
+  teams[teamId].AddRobot(robotId);
+  teams[teamId].setRobotTeam(robotId,teamId);
+  teams[teamId].setRobotNum(robotId);
+
+  teamBoards[teamId]->addRobot(robotId);
+
+  if (robotId != robot_trace.front())
+  robot_trace.push(robotId);
+
+  if (robotId!= robot_ball.front())
+  robot_ball.push(robotId);
 }
 
 void MainWindow::togglePause(){

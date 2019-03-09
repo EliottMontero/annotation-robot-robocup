@@ -54,6 +54,8 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+    void createTeam(int id);
+    void createRobot(int robotId, int teamId);
 
     QTimer * timer;
     cv::Mat * cvImage;
