@@ -10,7 +10,6 @@
 #include <QTimer>
 #include <QMessageBox>
 
-#include "teamBoard.h"
 
 #include "opencv2/core.hpp"
 #include <opencv/cv.hpp>
@@ -89,24 +88,19 @@ public:
     Annotation *annotation;
     std::map<int, Team> teams;
 
-        QWidget * zoneCentral;
-        QGridLayout * layout;
-
-        std::map<int, TeamBoard*> teamBoards;
-
     signals:
 
     public slots:
-      void robotChoice();
-      void changeImage();
-      void togglePause();
-      void toggleFF();
-      void togglePosition();
-      void toggleDirection();
-      void toggleTrace();
-      void toggleBall();
-      void changeTrace();
-      void changeBall();
+    void robotChoice();
+    void changeImage();
+    void togglePause();
+    void toggleFF();
+    void togglePosition();
+    void toggleDirection();
+    void toggleTrace();
+    void toggleBall();
+    void changeTrace();
+    void changeBall();
 };
 
 #endif // MAINWINDOW_H
