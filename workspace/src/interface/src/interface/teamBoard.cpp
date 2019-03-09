@@ -86,27 +86,6 @@ void TeamBoard::addRobot(int new_robot){
     layout_robot->addWidget(robotBoards[new_robot]);
     robotBoards[new_robot]->updateNumber(new_robot);
 
-    robotBoards[new_robot+1] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot+1]);
-    robotBoards[new_robot+1]->updateNumber(new_robot+1);
-
-    robotBoards[new_robot-1] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot-1]);
-    robotBoards[new_robot-1]->updateNumber(new_robot-1);
-
-    new_robot = 15;
-    robotBoards[new_robot] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot]);
-    robotBoards[new_robot]->updateNumber(new_robot);
-
-    robotBoards[new_robot+1] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot+1]);
-    robotBoards[new_robot+1]->updateNumber(new_robot+1);
-
-    robotBoards[new_robot-1] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot-1]);
-    robotBoards[new_robot-1]->updateNumber(new_robot-1);
-
 
     QWidget * robotFrame = new QWidget;
     robotFrame->setLayout(layout_robot);
