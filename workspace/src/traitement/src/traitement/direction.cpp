@@ -26,18 +26,19 @@ namespace traitement {
 // OU
 // autre chose
 
-Direction::Direction(){
-  float mean;
-  float std_dev;
-  float uncertainty;
-}
+  Direction::Direction(){
+    mean = 0;
+    std_dev;
+    time_stamp = 0;
+  }
 
-Direction::~Direction(){
+  Direction::~Direction(){
+    
+  }
 
-}
-
-void Direction::SetMean(float m){
+  void Direction::SetMean(float m, uint64_t t_s){
   mean = m;
+  time_stamp = t_s;
 }
 
 

@@ -13,11 +13,13 @@ class Direction {
     float mean;
     float std_dev;
     float uncertainty;
+    uint64_t time_stamp;
 
   Direction();
   ~Direction();
 
-  void SetMean(float m);
+  void SetMean(float m, uint64_t t_s);
   };
 
+ 
 }

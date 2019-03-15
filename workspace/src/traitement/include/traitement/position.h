@@ -20,5 +20,6 @@ class Position {
     Position();
     ~Position();
     void setPosition(float xp, float yp,  uint64_t time_stamp);
+    void setTimeStamp(uint64_t t_s);
   };
 }

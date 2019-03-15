@@ -53,7 +53,7 @@ int main(int argc, char ** argv) {
   std::cout << f << std::endl;
 
   Annotation annotation("annotation_settings.json");
-    std::map<int, Team>teams;
+  std::map<int, Team>teams;
 // While exit was not explicitly required, run
   uint64_t now = 0;
   uint64_t dt = 30 * 1000;//[microseconds]
@@ -61,6 +61,8 @@ int main(int argc, char ** argv) {
     now = manager.getStart();
     //time_start = manager.getStart();
   }
+  uint64_t stop = now+6000000;
+
   while(manager.isGood()) {
     manager.update();
     if (manager.isLive()) {
@@ -110,37 +112,54 @@ int main(int argc, char ** argv) {
 	       teams[team_id].setRobotNum(robot_entry.first.robot_id());
 
 	     }
-
-
+	     
+	     //	teams[team_id].GetRobot(robot_entry.first.robot_id()).getPosRobot();
+	     
 	     /* position du robot */
 	     const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-	     const PositionDistribution & position = weighted_pose.pose().position();
-	     Position pos;
-	     pos.setPosition(position.x(),position.y(), now);
-	     teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
+
+	     if (now<stop || now >stop+8000000 ){ //no position during 8s
+	       if (robot_entry.first.robot_id() !=2){ //no position for robot 2
+	      
+
+	       const PositionDistribution & position = weighted_pose.pose().position();
+	       Position pos;
+	       pos.setPosition(position.x(),position.y(), now);	       
+	       teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
+	       }
+
+	     }
 	     /*direction of the robot*/
-	     const AngleDistribution & dir = weighted_pose.pose().dir();
-	     Direction direction;
-	     direction.SetMean (dir.mean(), now);
-	     teams[team_id].setRobotDirRobot(robot_entry.first.robot_id(),direction);
 
-	     /*position of the ball from the robot*/
-	     const PositionDistribution & ball = perception.ball_in_self();
-	     Position pos_ball;
-	     pos_ball.setPosition(ball.x(), ball.y(), now);
-	     teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
-	     
-	     
-	  
-	   }
-	   //pour l'affichage de la position souhaitée mais pas encore fini.
-	   const Intention & intention = robot_entry.second.intention();
-	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
+	     //direction all the time for all robots
+	     if (now<stop-2000000 || now >stop+4000000 ){ //no position during 6s
+	       if (robot_entry.first.robot_id() !=1){ //no position for robot 1
+		 const AngleDistribution & dir = weighted_pose.pose().dir();
+		 Direction direction;
+		 direction.SetMean (dir.mean(), now);
+		 teams[team_id].setRobotDirRobot(robot_entry.first.robot_id(),direction);
+	       }
+	     }
 
-	   Position pos_target;
-	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
-	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
+	     if (now<stop+6000000 || now >stop+10000000 ){ //no position during 8s
+	       /*position of the ball from the robot*/
+	       const PositionDistribution & ball = perception.ball_in_self();
+	       Position pos_ball;
+	       pos_ball.setPosition(ball.x(), ball.y(), now);
+	       teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
+	     }
 	   
+	   }
+	   
+	   if (now<stop-1000000 || now >stop+6000000 ){ //no position during 8s
+	     const Intention & intention = robot_entry.second.intention();
+	     const PositionDistribution & target_pos = intention.target_pose_in_field().position();
+	     
+	     Position pos_target;
+	     pos_target.setPosition(target_pos.x(),target_pos.y(), now);
+	     teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
+	     
+	   }
 	   display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
             
 	 }
@@ -149,7 +168,7 @@ int main(int argc, char ** argv) {
    
      cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
      cv::imshow(entry.first, display_img);
-     cv::waitKey(10);
+     cv::waitKey(5);
   
    }
 

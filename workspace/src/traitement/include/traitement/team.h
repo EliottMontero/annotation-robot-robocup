@@ -23,6 +23,7 @@ namespace traitement
     void setRobotPosBall(int robot_id, Position pos);
     void setRobotPosTarget(int robot_id, Position pos);
     void setRobotDirRobot(int robot_id, Direction dir);
+    
   private:
     std::map<int, RobotInformation>robots;
   };
