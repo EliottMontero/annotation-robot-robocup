@@ -173,7 +173,7 @@ namespace traitement{
 	
 	else
 	  cv::circle(overlay,pos_in_img, targetsize, cv::Scalar(0,0,0),cv::FILLED);
-      //calcul compliqué à cause du time stamp
+	//calcul compliqué à cause du time stamp
 	
 	cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
       }
@@ -233,8 +233,8 @@ namespace traitement{
 	else
 	  if (color.find(rb.getTeam())!=color.end())
 	    cv :: arrowedLine(overlay, pos_in_img, fleche, color[rb.getTeam()], 2, 0, 0.1);
-	else
-	  cv :: arrowedLine(overlay, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+	  else
+	    cv :: arrowedLine(overlay, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
 	cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
       }
     }
@@ -280,18 +280,18 @@ namespace traitement{
 	float sec = nbtrace*1000000.0;
 	float opacity = (sec-(now-p.time_stamp))/sec;
 	if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
-	    old_pos=p;
-	    cv::Point3f pos_in_field(p.x, p.y, 0.0);
-	    cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	    if (color.find(rb.getTeam())!=color.end()){
-	      cv::Scalar s =  color[rb.getTeam()];
-	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
-	    }
-	    else{
-	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
-	    }
+	  old_pos=p;
+	  cv::Point3f pos_in_field(p.x, p.y, 0.0);
+	  cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	  if (color.find(rb.getTeam())!=color.end()){
+	    cv::Scalar s =  color[rb.getTeam()];
+	    cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	  }
+	  else{
+	    cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
+	  }
 	    
-	    cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
+	  cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
 	}
       
       }
