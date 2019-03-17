@@ -10,7 +10,7 @@ namespace traitement
 
   Team::~Team(){
 }
-  
+
   void Team::AddRobot(int robot_id){
     if (robots.find(robot_id)==robots.end()){
       RobotInformation rb;
@@ -28,10 +28,18 @@ namespace traitement
     return robots[robot_id];
   }
 
+  std::map<int,RobotInformation> Team::getRobotMap(){
+    std::map<int,RobotInformation> copy_robots;
+    for(auto robot : robots){
+      copy_robots[robot.first] = robot.second;
+    }
+    return copy_robots;
+  }
+
   void Team::setRobotTeam(int robot_id, int team_id){
     robots[robot_id].setTeam(team_id);
   }
-  
+
   void Team::setRobotNum(int robot_id){
     robots[robot_id].setnumRobotInformation(robot_id);
   }
@@ -46,7 +54,7 @@ namespace traitement
   void Team::setRobotPosTarget(int robot_id, Position pos){
     robots[robot_id].setPosTarget(pos);
   }
-  
+
   void Team::setRobotDirRobot(int robot_id, Direction dir){
     robots[robot_id].setDirRobot(dir);
   }

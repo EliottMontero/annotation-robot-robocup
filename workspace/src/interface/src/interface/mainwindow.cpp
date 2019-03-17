@@ -137,25 +137,29 @@ void MainWindow::sliderControl(int value){
 
 
 void MainWindow::robotChoice(){
-  QMessageBox msgBox;
-  msgBox.setInformativeText("Do you want to save your changes?");
-  msgBox.setText(tr("Confirm?"));
-  QAbstractButton* rob1 = msgBox.addButton(tr("Robot 1"), QMessageBox::YesRole);
-  msgBox.addButton(tr("Nope"), QMessageBox::NoRole);
+  ChoiceDialog * msgBox = new ChoiceDialog();
+  msgBox->setInitGeneral(boolPosition, boolDirection, boolTrace, boolBall);
+  msgBox->setTeamMap(teams);
+  // msgBox->setCurrentTrace(annotation->getRobotTrace());
+  // msgBox->setCurrentBall(annotation->getRobotBall());
 
+  int r = msgBox->exec();
 
-  int ret = msgBox.exec();
+  if(r == 1){
+    /*** GENERAL ***/
+    if(boolPosition != msgBox->getGeneralPosition()) togglePosition();
+    if(boolDirection != msgBox->getGeneralDirection()) toggleDirection();
+    if(boolTrace != msgBox->getGeneralTrace()) toggleTrace();
+    if(boolBall != msgBox->getGeneralBall()) toggleBall();
 
-
-  if (msgBox.clickedButton()==rob1) {
-    printf("oulala\n");
+    /*** COMBOBOX ***/
+    annotation->changeRobotTrace(msgBox->getNumberRobotTrace());
+    annotation->changeRobotBall(msgBox->getNumberRobotBall());
   }
-  else{
-    printf("nonononon\n");
-  }
+
+
 
 }
-
 
 
 
@@ -266,7 +270,6 @@ void MainWindow::changeImage(){
   }
 }
 
-
 void MainWindow::createTeam(int id){
   teamBoards[id] =  new TeamBoard();
   teamBoards[id]->setTeamNumber(id);
@@ -376,7 +379,6 @@ void MainWindow::changeTrace(){
   robot_trace.push(old_robot);
   annotation->changeRobotTrace(robot_trace.front());
 }
-
 
 void MainWindow::changeBall(){
   int old_robot = robot_ball.front();

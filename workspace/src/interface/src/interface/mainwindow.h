@@ -18,6 +18,7 @@
 #include <traitement/annotation.h>
 
 #include "teamBoard.h"
+#include "choiceDialog.h"
 
 
 #include <hl_communication/utils.h>

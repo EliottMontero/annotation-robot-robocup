@@ -6,17 +6,18 @@
 
 namespace traitement
 {
- 
+
   class Team {
 
   public:
-    
+
     Team();
     ~Team();
 
     void AddRobot(int robot_id);
     bool IsRobot(int robot_id);
     RobotInformation GetRobot(int robot_id);
+    std::map<int, RobotInformation> getRobotMap();
     void setRobotTeam(int robot_id, int team_id);
     void setRobotPos(int robot_id, Position pos);
     void setRobotNum(int robot_id);
