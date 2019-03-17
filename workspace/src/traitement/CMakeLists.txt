@@ -53,4 +53,8 @@ option(BUILD_TRAITEMENT_TOOLS "Building TRAITEMENT tools" OFF)
 if (BUILD_TRAITEMENT_TOOLS)
   add_executable(test_traitement tools/test_traitement.cpp)
   target_link_libraries(test_traitement ${PROJECT_NAME} ${catkin_LIBRARIES})
-  endif()
+
+  add_executable(test_pos tools/test.cpp)
+  target_link_libraries(test_pos ${PROJECT_NAME} ${catkin_LIBRARIES})
+  
+endif()

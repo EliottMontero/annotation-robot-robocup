@@ -31,5 +31,9 @@ namespace traitement
 		time_stamp = t_s;
 	}
 
+  void Position::setTimeStamp(uint64_t t_s){
+    time_stamp = t_s;
+  }
+
 
 }

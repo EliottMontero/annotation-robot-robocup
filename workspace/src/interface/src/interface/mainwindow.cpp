@@ -246,7 +246,7 @@ void MainWindow::changeImage(){
 
                 const AngleDistribution & dir = weighted_pose.pose().dir();
                 Direction direction;
-                direction.SetMean (dir.mean());
+                direction.SetMean (dir.mean(),now);
                 teams[team_id].setRobotDirRobot(robot_id,direction);
 
                 const PositionDistribution & ball = perception.ball_in_self();

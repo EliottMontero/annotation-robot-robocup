@@ -25,7 +25,6 @@ namespace traitement
   void RobotInformation::setPosRobot(Position pos){
    robot_pos = pos;
   }
-
     
   void RobotInformation::setPosBall(Position pos){
    ball_pos = pos;
@@ -38,7 +37,7 @@ namespace traitement
   void RobotInformation::setDirRobot(Direction dir){
     robot_dir = dir;
   }
-
+  
   Position RobotInformation::getPosBall(){
     return ball_pos;
   }
