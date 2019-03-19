@@ -28,9 +28,12 @@ namespace traitement{
     int targetsize;
     int sizearrow;
     int robottrace;
+    int teamtrace;
     int nbtrace;
     int robotball;
+    int teamball;
     int robottarget;
+    int teamtarget;
     std::map<int ,cv::Scalar> color;
 
 

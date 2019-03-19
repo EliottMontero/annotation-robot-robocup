@@ -54,22 +54,28 @@ namespace traitement{
     checkMember(root["trace"], "circle_size");
     checkMember(root["direction"], "arrow_size");
     checkMember(root["trace"], "robot_num");
+    checkMember(root["trace"], "team_num");
     checkMember(root["trace"], "old_pos_number");
     checkMember(root["ball"], "ball_size");
     checkMember(root["ball"], "robot_num");
+    checkMember(root["ball"], "team_num");
     checkMember(root["target"], "target_size");
     checkMember(root["target"], "robot_num");
+    checkMember(root["target"], "team_num");
 
 
     sizecircle = root["position"]["circle_size"].asUInt();
     sizecircletrace = root["trace"]["circle_size"].asUInt();
     sizearrow = root["direction"]["arrow_size"].asUInt();
     robottrace = root["trace"]["robot_num"].asUInt();
+    teamtrace = root["trace"]["team_num"].asUInt();
     nbtrace = root["trace"]["old_pos_number"].asUInt();
     ballsize = root["ball"]["ball_size"].asUInt();
     robotball = root["ball"]["robot_num"].asUInt();
+    teamball = root["ball"]["team_num"].asUInt();
     targetsize = root["target"]["target_size"].asUInt();
     robottarget = root["target"]["robot_num"].asUInt();
+    teamtarget = root["target"]["team_num"].asUInt();
 
     checkMember(root["color_team_1"], "num");
     checkMember(root["color_team_1"], "r");
@@ -369,13 +375,13 @@ namespace traitement{
       display = annoteDirection( camera_information, rb, display, now);
     if (annotation_choice["position"]&& rb.getPosRobot().time_stamp != 0)
       display = annotePosition(camera_information, rb , display, now);
-    if (annotation_choice["trace"] && rb.getNumRobotInformation() == robottrace&& rb.getPosRobot().time_stamp != 0){
+    if (annotation_choice["trace"] && rb.getNumRobotInformation() == robottrace && rb.getTeam() == teamtrace && rb.getPosRobot().time_stamp != 0){
       display = annoteTrace(camera_information, rb, display, now);
     }
-    if (annotation_choice["ball"] && rb.getPosRobot().time_stamp != 0 && rb.getPosTarget().time_stamp!=0 && rb.getNumRobotInformation() == robotball){
+    if (annotation_choice["ball"] && rb.getPosRobot().time_stamp != 0 && rb.getTeam() == teamball && rb.getPosTarget().time_stamp!=0 && rb.getNumRobotInformation() == robotball){
       display = annoteBall( camera_information, rb, display, now);
     }
-    if (annotation_choice["target"] && rb.getPosTarget().time_stamp != 0 && rb.getNumRobotInformation() == robottarget){
+    if (annotation_choice["target"] && rb.getPosTarget().time_stamp != 0 && rb.getTeam() == teamtarget && rb.getNumRobotInformation() == robottarget){
       display = annoteTarget( camera_information, rb, display, now);
     }
     return display;
