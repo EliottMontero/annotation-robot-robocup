@@ -157,11 +157,7 @@ void MainWindow::robotChoice(){
     annotation->changeRobotBall(msgBox->getNumberRobotBall());
   }
 
-
-
 }
-
-
 
 
 /*
@@ -253,6 +249,15 @@ void MainWindow::changeImage(){
                 Position pos_ball;
                 pos_ball.setPosition(ball.x(), ball.y(), now);
                 teams[team_id].setRobotPosBall(robot_id, pos_ball);
+
+
+                //pour l'affichage de la position souhaitée mais pas encore fini.
+           	   const Intention & intention = robot_entry.second.intention();
+           	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
+
+           	   Position pos_target;
+           	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
+           	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 
                 display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
 
