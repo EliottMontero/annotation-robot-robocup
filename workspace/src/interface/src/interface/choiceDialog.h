@@ -44,6 +44,8 @@ class ChoiceDialog : public QDialog
     bool getGeneralBall();
     int getNumberRobotBall();
     int getNumberRobotTrace();
+    int getNumberTeamBall();
+    int getNumberTeamTrace();
 
     signals:
 

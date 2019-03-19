@@ -19,16 +19,15 @@ MainWindow::MainWindow()
   layout = new QGridLayout;
 
 
-  //label1 sera le label contenant l'image de la video
-  label1 = new QLabel();
-  label1->setAlignment(Qt::AlignCenter);
+  labelVideo = new QLabel();
+  labelVideo->setAlignment(Qt::AlignCenter);
 
   label5=new QLabel(this);
   label5->setText("0");
 
-  label1->setStyleSheet("QLabel { background-color : red}");
-  label1->setScaledContents(true);
-  label1->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
+  labelVideo->setStyleSheet("QLabel { background-color : red}");
+  labelVideo->setScaledContents(true);
+  labelVideo->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
 
   slider = new QSlider(Qt::Horizontal, this);
 
@@ -65,7 +64,7 @@ MainWindow::MainWindow()
 
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
-  layout->addWidget(label1,1,1,5,4);
+  layout->addWidget(labelVideo,1,1,5,4);
   layout->addWidget(slider,7,1,1,4);
 
   layout->addWidget(boutonPause,8,2,1,1);
@@ -153,15 +152,17 @@ void MainWindow::robotChoice(){
     if(boolBall != msgBox->getGeneralBall()) toggleBall();
 
     /*** COMBOBOX ***/
-    annotation->changeRobotTrace(msgBox->getNumberRobotTrace());
-    annotation->changeRobotBall(msgBox->getNumberRobotBall());
+    annotation->changeRobotTrace(msgBox->getNumberTeamTrace(),
+                                 msgBox->getNumberRobotTrace());
+    annotation->changeRobotBall(msgBox->getNumberTeamBall(),
+                                msgBox->getNumberRobotBall());
   }
 
 }
 
 
 /*
-Slot qui affiche l'image traitÃ©e sur label1
+Slot qui affiche l'image traitÃ©e sur labelVideo
 */
 void MainWindow::changeImage(){
 
@@ -266,7 +267,7 @@ void MainWindow::changeImage(){
           }
         }
         cv::cvtColor(display_img, display_img, CV_BGR2RGB);
-        this->label1->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
+        this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
       }
     }
     for (auto it : teamBoards){
@@ -382,14 +383,14 @@ void MainWindow::changeTrace(){
   int old_robot = robot_trace.front();
   robot_trace.pop();
   robot_trace.push(old_robot);
-  annotation->changeRobotTrace(robot_trace.front());
+  //annotation->changeRobotTrace(robot_trace.front());
 }
 
 void MainWindow::changeBall(){
   int old_robot = robot_ball.front();
   robot_ball.pop();
   robot_ball.push(old_robot);
-  annotation->changeRobotBall(robot_ball.front());
+  //annotation->changeRobotBall(robot_ball.front());
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event){

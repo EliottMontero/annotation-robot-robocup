@@ -141,10 +141,22 @@ ChoiceDialog::chargeRobotBall(int i) {
 
 int
 ChoiceDialog::getNumberRobotTrace() {
+
   return (traceRobotComboBox->currentText()).toInt();
+}
+
+int
+ChoiceDialog::getNumberTeamTrace() {
+
+  return (traceTeamComboBox->currentText()).toInt();
 }
 
 int
 ChoiceDialog::getNumberRobotBall() {
   return (ballRobotComboBox->currentText()).toInt();
+}
+
+int
+ChoiceDialog::getNumberTeamBall() {
+  return (ballTeamComboBox->currentText()).toInt();
 }

@@ -2,52 +2,38 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QWidget>
-#include <QObject>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QTimer>
 #include <QSlider>
-#include <QMessageBox>
-
 
 #include "opencv2/core.hpp"
 #include <opencv/cv.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui.hpp>
 
 #include <traitement/annotation.h>
-
-#include "teamBoard.h"
-#include "choiceDialog.h"
-
-
-#include <hl_communication/utils.h>
-
-#include <hl_communication/message_manager.h>
-#include <hl_monitoring/monitoring_manager.h>
-#include <hl_monitoring/utils.h>
-#include <hl_monitoring/field.h>
 #include <traitement/position.h>
 #include <traitement/direction.h>
 #include <traitement/team.h>
 
+#include "teamBoard.h"
+#include "choiceDialog.h"
 
+#include <hl_communication/message_manager.h>
+#include <hl_monitoring/monitoring_manager.h>
+#include <hl_communication/utils.h>
+#include <hl_monitoring/utils.h>
+#include <hl_monitoring/field.h>
 
-#include <opencv2/imgproc.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui.hpp>
 #include <tclap/CmdLine.h>
 #include <string>
 #include <fstream>
-
 #include <sstream>
-
 
 
 using namespace cv;
 using namespace hl_communication;
 using namespace hl_monitoring;
-
 using namespace traitement;
 
 
@@ -59,6 +45,7 @@ public:
     MainWindow();
     void createTeam(int id);
     void createRobot(int robotId, int teamId);
+
 
     QTimer * timer;
     cv::Mat * cvImage;
@@ -73,7 +60,7 @@ public:
     QPushButton * boutonBall;
     QPushButton * boutonChangeBall;
     QSlider * slider;
-    QLabel * label1;
+    QLabel * labelVideo;
     QLabel * label5;
 
     bool boolPause;
@@ -87,13 +74,9 @@ public:
     bool boolBall;
     bool boolMove=false;
 
-    MonitoringManager manager;
     uint64_t now;
     uint64_t dt;
     Field field;
-    Annotation *annotation;
-    std::map<int, Team> teams;
-    std::map<int, TeamBoard*> teamBoards;
 
     QWidget * zoneCentral;
     QGridLayout * layout;
@@ -113,6 +96,16 @@ public:
     void toggleBall();
     void changeTrace();
     void changeBall();
+
+private :
+    MonitoringManager manager;
+    Annotation *annotation;
+
+    std::map<int, Team> teams;
+    std::map<int, TeamBoard*> teamBoards;
+
+
+
 
 protected:
   void resizeEvent(QResizeEvent *event) override;

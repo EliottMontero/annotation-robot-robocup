@@ -51,9 +51,9 @@ namespace traitement{
     void toggleDirectionChoice();
     void toggleTraceChoice();
     void toggleBallChoice();
-    void changeRobotTrace(int robot);
+    void changeRobotTrace(int team, int robot);
     int getRobotTrace();
-    void changeRobotBall(int robot);
+    void changeRobotBall(int team, int robot);
     int getRobotBall();
 
   };
