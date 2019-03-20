@@ -8,22 +8,19 @@
 #include <jsoncpp/json/json.h>
 #include <fstream>
 
-#define SIZE_CIRCLE_POS 10
-#define SIZE_ARROW 50
-#define SIZE_CIRCLE_TRACE 5
-
-
 
 using namespace hl_communication;
 using namespace hl_monitoring;
 
 
 namespace traitement{
+  
+ 
   Annotation::Annotation(std::string file){
     Json::Reader reader;
     Json::Value root;
 
-    std::ifstream annotation_settings(file);
+   std::ifstream annotation_settings(file);
     if (!annotation_settings.good())
       throw std::runtime_error("failed to open file" + file);
     annotation_settings >> root;
@@ -35,27 +32,31 @@ namespace traitement{
     checkMember(root["direction"], "write");
     checkMember(root, "trace");
     checkMember(root["trace"], "write");
-    checkMember(root, "optimized");
     checkMember(root, "ball");
     checkMember(root["ball"], "write");
     checkMember(root, "target");
     checkMember(root["target"], "write");
+    checkMember(root, "optimized");
 
 
     annotation_choice["position"]=root["position"]["write"].asBool();
     annotation_choice["number"]=root["position"]["number"].asBool();
     annotation_choice["direction"]=root["direction"]["write"].asBool();
     annotation_choice["trace"]=root["trace"]["write"].asBool();
-    annotation_choice["optimized"]=root["optimized"].asBool();
     annotation_choice["ball"]=root["ball"]["write"].asBool();
     annotation_choice["target"]=root["target"]["write"].asBool();
+    annotation_choice["optimized"]=root["optimized"].asBool();
+    
+    checkMember(root, "delay_annotation");
+    delay_annotation=root["delay_annotation"].asInt();
 
+    
     checkMember(root["position"], "circle_size");
     checkMember(root["trace"], "circle_size");
     checkMember(root["direction"], "arrow_size");
     checkMember(root["trace"], "robot_num");
     checkMember(root["trace"], "team_num");
-    checkMember(root["trace"], "old_pos_number");
+    checkMember(root["trace"], "delay_old_pos");
     checkMember(root["ball"], "ball_size");
     checkMember(root["ball"], "robot_num");
     checkMember(root["ball"], "team_num");
@@ -69,7 +70,7 @@ namespace traitement{
     sizearrow = root["direction"]["arrow_size"].asUInt();
     robottrace = root["trace"]["robot_num"].asUInt();
     teamtrace = root["trace"]["team_num"].asUInt();
-    nbtrace = root["trace"]["old_pos_number"].asUInt();
+    delay_old_pos = root["trace"]["delay_old_pos"].asUInt();
     ballsize = root["ball"]["ball_size"].asUInt();
     robotball = root["ball"]["robot_num"].asUInt();
     teamball = root["ball"]["team_num"].asUInt();
@@ -87,7 +88,7 @@ namespace traitement{
     checkMember(root["color_team_2"], "b");
     checkMember(root["color_team_2"], "g");
 
-
+    
     cv::Scalar color1 = {root["color_team_1"]["r"].asUInt(), root["color_team_1"]["g"].asUInt(), root["color_team_1"]["b"].asUInt()};
 
     cv::Scalar color2 = {root["color_team_2"]["r"].asUInt(), root["color_team_2"]["g"].asUInt(), root["color_team_2"]["b"].asUInt()};
@@ -101,6 +102,10 @@ namespace traitement{
   Annotation::~Annotation(){
   }
 
+  bool Annotation::IsPosValid(uint64_t time_stamp, uint64_t now, int delay){
+    return ((((delay*1000000.0-(now-time_stamp))/delay*1000000.0)>0 ));   
+  }
+
 
   cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
 
@@ -109,7 +114,7 @@ namespace traitement{
 
     if (annotation_choice["optimized"]){
       //calcul compliqué à cause du time stamp
-      float sec = nbtrace*1000000.0;
+      float sec = delay_annotation*1000000.0;
       float opacity = (sec-(now-pos.time_stamp))/sec;
 
       if (opacity>0){
@@ -129,14 +134,14 @@ namespace traitement{
       }
     }
     else{
-      if ((((nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0)>0 )){
+      if (IsPosValid(pos.time_stamp, now, delay_annotation)){
       	cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
 	cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	if (color.find(rb.getTeam())!=color.end())
 	  cv::circle(display,pos_in_img, sizecircle, color[rb.getTeam()],cv::FILLED);
 	else
 	  cv::circle(display,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
-	if (annotation_choice["number"] && (((nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0)>0 )){
+	if (annotation_choice["number"] && IsPosValid(pos.time_stamp, now, delay_annotation)){
 	  cv::putText(display, std::to_string(rb.numRobotInformation), cv::Point2f(pos_in_img.x-sizecircle*3/4,pos_in_img.y+sizecircle*3/4), cv::FONT_HERSHEY_TRIPLEX ,0.7,cv::Scalar(0,0,0),2);
 	}
       }
@@ -153,7 +158,7 @@ namespace traitement{
     Position robot;
     robot = rb.getPosRobot();
     if (annotation_choice["optimized"]){
-      float sec = nbtrace*1000000.0;
+      float sec = delay_annotation*1000000.0;
       float opacity = (sec-(now-pos.time_stamp))/sec;
       if (opacity>0){
 	cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
@@ -163,7 +168,7 @@ namespace traitement{
 	if (color.find(rb.getTeam())!=color.end()){
 	  cv::Scalar s =  color[rb.getTeam()];
 	  cv::drawMarker (overlay,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, 10, 2, 8);
-	  if ((((nbtrace*1000000.0-(now-robot.time_stamp))/nbtrace*1000000.0) >0)){
+	  if (IsPosValid(robot.time_stamp, now, delay_annotation)){
 	    cv::Point3f pos_in_fieldr(robot.x, robot.y, 0.0);
 	    cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
 	    cv::LineIterator it(overlay, pos_in_img, pos_in_imgr, 8);            // get a line iterator
@@ -185,7 +190,7 @@ namespace traitement{
       }
     }
     else{
-      if (((nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0)>0 ){
+      if (IsPosValid(pos.time_stamp, now, delay_annotation)){
 	cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
 	cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
@@ -194,7 +199,7 @@ namespace traitement{
 	if (color.find(rb.getTeam())!=color.end()){
 	  cv::Scalar s =  color[rb.getTeam()];
 	  cv::drawMarker (display,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, 10, 2, 8);
-	  if ((((nbtrace*1000000.0-(now-robot.time_stamp))/nbtrace*1000000.0) >0)){
+	  if (IsPosValid(robot.time_stamp, now, delay_annotation)){
 	    cv::LineIterator it(display, pos_in_img, pos_in_imgr, 8);            // get a line iterator
 	    for(int i = 0; i < it.count; i++,it++)
 	      if ( i%10<5 ) {
@@ -217,7 +222,7 @@ namespace traitement{
     Direction dir;
     dir = rb.getDirRobot();
     if (annotation_choice["optimized"]){
-      float sec = nbtrace*1000000.0;
+      float sec = delay_annotation*1000000.0;
       float opacity = (sec-(now-dir.time_stamp))/sec;
       if (opacity>0 && (((sec-(now-pos.time_stamp))/sec) >0)){
 	cv::Mat overlay;
@@ -245,7 +250,7 @@ namespace traitement{
       }
     }
     else {
-      if (((nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0)>0 && ((nbtrace*1000000.0-(now-pos.time_stamp))/nbtrace*1000000.0)>0  ){
+      if (IsPosValid(pos.time_stamp, now, delay_annotation) && IsPosValid(dir.time_stamp, now, delay_annotation) ){
 	// calcul pos
 	cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
 	cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
@@ -283,7 +288,7 @@ namespace traitement{
 	cv::Mat overlay;
 	display.copyTo(overlay);
 
-	float sec = nbtrace*1000000.0;
+	float sec = delay_old_pos*1000000.0;
 	float opacity = (sec-(now-p.time_stamp))/sec;
 	if(i == 0 || (i!=0 && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
 	  old_pos=p;
@@ -330,7 +335,7 @@ namespace traitement{
     Direction dir;
     dir = rb.getDirRobot();
     if (annotation_choice["optimized"]){
-      float sec = nbtrace*1000000.0;
+      float sec = delay_annotation*1000000.0;
       float opacity = (sec-(now-ball.time_stamp))/sec;
       if (opacity>0 && (((sec-(now-dir.time_stamp))/sec) >0) && (((sec-(now-robot.time_stamp))/sec) >0) ){
 	cv::Point2f position;
@@ -344,7 +349,7 @@ namespace traitement{
       }
     }
     else{
-      if (((nbtrace*1000000.0-(now-ball.time_stamp))/nbtrace*1000000.0)>0  && ((nbtrace*1000000.0-(now-robot.time_stamp))/nbtrace*1000000.0)>0 && ((nbtrace*1000000.0-(now-dir.time_stamp))/nbtrace*1000000.0)>0 ){
+      if (IsPosValid(robot.time_stamp, now, delay_annotation) && IsPosValid(ball.time_stamp, now, delay_annotation) && IsPosValid(dir.time_stamp, now, delay_annotation)){
       	cv::Point2f position;
 	position.x = robot.x + ball.x*cos(dir.mean)-ball.y*sin(dir.mean);
 	position.y = robot.y + ball.x*sin(dir.mean)+ball.y*cos(dir.mean);
@@ -359,9 +364,9 @@ namespace traitement{
 
   cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation rb ,cv::Mat display,  uint64_t now){
     //delete old pose
-    if (rb.sizeOfQueue()!=0 ){
+     if (rb.sizeOfQueue()!=0 ){
       Position p = rb.oldPos.front();
-      while (((nbtrace*1000000.0-(now-p.time_stamp))/nbtrace*1000000.0) <0){
+      while (!IsPosValid(p.time_stamp, now, delay_old_pos)){
 	rb.removePos();
 	if (rb.sizeOfQueue()!=0)
 	  p = rb.oldPos.front();
@@ -369,7 +374,7 @@ namespace traitement{
 	  p.setTimeStamp(now);
       }
     }
-
+    
 
     if (annotation_choice["direction"]&& rb.getPosRobot().time_stamp != 0 && rb.getDirRobot().time_stamp!=0 )
       display = annoteDirection( camera_information, rb, display, now);

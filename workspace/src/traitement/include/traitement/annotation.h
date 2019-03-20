@@ -20,18 +20,19 @@ using namespace hl_communication;
 namespace traitement{
   class Annotation{
   public:
-
     std::map<std::string, bool>annotation_choice;
+    int delay_annotation;
+
     int sizecircle;
     int sizecircletrace;
-    int ballsize;
-    int targetsize;
     int sizearrow;
     int robottrace;
     int teamtrace;
-    int nbtrace;
+    int delay_old_pos;
+    int ballsize;
     int robotball;
     int teamball;
+    int targetsize;   
     int robottarget;
     int teamtarget;
     std::map<int ,cv::Scalar> color;
@@ -40,13 +41,16 @@ namespace traitement{
     Annotation(std::string);
     ~Annotation();
 
+    bool IsPosValid(uint64_t time_stamp, uint64_t now, int delay);
 
-    cv::Mat annotePosition( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
-    cv::Mat annoteTarget( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
-    cv::Mat annoteDirection( CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
+    cv::Mat annotePosition(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
+    cv::Mat annoteTarget(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
+    cv::Mat annoteDirection(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat  annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat  annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat AddAnnotation(CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display,  uint64_t now);
+
+    /*this is for the interface*/
     void togglePositionChoice();
     void toggleDirectionChoice();
     void toggleTraceChoice();
