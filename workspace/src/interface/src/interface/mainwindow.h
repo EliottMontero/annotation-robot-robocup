@@ -26,8 +26,6 @@
 #include <hl_monitoring/field.h>
 
 #include <tclap/CmdLine.h>
-#include <string>
-#include <fstream>
 #include <sstream>
 
 
@@ -46,40 +44,6 @@ public:
     void createTeam(int id);
     void createRobot(int robotId, int teamId);
 
-
-    QTimer * timer;
-    cv::Mat * cvImage;
-    cv::Mat * cvImage2;
-    QPushButton * boutonRobotChoice;
-    QPushButton * boutonPause;
-    QPushButton * boutonFF;
-    QSlider * slider;
-    QLabel * labelVideo;
-    QLabel * label5;
-
-    bool boolPause;
-    bool boolFF;
-    bool boolPosition;
-    bool boolDirection;
-    bool boolTrace;
-    bool boolTarget;
-
-    bool addRobot;
-    std::queue<int> robot_trace;
-    std::queue<int> robot_ball;
-    bool boolBall;
-    bool boolMove=false;
-
-    uint64_t now;
-    uint64_t dt;
-    Field field;
-
-    QWidget * zoneCentral;
-    QGridLayout * layout;
-
-
-    signals:
-
     public slots:
     void sliderControl(int i);
     void robotChoice();
@@ -91,18 +55,41 @@ public:
     void toggleTrace();
     void toggleBall();
     void toggleTarget();
-    void changeTrace();
-    void changeBall();
 
 private :
     MonitoringManager manager;
     Annotation *annotation;
+    Field field;
+
+    QLabel * labelVideo;
+    cv::Mat * cvImage;
+    cv::Mat * cvImage2;
+
+    QTimer * timer;
+    uint64_t now;
+    uint64_t dt;
 
     std::map<int, Team> teams;
     std::map<int, TeamBoard*> teamBoards;
 
+    QPushButton * boutonRobotChoice;
+    QPushButton * boutonPause;
+    QPushButton * boutonFF;
 
+    QSlider * slider;
+    QLabel * label5;
+    bool boolMove=false;
 
+    bool boolPause;
+    bool boolFF;
+    bool boolPosition;
+    bool boolDirection;
+    bool boolTrace;
+    bool boolBall;
+    bool boolTarget;
+
+    QWidget * zoneCentral;
+    QGridLayout * layout;
 
 protected:
   void resizeEvent(QResizeEvent *event) override;

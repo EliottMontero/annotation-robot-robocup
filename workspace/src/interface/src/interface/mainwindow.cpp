@@ -9,34 +9,45 @@
 
 MainWindow::MainWindow()
 {
+  setWindowTitle(tr("SPECTATOR MODE"));
+
   cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
   cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
   cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
   cv::cvtColor(*cvImage2, *cvImage2, CV_BGR2RGB);
 
-
   zoneCentral = new QWidget;
   layout = new QGridLayout;
 
-
   labelVideo = new QLabel();
   labelVideo->setAlignment(Qt::AlignCenter);
-
-  label5=new QLabel(this);
-  label5->setText("0");
-
   labelVideo->setStyleSheet("QLabel { background-color : red}");
   labelVideo->setScaledContents(true);
   labelVideo->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
 
+  label5=new QLabel(this);
+  label5->setText("0");
+
   slider = new QSlider(Qt::Horizontal, this);
-
-  setWindowTitle(tr("SPECTATOR MODE"));
-
 
   boutonRobotChoice = new QPushButton("Choix Robot");
   boutonPause = new QPushButton("PAUSE");
   boutonFF = new QPushButton(">>");
+
+  connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
+  connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
+  connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
+  connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
+
+  layout->addWidget(labelVideo,1,1,5,4);
+  layout->addWidget(slider,7,1,1,4);
+  layout->addWidget(label5,8,1,1,1);
+  layout->addWidget(boutonPause,8,2,1,1);
+  layout->addWidget(boutonFF,8,3,1,1);
+  layout->addWidget(boutonRobotChoice,8,4,1,1);
+
+  zoneCentral->setLayout(layout);
+  setCentralWidget(zoneCentral);
 
   boolPause = false;
   boolFF = false;
@@ -44,33 +55,13 @@ MainWindow::MainWindow()
   boolDirection = true;
   boolTrace = true;
   boolTarget = true;
-  addRobot = false;
   boolBall = true;
 
-  connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
-  connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
-  connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
 
-  connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
-
-  layout->addWidget(labelVideo,1,1,5,4);
-  layout->addWidget(slider,7,1,1,4);
-
-  layout->addWidget(boutonPause,8,2,1,1);
-  layout->addWidget(boutonFF,8,3,1,1);
-  layout->addWidget(boutonRobotChoice,8,4,1,1);
-  layout->addWidget(label5,8,1,1,1);
-
-
-  zoneCentral->setLayout(layout);
-  setCentralWidget(zoneCentral);
-
-  //Partie communication avec traitement
-
+  //*** Partie communication avec traitement ***//
 
   Json::Reader reader;
   Json::Value root;
-
 
   std::ifstream match_settings("match_settings.json");
   if (!match_settings.good())
@@ -82,8 +73,6 @@ MainWindow::MainWindow()
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
-
-
   manager.loadConfig(conf);
 
   std::string f = root["match_setting"]["field"].asString();
@@ -92,22 +81,17 @@ MainWindow::MainWindow()
   std::cout << f << std::endl;
 
   annotation = new Annotation("annotation_settings.json");
-  robot_trace.push(annotation->getRobotTrace());
-  robot_ball.push(annotation->getRobotBall());
-  // While exit was not explicitly required, run
+
+  // // While exit was not explicitly required, run
   now = 0;
   dt = 30 * 1000;//[microseconds]
   if (!manager.isLive()) {
     now = manager.getStart();
   }
 
-
-
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
   timer->start(SPD_INTERVAL);
-
-
 }
 
 
@@ -236,7 +220,6 @@ void MainWindow::changeImage(){
                 pos_ball.setPosition(ball.x(), ball.y(), now);
                 teams[team_id].setRobotPosBall(robot_id, pos_ball);
 
-
                 //pour l'affichage de la position souhaitée mais pas encore fini.
            	   const Intention & intention = robot_entry.second.intention();
            	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
@@ -246,7 +229,6 @@ void MainWindow::changeImage(){
            	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 
                display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
-
               }
             }
           }
@@ -256,7 +238,6 @@ void MainWindow::changeImage(){
       }
     }
     for (auto it : teamBoards){
-
       (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
           annotation->getTeamTrace(), annotation->getRobotTrace(),
           annotation->getTeamBall(), annotation->getRobotBall(),
@@ -280,7 +261,6 @@ void MainWindow::createTeam(int id){
   teams[id] = t1;
 
   teamBoards[id]->setSizeRobotArea();
-
 }
 
 void MainWindow::createRobot(int robotId, int teamId){
@@ -289,20 +269,14 @@ void MainWindow::createRobot(int robotId, int teamId){
   teams[teamId].setRobotNum(robotId);
 
   teamBoards[teamId]->addRobot(robotId);
-
-  if (robotId != robot_trace.front())
-    robot_trace.push(robotId);
-
-  if (robotId!= robot_ball.front())
-    robot_ball.push(robotId);
 }
 
 void MainWindow::togglePause(){
-  if(boolPause){ //boolPause -> on est en pause, donc on veut restart
+  if(boolPause){
     this->boutonPause->setText("PAUSE");
   }
   else{
-    this->boutonPause->setText("START");
+    this->boutonPause->setText("PLAY");
   }
   boolPause = !boolPause;
 
@@ -314,7 +288,7 @@ void MainWindow::togglePosition(){
 }
 
 void MainWindow::toggleFF(){
-  if(boolFF){//boolFF ->On est en FF, on veut passer en normal
+  if(boolFF){
     this->boutonFF->setText(">>");
     timer->setInterval(SPD_INTERVAL);
   }
@@ -345,25 +319,9 @@ void MainWindow::toggleTarget(){
   boolTarget = !boolTarget;
 }
 
-void MainWindow::changeTrace(){
-  int old_robot = robot_trace.front();
-  robot_trace.pop();
-  robot_trace.push(old_robot);
-  //annotation->changeRobotTrace(robot_trace.front());
-}
-
-void MainWindow::changeBall(){
-  int old_robot = robot_ball.front();
-  robot_ball.pop();
-  robot_ball.push(old_robot);
-  //annotation->changeRobotBall(robot_ball.front());
-}
-
 void MainWindow::resizeEvent(QResizeEvent *event){
   QMainWindow::resizeEvent(event);
-
   for(auto it : teamBoards){
     (it.second)->setSizeRobotArea();
   }
-
 }

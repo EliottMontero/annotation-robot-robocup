@@ -1,16 +1,7 @@
 #ifndef TeamBOARD_H
 #define TeamBOARD_H
 
-#include <QWidget>
-#include <QObject>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QGroupBox>
 #include <QScrollArea>
-
-#include <string>
-#include <fstream>
 
 #include "robotBoard.h"
 
@@ -31,7 +22,6 @@ class TeamBoard : public QWidget
                           int teamBall, int robotBall,
                           int teamTarget, int robotTarget);
 
-
   private :
     int idTeam;
 
@@ -45,12 +35,6 @@ class TeamBoard : public QWidget
     std::map<int, RobotBoard*> robotBoards;
     QVBoxLayout * layout_robot;
     QScrollArea * scrollAreaRobot;
-
-  signals:
-
-  public slots:
-
-
 
 };
 

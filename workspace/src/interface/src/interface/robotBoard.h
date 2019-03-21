@@ -18,6 +18,14 @@ class RobotBoard : public QWidget
 
   public:
     RobotBoard();
+
+    void updateNumber(int i);
+    void updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
+                          bool teamTrace, int robotTrace,
+                          bool teamBall, int robotBall,
+                          bool teamTarget, int robotTarget);
+
+  private:
     int idRobot;
 
     QLabel * label_number;
@@ -26,18 +34,6 @@ class RobotBoard : public QWidget
     QLabel * label_trace;
     QLabel * label_ball;
     QLabel * label_target;
-
-    void updateNumber(int i);
-    void updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
-                          bool teamTrace, int robotTrace,
-                          bool teamBall, int robotBall,
-                          bool teamTarget, int robotTarget);
-
-  signals:
-
-  public slots:
-
-
 
 };
 
