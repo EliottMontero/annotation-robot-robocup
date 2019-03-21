@@ -1,93 +1,99 @@
-### ANNOTATIONS-ROBOT
+### ANNOTATIONS-robot
 
 /!\------/!\
 
-Si vous aviez une version du git d'avant le 15/02/2019, vous allez perdre votre dossier 2vs1
-en récupérant toute version postérieure, il faut donc le re-télécharger si vous le voulez, voir
-la fin de la partie INSTALLATION.
+If you had a version of this project older than 15/02/2019, you will lose the
+2vs1/ folder by getting any newer version, you will then need to download it
+if you want to test the project once again, see the INSTALLATION part.
 
 /!\------/!\
 
-
-Le but de ce projet est d'afficher les logs des robots sur une vidéo qui a été prise en même temps
-que les logs, ce qui permet d'avoir des "logs augmentés", et de mieux comprendre les logs par rapport
-à ce qu'il s'est passé dans la vidéo, et donc le comportement des robots.
-Il y a deux packages important dans ce projet : traitement et interface, qui devront fonctionner ensemble
-dans le futur mais pour le moment nous avons des problèmes de fusion donc ils ne fonctionnent que chacun de leur côté.
+The goal of this project is to display robots logs on a video from a football
+match of robots,, which is the equivalent of "Augmented Logs", and helps
+understand the logs' content through what happens in the video, and the robots'
+behaviour.
+There are two important packages in this project : treatment and interface, where
+treatment is in charge of treating images to display the informations, and
+interface is in charge of the UI and using the treatment package to display the
+modified video.
 
 # INSTALLATION
 
-Pour l'installation, il y a plusieurs procédures à effectuer:
+In order to install the project, there are several steps :
 
-- D'abord installer pip si vous ne l'avez pas :
-			sudo apt install pip
-- catkin_tools par le biais de pip :
-			pip install -U catkin_tools
-- Cloner catkin dans workspace/src :
-			cd workspace/src
-			git clone https://github.com/ros/catkin.git
-- Installer libprotobuf-dev et protobuf-compiler pour les protobuf :
-			sudo apt install libprotobuf-dev
-			sudo apt install protobuf-compiler
-- Installer libjsconcpp-dev pour les json :
-			sudo apt install libjsoncpp-dev
-- Installer libtclap-dev pour les TCLAP :
-			sudo apt install libtclap-dev
-- Installer qtmultimedia5-dev pour faire marcher qt :
-			sudo apt install qtmultimedia5-dev
-- Installer libopencv-dev pour faire marcher opencv :
-			sudo apt-get install libopencv-dev
+- You'll first need several packages : pip, libprotobuf-dev, protobuf-compiler,
+libjsoncpp-dev, libtclap-dev, qtmultimedia5-dev, libopencv, gcc, cmake, git :
 
-Et normalement avec tout ça on a toutes les dépendances qu'il faut (il est possible
-qu'il faille télécharger QT 5.9.5 par le site officiel : https://www.qt.io/download pour compiler l'interface).
+      sudo apt install pip libprotobuf-dev protobuf-compiler libjsoncpp-dev\
+      libtclap-dev qtmultimedia5-dev libopencv gcc cmake git
 
-On peut rajouter le fichier 2vs1 (qui contient les vidéos et les logs d'un match
-2 robots vs 1 robot) dans le dépôt à côté de workspace pour lancer le côté traitement
-par exemple, en le récupérant du google drive suivant : https://drive.google.com/drive/folders/1euuFUpFEmJQSxWQ8DGrLt1pGioKHVwfI?usp=sharing
+- Install catkin_tools through pip :
 
-A la source du projet on aura donc les dossiers suivant : 2vs1, rapports et workspace.
+      pip install -U catkin_tools
+
+- Clone catkin in workspace/src : (from the root of the project)
+
+      cd workspace/src
+      git clone https://github.com/ros/catkin.git
+
+Now you should have every dependencies needed to make this project work.
+You may need to download QT 5.9.5 from the official website :
+https://www.qt.op/download to build the interface.
+
+You can add the 2vs1/ folder (which contains videos and logs of a match 2 robots
+vs 1 robot) if you want to try the project in the repository next to the
+workspace/ folder by downloading the following google drive :
+
+https://drive.google.com/drive/folders/1euuFUpFEmJQSxWQ8DGrLt1pGioKHVwfI?usp=sharing
+
+At the root of the project you should now have the following folders : 2vs1/,
+rapports/, memoire/, and workspace/.
 
 
+# BUILDING THE PROJECT
 
-Maintenant reste seulement à se placer dans workspace et rentrer les commandes suivantes:
+To build the project you'll need to be in the workspace/ folder.
+For the first build you'll first need to input the following line :
 
-			catkin init
-			catkin build
+      catkin init
 
-# COMPILATION
+Which will initialize the catkin settings on your device.
+Then, every time you want to build the project, go to the workspace/ folder
+and input the following line :
 
-Pour compiler, il suffit de se placer dans le dossier workspace et d'écrire dans le terminal :
+      catkin build
 
-			catkin build
+If you want a package's executables files, you'll need to go to
+workspace/build/<package_name> and change the value of BUILD_TRAITEMENT_TOOLS:BOOL
+to ON in the CMakeCache.txt file.
 
-Si on veut l'exécutable d'un package, il faut aller dans workspace/build/<package> et changer la valeur du BUILD_TRAITEMENT_TOOLS:BOOL à ON.
+# LAUNCH TREATMENT
 
-Les exécutables se trouveront donc dans workspace/devel/lib/<package> .
+In order to launch the treatment, you'll need a folder containing the video
+files and logs, see the INSTALLATION part to download the given 2vs1/ files
+containing examples of the needed files to test the project.
 
-# LANCEMENT TRAITEMENT
+After you changed the value of the BUILD_TRAITEMENT_TOOLS:BOOL to ON in
+workspace/build/treatment/CMakeCache.txt and built with catkin in workspace,
+go to the 2vs1/ folder and input the following line in the terminal :
 
-Pour lancer le traitement, il faut au préalable un dossier contenant des vidéos et
-logs associés, voir la partie INSTALLATION pour télécharger le dossier 2vs1 contenant lesdites vidéos/logs sur le drive.
+      ../workspace/devel/lib/treatment/test_treatment -c replay.json \
+      -f eirlab.json -a 1 -a 1 -t 4
 
-Après avoir passé le BUILD_TRAITEMENT_TOOLS:BOOL à ON dans workspace/build/traitement/CMakeCache.txt
-et compilé avec catkin build dans workspace, placez vous dans le dossier 2vs1 et entrez la ligne suivante dans le terminal :
+The first -a option indicates  whether you want to display the robots' position
+or not (1 = ON, 0 = OFF)
+The second -a option indicates wh
 
-			../workspace/devel/lib/traitement/test_traitement -c replay.json -f eirlab.json -a 1 -a 1 -t 4
+/!\ NEEDS CHANGE /!\
 
-Le premier -a indique si vous souhaitez afficher la position des robots (-a 1 = ON, -a 0 = OFF)
-Le deuxième -a indique si vous souhaitez afficher l'orientation des robots (-a 1 = ON, -a 0 = OFF)
-Le -t indique si vous souhaitez afficher l'ancienne position d'un robot (-t <numero_du_robot>)
 
-Même si trace_arg (l'argument -t) est définit comme MultiArg<int>, on ne peut pas afficher
-plusieurs robots pour l'instant, nous verrons cette implémentation lorsque chaque robot aura
-son objet (pour l'instant on définit qu'un robot, celui que l'on affiche).
+# LAUNCH INTERFACE
 
-# LANCEMENT INTERFACE
+After you changed the value of the BUILD_TRAITEMENT_TOOLS:BOOL to ON in
+workspace/build/interface/CMakeCache.txt and built with catkin in workspace,
+go to the 2vs1/ folder and input the following line in the terminal :
 
-Après avoir passé le BUILD_TRAITEMENT_TOOLS:BOOL à ON dans workspace/build/interface/CMakeCache.txt
-et compilé avec catkin build dans workspace, il n'y a pas d'arguments spéciaux pour lancer l'interface,
- vous n'avez qu'à lancer l'éxecutable qui se trouve au chemin suivant :
+      ../workspace/devel/lib/interface/main
 
-			workspace/devel/lib/interface/main
-
-A noter que pour l'instant l'interface est juste un interface, il n'y pas d'images affichées.
+You don't need any arguments because they are given by the json file
+annotation_settings.json
