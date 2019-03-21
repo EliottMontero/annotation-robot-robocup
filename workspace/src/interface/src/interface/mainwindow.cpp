@@ -38,30 +38,18 @@ MainWindow::MainWindow()
   boutonPause = new QPushButton("PAUSE");
   boutonFF = new QPushButton(">>");
 
-  // boutonPosition = new QPushButton("Position : ON");
-  // boutonDirection = new QPushButton("Direction : ON");
-  // boutonTrace = new QPushButton("Trace : ON");
-  // boutonChangeTrace = new QPushButton("Trace : Change Robot");
-  // boutonChangeBall = new QPushButton("Ball : Change Robot");
-  // boutonBall = new QPushButton("Ball : ON");
-
   boolPause = false;
   boolFF = false;
   boolPosition = true;
   boolDirection = true;
   boolTrace = true;
+  boolTarget = true;
   addRobot = false;
   boolBall = true;
 
   connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
   connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
   connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
-  // connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
-  // connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
-  // connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
-  // connect(boutonChangeTrace, SIGNAL (released()), this, SLOT (changeTrace()));
-  // connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
-  // connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
 
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
@@ -72,14 +60,6 @@ MainWindow::MainWindow()
   layout->addWidget(boutonFF,8,3,1,1);
   layout->addWidget(boutonRobotChoice,8,4,1,1);
   layout->addWidget(label5,8,1,1,1);
-
-
-  // layout->addWidget(boutonPosition,0,0,1,1);
-  // layout->addWidget(boutonDirection,0,1,1,1);
-  // layout->addWidget(boutonTrace,0,2,1,1);
-  // layout->addWidget(boutonBall,0,3,1,1);
-  // layout->addWidget(boutonChangeTrace,0,4,1,1);
-  // layout->addWidget(boutonChangeBall,0,5,1,1);
 
 
   zoneCentral->setLayout(layout);
@@ -138,10 +118,11 @@ void MainWindow::sliderControl(int value){
 
 void MainWindow::robotChoice(){
   ChoiceDialog * msgBox = new ChoiceDialog();
-  msgBox->setInitGeneral(boolPosition, boolDirection, boolTrace, boolBall);
+  msgBox->setInitGeneral(boolPosition, boolDirection, boolTrace, boolBall, boolTarget);
   msgBox->setTeamMap(teams);
   msgBox->setCurrentTrace(annotation->getTeamTrace(),annotation->getRobotTrace());
   msgBox->setCurrentBall(annotation->getTeamBall(),annotation->getRobotBall());
+  msgBox->setCurrentTarget(annotation->getTeamTarget(),annotation->getRobotTarget());
 
   int r = msgBox->exec();
 
@@ -151,14 +132,17 @@ void MainWindow::robotChoice(){
     if(boolDirection != msgBox->getGeneralDirection()) toggleDirection();
     if(boolTrace != msgBox->getGeneralTrace()) toggleTrace();
     if(boolBall != msgBox->getGeneralBall()) toggleBall();
+    if(boolTarget != msgBox->getGeneralTarget()) toggleTarget();
 
     /*** COMBOBOX ***/
     annotation->changeRobotTrace(msgBox->getNumberTeamTrace(),
                                  msgBox->getNumberRobotTrace());
     annotation->changeRobotBall(msgBox->getNumberTeamBall(),
                                 msgBox->getNumberRobotBall());
-  }
+    annotation->changeRobotTarget(msgBox->getNumberTeamTarget(),
+                                msgBox->getNumberRobotTarget());
 
+    }
 }
 
 
@@ -261,7 +245,7 @@ void MainWindow::changeImage(){
            	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
            	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 
-                display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
+               display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
 
               }
             }
@@ -350,7 +334,11 @@ void MainWindow::toggleTrace(){
 void MainWindow::toggleBall(){
   annotation->toggleBallChoice();
   boolBall = !boolBall;
+}
 
+void MainWindow::toggleTarget(){
+  annotation->toggleTargetChoice();
+  boolTarget = !boolTarget;
 }
 
 void MainWindow::changeTrace(){

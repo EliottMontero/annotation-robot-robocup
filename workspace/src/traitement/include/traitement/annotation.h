@@ -46,8 +46,8 @@ namespace traitement{
     cv::Mat annotePosition(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat annoteTarget(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat annoteDirection(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
-    cv::Mat  annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
-    cv::Mat  annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
+    cv::Mat annoteTrace(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
+    cv::Mat annoteBall(CameraMetaInformation camera_information, RobotInformation rb,cv::Mat display,  uint64_t now);
     cv::Mat AddAnnotation(CameraMetaInformation camera_information,  RobotInformation rb,cv::Mat display,  uint64_t now);
 
     /*this is for the interface*/
@@ -55,12 +55,18 @@ namespace traitement{
     void toggleDirectionChoice();
     void toggleTraceChoice();
     void toggleBallChoice();
+    void toggleTargetChoice();
+
     void changeRobotTrace(int team, int robot);
     int getRobotTrace();
     int getTeamTrace();
     void changeRobotBall(int team, int robot);
     int getRobotBall();
     int getTeamBall();
+    void changeRobotTarget(int team, int robot);
+    int getRobotTarget();
+    int getTeamTarget();
+
 
   };
 }

@@ -408,6 +408,10 @@ namespace traitement{
     annotation_choice["ball"] = !annotation_choice["ball"];
   }
 
+  void Annotation::toggleTargetChoice(){
+    annotation_choice["target"] = !annotation_choice["target"];
+  }
+
   void Annotation::changeRobotTrace(int team , int robot){
     teamtrace = team;
     robottrace = robot;
@@ -432,5 +436,18 @@ namespace traitement{
 
   int Annotation::getTeamBall(){
     return teamball;
+  }
+
+  void Annotation::changeRobotTarget(int team, int robot){
+    teamtarget = team;
+    robottarget = robot;
+  }
+
+  int Annotation::getRobotTarget(){
+    return robottarget;
+  }
+
+  int Annotation::getTeamTarget(){
+    return teamtarget;
   }
 }

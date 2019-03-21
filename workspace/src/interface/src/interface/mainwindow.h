@@ -62,6 +62,8 @@ public:
     bool boolPosition;
     bool boolDirection;
     bool boolTrace;
+    bool boolTarget;
+
     bool addRobot;
     std::queue<int> robot_trace;
     std::queue<int> robot_ball;
@@ -88,6 +90,7 @@ public:
     void toggleDirection();
     void toggleTrace();
     void toggleBall();
+    void toggleTarget();
     void changeTrace();
     void changeBall();
 
