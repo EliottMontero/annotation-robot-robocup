@@ -32,7 +32,7 @@ namespace traitement{
     int ballsize;
     int robotball;
     int teamball;
-    int targetsize;   
+    int targetsize;
     int robottarget;
     int teamtarget;
     std::map<int ,cv::Scalar> color;
@@ -57,8 +57,10 @@ namespace traitement{
     void toggleBallChoice();
     void changeRobotTrace(int team, int robot);
     int getRobotTrace();
+    int getTeamTrace();
     void changeRobotBall(int team, int robot);
     int getRobotBall();
+    int getTeamBall();
 
   };
 }

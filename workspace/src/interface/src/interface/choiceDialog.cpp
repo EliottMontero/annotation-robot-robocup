@@ -99,6 +99,31 @@ ChoiceDialog::setInitGeneral(bool position, bool direction, bool trace, bool bal
   ballCheck->setChecked(ball);
 }
 
+void
+ChoiceDialog::setCurrentTrace(int team, int robot) {
+  int numberTeam = traceTeamComboBox->findText(QString::number(team));
+  if(numberTeam != -1){
+    traceTeamComboBox->setCurrentIndex(numberTeam);
+  }
+  int numberRobot = traceRobotComboBox->findText(QString::number(robot));
+  if(numberRobot != -1){
+    traceRobotComboBox->setCurrentIndex(numberRobot);
+  }
+}
+
+void
+ChoiceDialog::setCurrentBall(int team, int robot) {
+  int numberTeam = ballTeamComboBox->findText(QString::number(team));
+  if(numberTeam != -1){
+    ballTeamComboBox->setCurrentIndex(numberTeam);
+  }
+  int numberRobot = ballRobotComboBox->findText(QString::number(robot));
+  if(numberRobot != -1){
+    ballRobotComboBox->setCurrentIndex(numberRobot);
+  }
+}
+
+
 bool
 ChoiceDialog::getGeneralPosition(){
   return positionCheck->isChecked();

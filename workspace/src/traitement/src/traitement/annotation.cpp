@@ -14,8 +14,8 @@ using namespace hl_monitoring;
 
 
 namespace traitement{
-  
- 
+
+
   Annotation::Annotation(std::string file){
     Json::Reader reader;
     Json::Value root;
@@ -46,11 +46,11 @@ namespace traitement{
     annotation_choice["ball"]=root["ball"]["write"].asBool();
     annotation_choice["target"]=root["target"]["write"].asBool();
     annotation_choice["optimized"]=root["optimized"].asBool();
-    
+
     checkMember(root, "delay_annotation");
     delay_annotation=root["delay_annotation"].asInt();
 
-    
+
     checkMember(root["position"], "circle_size");
     checkMember(root["trace"], "circle_size");
     checkMember(root["direction"], "arrow_size");
@@ -88,7 +88,7 @@ namespace traitement{
     checkMember(root["color_team_2"], "b");
     checkMember(root["color_team_2"], "g");
 
-    
+
     cv::Scalar color1 = {root["color_team_1"]["r"].asUInt(), root["color_team_1"]["g"].asUInt(), root["color_team_1"]["b"].asUInt()};
 
     cv::Scalar color2 = {root["color_team_2"]["r"].asUInt(), root["color_team_2"]["g"].asUInt(), root["color_team_2"]["b"].asUInt()};
@@ -103,7 +103,7 @@ namespace traitement{
   }
 
   bool Annotation::IsPosValid(uint64_t time_stamp, uint64_t now, int delay){
-    return ((((delay*1000000.0-(now-time_stamp))/delay*1000000.0)>0 ));   
+    return ((((delay*1000000.0-(now-time_stamp))/delay*1000000.0)>0 ));
   }
 
 
@@ -374,7 +374,7 @@ namespace traitement{
 	  p.setTimeStamp(now);
       }
     }
-    
+
 
     if (annotation_choice["direction"]&& rb.getPosRobot().time_stamp != 0 && rb.getDirRobot().time_stamp!=0 )
       display = annoteDirection( camera_information, rb, display, now);
@@ -417,6 +417,10 @@ namespace traitement{
     return robottrace;
   }
 
+  int Annotation::getTeamTrace(){
+    return teamtrace;
+  }
+
   void Annotation::changeRobotBall(int team, int robot){
     teamball = team;
     robotball = robot;
@@ -424,5 +428,9 @@ namespace traitement{
 
   int Annotation::getRobotBall(){
     return robotball;
+  }
+
+  int Annotation::getTeamBall(){
+    return teamball;
   }
 }

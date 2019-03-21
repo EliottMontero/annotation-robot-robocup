@@ -53,12 +53,6 @@ public:
     QPushButton * boutonRobotChoice;
     QPushButton * boutonPause;
     QPushButton * boutonFF;
-    QPushButton * boutonPosition;
-    QPushButton * boutonDirection;
-    QPushButton * boutonTrace;
-    QPushButton * boutonChangeTrace;
-    QPushButton * boutonBall;
-    QPushButton * boutonChangeBall;
     QSlider * slider;
     QLabel * labelVideo;
     QLabel * label5;

@@ -37,12 +37,13 @@ MainWindow::MainWindow()
   boutonRobotChoice = new QPushButton("Choix Robot");
   boutonPause = new QPushButton("PAUSE");
   boutonFF = new QPushButton(">>");
-  boutonPosition = new QPushButton("Position : ON");
-  boutonDirection = new QPushButton("Direction : ON");
-  boutonTrace = new QPushButton("Trace : ON");
-  boutonChangeTrace = new QPushButton("Trace : Change Robot");
-  boutonChangeBall = new QPushButton("Ball : Change Robot");
-  boutonBall = new QPushButton("Ball : ON");
+
+  // boutonPosition = new QPushButton("Position : ON");
+  // boutonDirection = new QPushButton("Direction : ON");
+  // boutonTrace = new QPushButton("Trace : ON");
+  // boutonChangeTrace = new QPushButton("Trace : Change Robot");
+  // boutonChangeBall = new QPushButton("Ball : Change Robot");
+  // boutonBall = new QPushButton("Ball : ON");
 
   boolPause = false;
   boolFF = false;
@@ -55,12 +56,12 @@ MainWindow::MainWindow()
   connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
   connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
   connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
-  connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
-  connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
-  connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
-  connect(boutonChangeTrace, SIGNAL (released()), this, SLOT (changeTrace()));
-  connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
-  connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
+  // connect(boutonPosition, SIGNAL (released()), this, SLOT (togglePosition()));
+  // connect(boutonDirection, SIGNAL (released()), this, SLOT (toggleDirection()));
+  // connect(boutonTrace, SIGNAL (released()), this, SLOT (toggleTrace()));
+  // connect(boutonChangeTrace, SIGNAL (released()), this, SLOT (changeTrace()));
+  // connect(boutonBall, SIGNAL (released()), this, SLOT (toggleBall()));
+  // connect(boutonChangeBall, SIGNAL (released()), this, SLOT (changeBall()));
 
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
@@ -73,12 +74,12 @@ MainWindow::MainWindow()
   layout->addWidget(label5,8,1,1,1);
 
 
-  layout->addWidget(boutonPosition,0,0,1,1);
-  layout->addWidget(boutonDirection,0,1,1,1);
-  layout->addWidget(boutonTrace,0,2,1,1);
-  layout->addWidget(boutonBall,0,3,1,1);
-  layout->addWidget(boutonChangeTrace,0,4,1,1);
-  layout->addWidget(boutonChangeBall,0,5,1,1);
+  // layout->addWidget(boutonPosition,0,0,1,1);
+  // layout->addWidget(boutonDirection,0,1,1,1);
+  // layout->addWidget(boutonTrace,0,2,1,1);
+  // layout->addWidget(boutonBall,0,3,1,1);
+  // layout->addWidget(boutonChangeTrace,0,4,1,1);
+  // layout->addWidget(boutonChangeBall,0,5,1,1);
 
 
   zoneCentral->setLayout(layout);
@@ -139,8 +140,8 @@ void MainWindow::robotChoice(){
   ChoiceDialog * msgBox = new ChoiceDialog();
   msgBox->setInitGeneral(boolPosition, boolDirection, boolTrace, boolBall);
   msgBox->setTeamMap(teams);
-  // msgBox->setCurrentTrace(annotation->getRobotTrace());
-  // msgBox->setCurrentBall(annotation->getRobotBall());
+  msgBox->setCurrentTrace(annotation->getTeamTrace(),annotation->getRobotTrace());
+  msgBox->setCurrentBall(annotation->getTeamBall(),annotation->getRobotBall());
 
   int r = msgBox->exec();
 
@@ -320,15 +321,8 @@ void MainWindow::togglePause(){
 }
 
 void MainWindow::togglePosition(){
-  if(boolPosition){ //boolPosition -> on affiche, donc on ne veut plus afficher
-    this->boutonPosition->setText("Position : OFF");
-  }
-  else{
-    this->boutonPosition->setText("Position : ON");
-  }
   annotation->togglePositionChoice();
   boolPosition = !boolPosition;
-
 }
 
 void MainWindow::toggleFF(){
@@ -344,36 +338,16 @@ void MainWindow::toggleFF(){
 }
 
 void MainWindow::toggleDirection(){
-  if(boolDirection){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->boutonDirection->setText("Direction : OFF");
-  }
-  else{
-    this->boutonDirection->setText("Direction : ON");
-  }
   annotation->toggleDirectionChoice();
   boolDirection = !boolDirection;
-
 }
 
 void MainWindow::toggleTrace(){
-  if(boolTrace){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->boutonTrace->setText("Trace : OFF");
-  }
-  else{
-    this->boutonTrace->setText("Trace : ON");
-  }
   annotation->toggleTraceChoice();
   boolTrace = !boolTrace;
-
 }
 
 void MainWindow::toggleBall(){
-  if(boolBall){ //boolDirection -> on affiche, donc on ne veut plus afficher
-    this->boutonBall->setText("Ball : OFF");
-  }
-  else{
-    this->boutonBall->setText("Ball : ON");
-  }
   annotation->toggleBallChoice();
   boolBall = !boolBall;
 

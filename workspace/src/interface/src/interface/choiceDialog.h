@@ -37,6 +37,8 @@ class ChoiceDialog : public QDialog
     QComboBox * ballRobotComboBox;
 
     void setInitGeneral(bool position, bool direction, bool trace, bool ball);
+    void setCurrentTrace(int team, int robot);
+    void setCurrentBall(int team, int robot);
     void setTeamMap(std::map<int,Team> & teams);
     bool getGeneralPosition();
     bool getGeneralDirection();

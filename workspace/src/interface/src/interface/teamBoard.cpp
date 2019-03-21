@@ -56,7 +56,7 @@ void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
 }
 
 void TeamBoard::setSizeRobotArea(){
-  QRect cell = layout->cellRect(0,3);
+  QRect cell = layout->cellRect(1,3);
   QRect cellLabel1 = layout->cellRect(1,2);
   if(cell.isValid()){
     int w = cell.width();
