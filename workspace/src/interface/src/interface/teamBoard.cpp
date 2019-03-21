@@ -2,14 +2,13 @@
 
 TeamBoard::TeamBoard()
 {
-    //QVBoxLayout * layout = new QVBoxLayout;
     layout_robot = new QVBoxLayout;
     QVBoxLayout * layout_head = new QVBoxLayout;
-
 
     label_TeamNumber = new QLabel();
     label_TeamNumber->setText("Team X");
     label_TeamNumber->setFont(QFont("Arial",24,3,false));
+    label_TeamNumber->setAlignment(Qt::AlignCenter);
 
     label_score = new QLabel();
     label_score->setText("?");
@@ -28,17 +27,13 @@ TeamBoard::TeamBoard()
     robotBox->setTitle("Robots");
 
     QWidget * robotFrame = new QWidget;
-    //robotBox->addWidget(robotFrame);
     robotFrame->setLayout(layout_robot);
-
-    //scrollAreaRobot->setWidget(robotFrame);
 
     layout_head->addWidget(label_TeamNumber);
     layout_head->addWidget(label_score);
 
     head_Widget = new QWidget;
     head_Widget->setLayout(layout_head);
-
 }
 
 void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
@@ -52,7 +47,6 @@ void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
     layout->addWidget(line,2,5,1,1);
     layout->addWidget(scrollAreaRobot,3,5,3,1);
   }
-
 }
 
 void TeamBoard::setSizeRobotArea(){
@@ -67,6 +61,7 @@ void TeamBoard::setSizeRobotArea(){
 
 void TeamBoard::setTeamNumber(int number){
   label_TeamNumber->setText("Team " + QString::number(number));
+  idTeam = number;
 }
 
 
@@ -74,9 +69,19 @@ void TeamBoard::updateScore(int score){
   label_score->setText(QString::number(score));
 }
 
-void TeamBoard::updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRobotBall){
+void TeamBoard::updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
+                                 int teamTrace, int robotTrace,
+                                 int teamBall, int robotBall,
+                                 int teamTarget, int robotTarget){
+  bool boolTeamTrace = (teamTrace == idTeam);
+  bool boolTeamBall = (teamBall == idTeam);
+  bool boolTeamTarget = (teamTarget == idTeam);
+
   for(auto it : robotBoards){
-    (it.second)->updateAnnotation(pos, dir, idRobotTrace, idRobotBall);
+    (it.second)->updateAnnotation(pos, dir, trace, ball, target,
+                                  boolTeamTrace, robotTrace,
+                                  boolTeamBall, robotBall,
+                                  boolTeamTarget, robotTarget);
   }
 }
 

@@ -22,28 +22,29 @@ class TeamBoard : public QWidget
   public:
     TeamBoard();
     void setGridLayout(QGridLayout * layout_main, bool isLeft);
+    void setTeamNumber(int number);
+    void addRobot(int new_robot);
     void setSizeRobotArea();
+    void updateScore(int score);
+    void updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
+                          int teamTrace, int robotTrace,
+                          int teamBall, int robotBall,
+                          int teamTarget, int robotTarget);
 
-    QGroupBox * robotBox;
-    std::map<int, RobotBoard*> robotBoards;
 
-    QScrollArea * scrollAreaRobot;
-    QVBoxLayout * layout_robot;
-
-    QGridLayout * layout;
-
+  private :
+    int idTeam;
 
     QLabel * label_TeamNumber;
     QLabel * label_score;
+    QGridLayout * layout;
     QWidget * head_Widget;
     QFrame * line;
 
-    void setTeamNumber(int number);
-    void updateScore(int score);
-    void updateAnnotation(bool pos, bool dir, int idRobotTrace, int idRobotBall);
-    void addRobot(int new_robot);
-
-
+    QGroupBox * robotBox;
+    std::map<int, RobotBoard*> robotBoards;
+    QVBoxLayout * layout_robot;
+    QScrollArea * scrollAreaRobot;
 
   signals:
 

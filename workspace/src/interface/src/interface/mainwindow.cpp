@@ -256,7 +256,11 @@ void MainWindow::changeImage(){
       }
     }
     for (auto it : teamBoards){
-      (it.second)->updateAnnotation(boolPosition, boolDirection, robot_trace.front(),robot_ball.front());
+
+      (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
+          annotation->getTeamTrace(), annotation->getRobotTrace(),
+          annotation->getTeamBall(), annotation->getRobotBall(),
+          annotation->getTeamTarget(), annotation->getRobotTarget());
     }
   }
 }
