@@ -1,17 +1,17 @@
-#ifndef TeamBOARD_H
-#define TeamBOARD_H
+#ifndef TeamPANEL_H
+#define TeamPANEL_H
 
 #include <QScrollArea>
 
-#include "robotBoard.h"
+#include "robotPanel.h"
 
 
-class TeamBoard : public QWidget
+class TeamPanel : public QWidget
 {
   Q_OBJECT
 
   public:
-    TeamBoard();
+    TeamPanel();
     void setGridLayout(QGridLayout * layout_main, bool isLeft);
     void setTeamNumber(int number);
     void addRobot(int new_robot);
@@ -32,10 +32,10 @@ class TeamBoard : public QWidget
     QFrame * line;
 
     QGroupBox * robotBox;
-    std::map<int, RobotBoard*> robotBoards;
+    std::map<int, RobotPanel*> robotPanels;
     QVBoxLayout * layout_robot;
     QScrollArea * scrollAreaRobot;
 
 };
 
-#endif //TeamBoard_H
+#endif //TeamPanel_H

@@ -1,6 +1,6 @@
-#include "teamBoard.h"
+#include "teamPanel.h"
 
-TeamBoard::TeamBoard()
+TeamPanel::TeamPanel()
 {
     layout_robot = new QVBoxLayout;
     QVBoxLayout * layout_head = new QVBoxLayout;
@@ -36,7 +36,7 @@ TeamBoard::TeamBoard()
     head_Widget->setLayout(layout_head);
 }
 
-void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
+void TeamPanel::setGridLayout(QGridLayout * layout_main, bool isLeft){
   layout = layout_main;
   if(isLeft){
     layout->addWidget(head_Widget,1,0,1,1);
@@ -49,7 +49,7 @@ void TeamBoard::setGridLayout(QGridLayout * layout_main, bool isLeft){
   }
 }
 
-void TeamBoard::setSizeRobotArea(){
+void TeamPanel::setSizeRobotArea(){
   QRect cell = layout->cellRect(1,3);
   QRect cellLabel1 = layout->cellRect(1,2);
   if(cell.isValid()){
@@ -59,17 +59,17 @@ void TeamBoard::setSizeRobotArea(){
   }
 }
 
-void TeamBoard::setTeamNumber(int number){
+void TeamPanel::setTeamNumber(int number){
   label_TeamNumber->setText("Team " + QString::number(number));
   idTeam = number;
 }
 
 
-void TeamBoard::updateScore(int score){
+void TeamPanel::updateScore(int score){
   label_score->setText(QString::number(score));
 }
 
-void TeamBoard::updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
+void TeamPanel::updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
                                  int teamTrace, int robotTrace,
                                  int teamBall, int robotBall,
                                  int teamTarget, int robotTarget){
@@ -77,7 +77,7 @@ void TeamBoard::updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool
   bool boolTeamBall = (teamBall == idTeam);
   bool boolTeamTarget = (teamTarget == idTeam);
 
-  for(auto it : robotBoards){
+  for(auto it : robotPanels){
     (it.second)->updateAnnotation(pos, dir, trace, ball, target,
                                   boolTeamTrace, robotTrace,
                                   boolTeamBall, robotBall,
@@ -86,10 +86,10 @@ void TeamBoard::updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool
 }
 
 
-void TeamBoard::addRobot(int new_robot){
-    robotBoards[new_robot] = new RobotBoard;
-    layout_robot->addWidget(robotBoards[new_robot]);
-    robotBoards[new_robot]->updateNumber(new_robot);
+void TeamPanel::addRobot(int new_robot){
+    robotPanels[new_robot] = new RobotPanel;
+    layout_robot->addWidget(robotPanels[new_robot]);
+    robotPanels[new_robot]->updateNumber(new_robot);
 
 
     QWidget * robotFrame = new QWidget;

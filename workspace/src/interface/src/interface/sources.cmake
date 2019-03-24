@@ -1,6 +1,6 @@
 set(SOURCES
 	mainwindow.cpp
-	teamBoard.cpp
-	robotBoard.cpp
+	teamPanel.cpp
+	robotPanel.cpp
 	choiceDialog.cpp
 	)

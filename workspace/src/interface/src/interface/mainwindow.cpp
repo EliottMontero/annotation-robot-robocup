@@ -169,13 +169,13 @@ void MainWindow::changeImage(){
         const GCTeamMsg & team_msg = status.gc_message.teams(idx);
         uint32_t team_id = team_msg.team_number();
 
-        if(teamBoards.find(team_id) == teamBoards.end()){
+        if(teamPanels.find(team_id) == teamPanels.end()){
           createTeam(team_id);
         }
 
         if (team_msg.has_score()) {
           uint32_t team_score = team_msg.score();
-          teamBoards[team_id]->updateScore(team_score);
+          teamPanels[team_id]->updateScore(team_score);
         }
       }
 
@@ -190,7 +190,7 @@ void MainWindow::changeImage(){
           //Robot Msg
           for (const auto & robot_entry : status.robot_messages) {
             uint32_t team_id = robot_entry.first.team_id();
-            if(teamBoards.find(team_id) == teamBoards.end()){
+            if(teamPanels.find(team_id) == teamPanels.end()){
               createTeam(team_id);
             }
 
@@ -237,7 +237,7 @@ void MainWindow::changeImage(){
         this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
       }
     }
-    for (auto it : teamBoards){
+    for (auto it : teamPanels){
       (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
           annotation->getTeamTrace(), annotation->getRobotTrace(),
           annotation->getTeamBall(), annotation->getRobotBall(),
@@ -247,20 +247,20 @@ void MainWindow::changeImage(){
 }
 
 void MainWindow::createTeam(int id){
-  teamBoards[id] =  new TeamBoard();
-  teamBoards[id]->setTeamNumber(id);
+  teamPanels[id] =  new TeamPanel();
+  teamPanels[id]->setTeamNumber(id);
 
-  if(teamBoards.size() == 1){
-    teamBoards[id]->setGridLayout(layout,true);
+  if(teamPanels.size() == 1){
+    teamPanels[id]->setGridLayout(layout,true);
   }
-  if(teamBoards.size() == 2){
-    teamBoards[id]->setGridLayout(layout,false);
+  if(teamPanels.size() == 2){
+    teamPanels[id]->setGridLayout(layout,false);
   }
 
   Team t1;
   teams[id] = t1;
 
-  teamBoards[id]->setSizeRobotArea();
+  teamPanels[id]->setSizeRobotArea();
 }
 
 void MainWindow::createRobot(int robotId, int teamId){
@@ -268,7 +268,7 @@ void MainWindow::createRobot(int robotId, int teamId){
   teams[teamId].setRobotTeam(robotId,teamId);
   teams[teamId].setRobotNum(robotId);
 
-  teamBoards[teamId]->addRobot(robotId);
+  teamPanels[teamId]->addRobot(robotId);
 }
 
 void MainWindow::togglePause(){
@@ -321,7 +321,7 @@ void MainWindow::toggleTarget(){
 
 void MainWindow::resizeEvent(QResizeEvent *event){
   QMainWindow::resizeEvent(event);
-  for(auto it : teamBoards){
+  for(auto it : teamPanels){
     (it.second)->setSizeRobotArea();
   }
 }

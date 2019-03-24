@@ -1,6 +1,6 @@
-#include "robotBoard.h"
+#include "robotPanel.h"
 
-RobotBoard::RobotBoard()
+RobotPanel::RobotPanel()
 {
   QLayout * layout = new QVBoxLayout;
 
@@ -33,12 +33,12 @@ RobotBoard::RobotBoard()
 
 }
 
-void RobotBoard::updateNumber(int i){
+void RobotPanel::updateNumber(int i){
   label_number->setText("Robot n°" + QString::number(i));
   idRobot = i;
 }
 
-void RobotBoard::updateAnnotation(bool pos, bool dir, bool trace,bool ball, bool target,
+void RobotPanel::updateAnnotation(bool pos, bool dir, bool trace,bool ball, bool target,
                       bool teamTrace, int robotTrace,
                       bool teamBall, int robotBall,
                       bool teamTarget, int robotTarget){

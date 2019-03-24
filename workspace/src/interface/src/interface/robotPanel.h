@@ -1,5 +1,5 @@
-#ifndef ROBOTBOARD_H
-#define ROBOTBOARD_H
+#ifndef ROBOTPANEL_H
+#define ROBOTPANEL_H
 
 #include <QWidget>
 #include <QObject>
@@ -12,12 +12,12 @@
 #include <fstream>
 
 
-class RobotBoard : public QWidget
+class RobotPanel : public QWidget
 {
   Q_OBJECT
 
   public:
-    RobotBoard();
+    RobotPanel();
 
     void updateNumber(int i);
     void updateAnnotation(bool pos, bool dir, bool trace, bool ball, bool target,
@@ -37,4 +37,4 @@ class RobotBoard : public QWidget
 
 };
 
-#endif //RobotBoard_H
+#endif //RobotPanel_H

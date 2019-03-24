@@ -16,7 +16,7 @@
 #include <traitement/direction.h>
 #include <traitement/team.h>
 
-#include "teamBoard.h"
+#include "teamPanel.h"
 #include "choiceDialog.h"
 
 #include <hl_communication/message_manager.h>
@@ -70,7 +70,7 @@ private :
     uint64_t dt;
 
     std::map<int, Team> teams;
-    std::map<int, TeamBoard*> teamBoards;
+    std::map<int, TeamPanel*> teamPanels;
 
     QPushButton * boutonRobotChoice;
     QPushButton * boutonPause;
