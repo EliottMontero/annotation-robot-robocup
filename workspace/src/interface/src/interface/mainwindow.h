@@ -62,8 +62,7 @@ private :
     Field field;
 
     QLabel * labelVideo;
-    cv::Mat * cvImage;
-    cv::Mat * cvImage2;
+    cv::Mat * gamePicture;
 
     QTimer * timer;
     uint64_t now;
@@ -72,12 +71,12 @@ private :
     std::map<int, Team> teams;
     std::map<int, TeamPanel*> teamPanels;
 
-    QPushButton * boutonRobotChoice;
-    QPushButton * boutonPause;
-    QPushButton * boutonFF;
+    QPushButton * buttonRobotChoice;
+    QPushButton * buttonPause;
+    QPushButton * buttonFastForward;
 
     QSlider * slider;
-    QLabel * label5;
+    QLabel * sliderValue;
     bool boolMove=false;
 
     bool boolPause;

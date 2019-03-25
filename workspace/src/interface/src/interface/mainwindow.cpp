@@ -11,10 +11,8 @@ MainWindow::MainWindow()
 {
   setWindowTitle(tr("SPECTATOR MODE"));
 
-  cvImage = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
-  cvImage2 = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,255,0));
-  cv::cvtColor(*cvImage,*cvImage, CV_BGR2RGB);
-  cv::cvtColor(*cvImage2, *cvImage2, CV_BGR2RGB);
+  gamePicture = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
+  cv::cvtColor(*gamePicture,*gamePicture, CV_BGR2RGB);
 
   zoneCentral = new QWidget;
   layout = new QGridLayout;
@@ -23,28 +21,28 @@ MainWindow::MainWindow()
   labelVideo->setAlignment(Qt::AlignCenter);
   labelVideo->setStyleSheet("QLabel { background-color : red}");
   labelVideo->setScaledContents(true);
-  labelVideo->setPixmap(QPixmap::fromImage(QImage(cvImage->data, cvImage->cols, cvImage->rows, cvImage->step, QImage::Format_RGB888)));
+  labelVideo->setPixmap(QPixmap::fromImage(QImage(gamePicture->data, gamePicture->cols, gamePicture->rows, gamePicture->step, QImage::Format_RGB888)));
 
-  label5=new QLabel(this);
-  label5->setText("0");
+  sliderValue=new QLabel(this);
+  sliderValue->setText("0");
 
   slider = new QSlider(Qt::Horizontal, this);
 
-  boutonRobotChoice = new QPushButton("Choix Robot");
-  boutonPause = new QPushButton("PAUSE");
-  boutonFF = new QPushButton(">>");
+  buttonRobotChoice = new QPushButton("Choix Robot");
+  buttonPause = new QPushButton("PAUSE");
+  buttonFastForward = new QPushButton(">>");
 
-  connect(boutonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
-  connect(boutonPause, SIGNAL (released()), this, SLOT (togglePause()));
-  connect(boutonFF, SIGNAL (released()), this, SLOT (toggleFF()));
+  connect(buttonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
+  connect(buttonPause, SIGNAL (released()), this, SLOT (togglePause()));
+  connect(buttonFastForward, SIGNAL (released()), this, SLOT (toggleFF()));
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
   layout->addWidget(labelVideo,1,1,5,4);
   layout->addWidget(slider,7,1,1,4);
-  layout->addWidget(label5,8,1,1,1);
-  layout->addWidget(boutonPause,8,2,1,1);
-  layout->addWidget(boutonFF,8,3,1,1);
-  layout->addWidget(boutonRobotChoice,8,4,1,1);
+  layout->addWidget(sliderValue,8,1,1,1);
+  layout->addWidget(buttonPause,8,2,1,1);
+  layout->addWidget(buttonFastForward,8,3,1,1);
+  layout->addWidget(buttonRobotChoice,8,4,1,1);
 
   zoneCentral->setLayout(layout);
   setCentralWidget(zoneCentral);
@@ -157,7 +155,7 @@ void MainWindow::changeImage(){
         }
         char str[20];
         sprintf(str,"%d\n",now);
-        label5->setText(str);
+        sliderValue->setText(str);
       }
       MessageManager::Status status = manager.getStatus(now);
       std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
@@ -273,10 +271,10 @@ void MainWindow::createRobot(int robotId, int teamId){
 
 void MainWindow::togglePause(){
   if(boolPause){
-    this->boutonPause->setText("PAUSE");
+    this->buttonPause->setText("PAUSE");
   }
   else{
-    this->boutonPause->setText("PLAY");
+    this->buttonPause->setText("PLAY");
   }
   boolPause = !boolPause;
 
@@ -289,7 +287,7 @@ void MainWindow::togglePosition(){
 
 void MainWindow::toggleFF(){
   if(boolFF){
-    this->boutonFF->setText(">>");
+    this->buttonFastForward->setText(">>");
     timer->setInterval(SPD_INTERVAL);
   }
   else {
