@@ -180,6 +180,7 @@ void MainWindow::changeImage(){
       std::map<std::string, CalibratedImage> images_by_source;
       images_by_source = manager.getCalibratedImages(now);
       for (const auto & entry : images_by_source) {
+        std::string source_name = entry.first;
         cv::Mat display_img = entry.second.getImg().clone();
         if (entry.second.isFullySpecified()) {
           const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
@@ -233,6 +234,9 @@ void MainWindow::changeImage(){
         }
         cv::cvtColor(display_img, display_img, CV_BGR2RGB);
         this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
+        char str_test[20];
+        sprintf(str_test,"%d\n",manager.getImageProvider(source_name).getNbFrames());
+        sliderValue->setText(str_test);
       }
     }
     for (auto it : teamPanels){
