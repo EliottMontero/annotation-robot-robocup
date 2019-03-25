@@ -27,7 +27,7 @@ using namespace hl_monitoring;
 
 using namespace traitement;
 
-int main(int argc, char ** argv) {
+int main() {
   Json::Reader reader;
   Json::Value root;
   
@@ -91,7 +91,7 @@ int main(int argc, char ** argv) {
      cv::Mat display_img = entry.second.getImg().clone();
      if (entry.second.isFullySpecified()) {
        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-       field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+       //field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
        // Basic drawing of robot estimated position
        for (const auto & robot_entry : status.robot_messages) {
 	 uint32_t team_id = robot_entry.first.team_id();
@@ -149,7 +149,7 @@ int main(int argc, char ** argv) {
    
      cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
      cv::imshow(entry.first, display_img);
-     cv::waitKey(10);
+     cv::waitKey(1);
   
    }
 

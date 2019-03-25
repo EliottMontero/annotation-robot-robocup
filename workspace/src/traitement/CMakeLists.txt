@@ -56,5 +56,11 @@ if (BUILD_TRAITEMENT_TOOLS)
 
   add_executable(test_logs tools/test.cpp)
   target_link_libraries(test_logs ${PROJECT_NAME} ${catkin_LIBRARIES})
+
+  add_executable(test_time tools/test_time.cpp)
+  target_link_libraries(test_time ${PROJECT_NAME} ${catkin_LIBRARIES})
+
+  add_executable(test_video tools/test_video.cpp)
+  target_link_libraries(test_time ${PROJECT_NAME} ${catkin_LIBRARIES})
   
 endif()
