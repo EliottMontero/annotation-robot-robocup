@@ -112,7 +112,7 @@ int main(int argc, char ** argv) {
    
 
       for (const auto & entry : images_by_source) {
-	if ((now-old_time-elapsed_seconds.count())>-(now-old_time)){
+	if ((now-old_time-elapsed_seconds.count())>-3000){
 	cv::Mat display_img = entry.second.getImg().clone();
      
 	if ( entry.second.isFullySpecified()) {

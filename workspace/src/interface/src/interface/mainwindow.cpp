@@ -291,7 +291,7 @@ void MainWindow::toggleFF(){
     timer->setInterval(SPD_INTERVAL);
   }
   else {
-    this->boutonFF->setText(">");
+    this->buttonFastForward->setText(">");
     timer->setInterval(SPD_INTERVAL_FF);
   }
   boolFF = !boolFF;
