@@ -31,10 +31,10 @@ libjsoncpp-dev, libtclap-dev, qtmultimedia5-dev, libopencv, gcc, cmake, git :
 
       pip install -U catkin_tools
 
-- Clone catkin in workspace/src : (from the root of the project)
+- Import the project's submodules : 
 
-      cd workspace/src
-      git clone https://github.com/ros/catkin.git
+      git submodule init
+      git submodule update
 
 Now you should have every dependencies needed to make this project work.
 You may need to download QT 5.9.5 from the official website :
