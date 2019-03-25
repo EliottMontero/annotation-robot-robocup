@@ -96,56 +96,70 @@ int main(int argc, char ** argv) {
        field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
        // Basic drawing of robot estimated position
        for (const auto & robot_entry : status.robot_messages) {
+	 uint64_t message_time = robot_entry.second.time_stamp();
 	 uint32_t team_id = robot_entry.first.team_id();
-         if (robot_entry.second.has_perception()) {
+	 if (teams.find(team_id)==teams.end()){
+	   Team t1;
+	   teams[team_id]=t1;
+	 }
+	 if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
+	   teams[team_id].AddRobot(robot_entry.first.robot_id());
+	   teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
+	   teams[team_id].setRobotNum(robot_entry.first.robot_id());
+	 }
+	 teams[team_id].setRobotMessage(robot_entry.first.robot_id(), robot_entry.second);
+	   	   
+	 display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
+       }
+       /*  if (robot_entry.second.has_perception()) {
 	   const Perception & perception = robot_entry.second.perception();			
 	   for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
 	     
-	     /* init des robots présent sur le jeu*/
-	     if (teams.find(team_id)==teams.end()){
-	       Team t1;
-	       teams[team_id]=t1;
-	     }
-	     if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
-	       teams[team_id].AddRobot(robot_entry.first.robot_id());
-	       teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
-	       teams[team_id].setRobotNum(robot_entry.first.robot_id());
+	   /* init des robots présent sur le jeu*/
+       /*	     if (teams.find(team_id)==teams.end()){
+		     Team t1;
+		     teams[team_id]=t1;
+		     }
+		     if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
+		     teams[team_id].AddRobot(robot_entry.first.robot_id());
+		     teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
+		     teams[team_id].setRobotNum(robot_entry.first.robot_id());
 
-	     }
+		     }
 	     
-	     //	teams[team_id].GetRobot(robot_entry.first.robot_id()).getPosRobot();
-	     
-	     /* position du robot */
-	     const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
+		     //	teams[team_id].GetRobot(robot_entry.first.robot_id()).getPosRobot();
+		     */	     
+       /* position du robot */
+       /*const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
 
-	     if (now<stop || now >stop+8000000 ){ //no position during 8s
-	       if (robot_entry.first.robot_id() !=2){ //no position for robot 2
+	 if (now<stop || now >stop+8000000 ){ //no position during 8s
+	 if (robot_entry.first.robot_id() !=2){ //no position for robot 2
 	      
 
-	       const PositionDistribution & position = weighted_pose.pose().position();
-	       Position pos;
-	       pos.setPosition(position.x(),position.y(), now);	       
-	       teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
-	       }
+	 const PositionDistribution & position = weighted_pose.pose().position();
+	 Position pos;
+	 pos.setPosition(position.x(),position.y(), message_time);	       
+	 teams[team_id].setRobotPos(robot_entry.first.robot_id(),pos);
+	 }
 
-	     }
+	       }*/
 	     /*direction of the robot*/
 
 	     //direction all the time for all robots
-	     if (now<stop-2000000 || now >stop+4000000 ){ //no position during 6s
+/*   if (now<stop-2000000 || now >stop+4000000 ){ //no position during 6s
 	       if (robot_entry.first.robot_id() !=1){ //no position for robot 1
 		 const AngleDistribution & dir = weighted_pose.pose().dir();
 		 Direction direction;
-		 direction.SetMean (dir.mean(), now);
+		 direction.SetMean (dir.mean(), message_time);
 		 teams[team_id].setRobotDirRobot(robot_entry.first.robot_id(),direction);
 	       }
 	     }
 
 	     if (now<stop+6000000 || now >stop+10000000 ){ //no position during 8s
-	       /*position of the ball from the robot*/
-	       const PositionDistribution & ball = perception.ball_in_self();
+*/    /*position of the ball from the robot*/
+/*	       const PositionDistribution & ball = perception.ball_in_self();
 	       Position pos_ball;
-	       pos_ball.setPosition(ball.x(), ball.y(), now);
+	       pos_ball.setPosition(ball.x(), ball.y(), message_time);
 	       teams[team_id].setRobotPosBall(robot_entry.first.robot_id(), pos_ball);
 	     }
 	   
@@ -156,14 +170,14 @@ int main(int argc, char ** argv) {
 	     const PositionDistribution & target_pos = intention.target_pose_in_field().position();
 	     
 	     Position pos_target;
-	     pos_target.setPosition(target_pos.x(),target_pos.y(), now);
+	     pos_target.setPosition(target_pos.x(),target_pos.y(), message_time);
 	     teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 	     
-	   }
+	   
 	   display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
             
-	 }
-       }
+	   }*/
+       
      }
    
      cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
@@ -176,3 +190,4 @@ int main(int argc, char ** argv) {
   }
   return 0;
 }
+

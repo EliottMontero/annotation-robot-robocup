@@ -197,29 +197,33 @@ void MainWindow::changeImage(){
             if(!teams[team_id].IsRobot(robot_id)){
               createRobot(robot_id, team_id);
             }
+	    teams[team_id].setRobotMessage(robot_entry.first.robot_id(), robot_entry.second);
+	   	   
+	    display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
+	  }
 
-            if (robot_entry.second.has_perception()) {
-              const Perception & perception = robot_entry.second.perception();
-              for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
+	  /*if (robot_entry.second.has_perception()) {
+	    const Perception & perception = robot_entry.second.perception();
+	    for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
 
-                /* position du robot */
-                const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-                const PositionDistribution & position = weighted_pose.pose().position();
-                Position pos;
-                pos.setPosition(position.x(),position.y(), now);
-                teams[team_id].setRobotPos(robot_id,pos);
+	  */       /* position du robot */
+	  /*       const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
+		   const PositionDistribution & position = weighted_pose.pose().position();
+		   Position pos;
+		   pos.setPosition(position.x(),position.y(), now);
+		   teams[team_id].setRobotPos(robot_id,pos);
 
-                const AngleDistribution & dir = weighted_pose.pose().dir();
-                Direction direction;
-                direction.SetMean (dir.mean(),now);
-                teams[team_id].setRobotDirRobot(robot_id,direction);
+		   const AngleDistribution & dir = weighted_pose.pose().dir();
+		   Direction direction;
+		   direction.SetMean (dir.mean(),now);
+		   teams[team_id].setRobotDirRobot(robot_id,direction);
 
-                const PositionDistribution & ball = perception.ball_in_self();
-                Position pos_ball;
-                pos_ball.setPosition(ball.x(), ball.y(), now);
-                teams[team_id].setRobotPosBall(robot_id, pos_ball);
+		   const PositionDistribution & ball = perception.ball_in_self();
+		   Position pos_ball;
+		   pos_ball.setPosition(ball.x(), ball.y(), now);
+		   teams[team_id].setRobotPosBall(robot_id, pos_ball);
 
-                //pour l'affichage de la position souhaitée mais pas encore fini.
+		   //pour l'affichage de la position souhaitée mais pas encore fini.
            	   const Intention & intention = robot_entry.second.intention();
            	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
 
@@ -227,25 +231,25 @@ void MainWindow::changeImage(){
            	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
            	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
 
-               display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
-              }
-            }
-          }
-        }
-        cv::cvtColor(display_img, display_img, CV_BGR2RGB);
-        this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
-        char str_test[20];
-        sprintf(str_test,"%d\n",manager.getImageProvider(source_name).getNbFrames());
-        sliderValue->setText(str_test);
-      }
+		   display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
+		   }
+		   }
+		   }*/
     }
-    for (auto it : teamPanels){
-      (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
-          annotation->getTeamTrace(), annotation->getRobotTrace(),
-          annotation->getTeamBall(), annotation->getRobotBall(),
-          annotation->getTeamTarget(), annotation->getRobotTarget());
-    }
+    cv::cvtColor(display_img, display_img, CV_BGR2RGB);
+    this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
+    char str_test[20];
+    sprintf(str_test,"%d\n",manager.getImageProvider(source_name).getNbFrames());
+    sliderValue->setText(str_test);
   }
+}
+for (auto it : teamPanels){
+  (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
+				annotation->getTeamTrace(), annotation->getRobotTrace(),
+				annotation->getTeamBall(), annotation->getRobotBall(),
+				annotation->getTeamTarget(), annotation->getRobotTarget());
+ }
+}
 }
 
 void MainWindow::createTeam(int id){

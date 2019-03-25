@@ -1,8 +1,19 @@
 #pragma once
 
+#include <hl_communication/utils.h>
+#include <hl_communication/message_manager.h>
+#include <hl_monitoring/monitoring_manager.h>
+#include <hl_monitoring/utils.h>
+#include <hl_monitoring/field.h>
+
 #include <traitement/position.h>
 #include <traitement/direction.h>
+#include <hl_communication/wrapper.pb.h>
+
 #include <queue>       
+
+using namespace hl_communication;
+using namespace hl_monitoring;
 
 namespace traitement
 {
@@ -10,51 +21,35 @@ namespace traitement
   class RobotInformation {
 
   public:
-    int numRobotInformation;
+    int team;
+    int robot;
 
+
+    
     RobotInformation();
     ~RobotInformation();
-    void setTeam(int team_id);
-    void setnumRobotInformation(int robot_id);
-    void setPosRobot(Position pos);
-    void setPosBall(Position pos);
-    void setPosTarget(Position pos);
-    void setDirRobot(Direction dir);
-    Position getPosBall();
-    Position getPosRobot();
-    Position getPosTarget();
-    Direction getDirRobot();
-    int getTeam() const;
-    int getNumRobotInformation() const;
-    int getPenalty() const;
-    int getSecsTillUnpenalised() const;
-    int getYellowCardCount() const;
-    int getRedCardCount() const;
+    void updateRobotMessage( RobotMsg new_message_by_robot);
+    void updateGCMessage( GCRobotMsg new_message_by_GC);
 
-    /*pour afficher les x anciennes positions du robot afin d'avoir la trace du robot*/
-    std::queue<Position> oldPos;
-    int sizeOfQueue();
     /*retourne la position en haut de la queue, la place en bas de la queue
-     lorsqu'on lance cette fonction on la lance sizeOfQueue fois,
-    le fait de lire le haut et de le mettre ensuite au bout de la queue
-    nous permet de lire chaque position une fois puis de revenir comme avant la lecture*/
-    Position getTraceRobot();
-    /*ajoute une position dans la queue*/
-    void stockPos(Position pos);
-    void removePos();
-
+      lorsqxu'on lance cette fonction on la lance sizeOfQueue fois,
+      le fait de lire le haut et de le mettre ensuite au bout de la queue
+      nous permet de lire chaque position une fois puis de revenir comme avant la lecture*/
+    Position getTraceRobot(uint64_t time_stamp);
+    /*add a postion in the map*/
+    void stockPos(Position pos, uint64_t time_stamp);
+    void removePos(uint64_t time_stamp);
+    RobotMsg getMessageRobot();
+    std::map<uint64_t, Position> getRobotTrace();
+    void setTeam(int team_id);
+    void setnumRobot(int robot_id);
+    
   private:
-    int team;
-    int penalty;
-    int secs_till_unpenalised;
-    int yellow_card_count;
-    int red_card_count;
-    Position ball_pos;
-    Position robot_pos;
-    Position target_pos;
-    Direction robot_dir;
-
-
+    RobotMsg message_by_robot;
+    GCRobotMsg message_by_GC;
+    /*To stock the old positions of the robot*/
+    std::map<uint64_t, Position> robot_trace;
+  
 
   };
 

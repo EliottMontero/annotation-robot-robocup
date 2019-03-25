@@ -36,26 +36,24 @@ namespace traitement
     return copy_robots;
   }
 
+  void Team::setRobotMessage(int robot_id, RobotMsg rb_msg)
+  {
+    
+    robots[robot_id].updateRobotMessage(rb_msg);
+  }
+
+  void Team::setGCMessage(int robot_id, GCRobotMsg gc_msg)
+  {
+    
+    robots[robot_id].updateGCMessage(gc_msg);
+  }
+
   void Team::setRobotTeam(int robot_id, int team_id){
     robots[robot_id].setTeam(team_id);
   }
 
   void Team::setRobotNum(int robot_id){
-    robots[robot_id].setnumRobotInformation(robot_id);
-  }
-  void Team::setRobotPos(int robot_id, Position pos){
-    robots[robot_id].stockPos(pos);
+    robots[robot_id].setnumRobot(robot_id);
   }
 
-  void Team::setRobotPosBall(int robot_id, Position pos){
-    robots[robot_id].setPosBall(pos);
-  }
-
-  void Team::setRobotPosTarget(int robot_id, Position pos){
-    robots[robot_id].setPosTarget(pos);
-  }
-
-  void Team::setRobotDirRobot(int robot_id, Direction dir){
-    robots[robot_id].setDirRobot(dir);
-  }
 }
