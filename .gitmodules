@@ -1,0 +1,6 @@
+[submodule "workspace/src/hl_monitoring"]
+	path = workspace/src/hl_monitoring
+	url = https://github.com/medrimonia/hl_monitoring.git
+[submodule "workspace/src/hl_communication"]
+	path = workspace/src/hl_communication
+	url = https://github.com/medrimonia/hl_communication.git
