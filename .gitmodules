@@ -4,3 +4,6 @@
 [submodule "workspace/src/hl_communication"]
 	path = workspace/src/hl_communication
 	url = https://github.com/medrimonia/hl_communication.git
+[submodule "workspace/src/catkin"]
+	path = workspace/src/catkin
+	url = https://github.com/ros/catkin.git
