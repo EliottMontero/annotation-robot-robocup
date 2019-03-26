@@ -36,10 +36,12 @@ namespace traitement
     return copy_robots;
   }
 
-  void Team::setRobotMessage(int robot_id, RobotMsg rb_msg)
+  void Team::updateRobot(int robot_id, RobotMsg rb_msg)
   {
     
     robots[robot_id].updateRobotMessage(rb_msg);
+    robots[robot_id].updateRobotTrace(rb_msg);
+    
   }
 
   void Team::setGCMessage(int robot_id, GCRobotMsg gc_msg)

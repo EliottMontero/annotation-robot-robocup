@@ -23,6 +23,7 @@ namespace traitement
   public:
     int team;
     int robot;
+    std::map<uint64_t, Position> robot_trace;
 
 
     
@@ -30,7 +31,8 @@ namespace traitement
     ~RobotInformation();
     void updateRobotMessage( RobotMsg new_message_by_robot);
     void updateGCMessage( GCRobotMsg new_message_by_GC);
-
+    void updateRobotTrace(RobotMsg new_message_by_robot);
+    
     /*retourne la position en haut de la queue, la place en bas de la queue
       lorsqxu'on lance cette fonction on la lance sizeOfQueue fois,
       le fait de lire le haut et de le mettre ensuite au bout de la queue
@@ -38,7 +40,6 @@ namespace traitement
     Position getTraceRobot(uint64_t time_stamp);
     /*add a postion in the map*/
     void stockPos(Position pos, uint64_t time_stamp);
-    void removePos(uint64_t time_stamp);
     RobotMsg getMessageRobot();
     std::map<uint64_t, Position> getRobotTrace();
     void setTeam(int team_id);
@@ -48,7 +49,6 @@ namespace traitement
     RobotMsg message_by_robot;
     GCRobotMsg message_by_GC;
     /*To stock the old positions of the robot*/
-    std::map<uint64_t, Position> robot_trace;
   
 
   };

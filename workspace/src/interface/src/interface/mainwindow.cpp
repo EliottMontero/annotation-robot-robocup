@@ -197,7 +197,7 @@ void MainWindow::changeImage(){
             if(!teams[team_id].IsRobot(robot_id)){
               createRobot(robot_id, team_id);
             }
-	    teams[team_id].setRobotMessage(robot_entry.first.robot_id(), robot_entry.second);
+	    teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
 	   	   
 	    display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
 	  }

@@ -28,7 +28,7 @@ namespace traitement
     bool IsRobot(int robot_id);
     RobotInformation GetRobot(int robot_id);
     std::map<int, RobotInformation> getRobotMap();
-    void setRobotMessage(int robot_id, RobotMsg rb_msg);
+    void updateRobot(int robot_id, RobotMsg rb_msg);
     void setGCMessage(int robot_id, GCRobotMsg gc_msg);
     void setRobotTeam(int robot_id, int team_id);
     void setRobotNum(int robot_id);

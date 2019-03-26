@@ -51,7 +51,7 @@ namespace traitement{
     cv::Mat annotePosition(CameraMetaInformation camera_information,Position pos,cv::Mat display,  uint64_t now);
     cv::Mat annoteTarget(CameraMetaInformation camera_information, RobotMsg robot, Position pos_target ,cv::Mat display,  uint64_t now);
     cv::Mat annoteDirection(CameraMetaInformation camera_information, Direction dir, Position pos,cv::Mat display,  uint64_t now);
-    cv::Mat annoteTrace(CameraMetaInformation camera_information, std::map<uint64_t, Position>robot_trace,cv::Mat display,  uint64_t now);
+    cv::Mat annoteTrace(CameraMetaInformation camera_information, RobotInformation robot,cv::Mat display,  uint64_t now);
     cv::Mat annoteBall(CameraMetaInformation camera_information, Position pos_ball, Position pos, Direction dir,cv::Mat display,  uint64_t now);
     cv::Mat AddAnnotation(CameraMetaInformation camera_information,  RobotInformation robot,cv::Mat display,  uint64_t now);
 

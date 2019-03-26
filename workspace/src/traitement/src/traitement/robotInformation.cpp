@@ -10,29 +10,39 @@ namespace traitement
   }
   void RobotInformation::updateRobotMessage( RobotMsg new_message_by_robot){
     message_by_robot = new_message_by_robot;
+    
   }
   void RobotInformation::updateGCMessage( GCRobotMsg new_message_by_GC)
   {
     message_by_GC = new_message_by_GC;
   }
 
+  void RobotInformation::updateRobotTrace(RobotMsg message_by_robot)
+  {
+    if (message_by_robot.has_perception()) {
+	  const Perception & perception = message_by_robot.perception();
+	  const WeightedPose & weighted_pose = perception.self_in_field(0);	  
+	  if (weighted_pose.pose().has_position())
+	    {
+	      const PositionDistribution & position = weighted_pose.pose().position();
+	      Position pos;
+	      pos.setPosition(position.x(),position.y(), message_by_robot.time_stamp());
+	      stockPos(pos, message_by_robot.time_stamp());
+	      
+	    }
+    }
+    
+  }
+  
+
   /*Detail dans le .h si besoin*/
   Position RobotInformation::getTraceRobot(uint64_t time_stamp){
-    /*  Position toSend = oldPos.front();
-    oldPos.pop();
-    oldPos.push(toSend);*/
-    Position pos;
     
-    return pos;
+    return robot_trace[time_stamp];
   }
 
   void RobotInformation::stockPos(Position pos,uint64_t time_stamp){
-    /* setPosRobot(pos);
-       oldPos.push(pos);*/
-  }
-
-  void RobotInformation::removePos(uint64_t time_stamp){
-    // oldPos.pop();
+    robot_trace[time_stamp]=pos;
   }
 
   RobotMsg RobotInformation::getMessageRobot()
