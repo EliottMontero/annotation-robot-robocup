@@ -34,7 +34,7 @@ MainWindow::MainWindow()
 
   connect(buttonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
   connect(buttonPause, SIGNAL (released()), this, SLOT (togglePause()));
-  connect(buttonFastForward, SIGNAL (released()), this, SLOT (toggleFF()));
+  connect(buttonFastForward, SIGNAL (released()), this, SLOT (toggleFastForward()));
   connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
   layout->addWidget(labelVideo,1,1,5,4);
@@ -48,15 +48,13 @@ MainWindow::MainWindow()
   setCentralWidget(zoneCentral);
 
   boolPause = false;
-  boolFF = false;
+  boolFastForward = false;
   boolPosition = true;
   boolDirection = true;
   boolTrace = true;
   boolTarget = true;
   boolBall = true;
 
-
-  //*** Partie communication avec traitement ***//
 
   Json::Reader reader;
   Json::Value root;
@@ -293,8 +291,8 @@ void MainWindow::togglePosition(){
   boolPosition = !boolPosition;
 }
 
-void MainWindow::toggleFF(){
-  if(boolFF){
+void MainWindow::toggleFastForward(){
+  if(boolFastForward){
     this->buttonFastForward->setText(">>");
     timer->setInterval(SPD_INTERVAL);
   }
@@ -302,7 +300,7 @@ void MainWindow::toggleFF(){
     this->buttonFastForward->setText(">");
     timer->setInterval(SPD_INTERVAL_FF);
   }
-  boolFF = !boolFF;
+  boolFastForward = !boolFastForward;
 }
 
 void MainWindow::toggleDirection(){

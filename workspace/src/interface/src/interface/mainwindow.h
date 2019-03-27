@@ -49,7 +49,7 @@ public:
     void robotChoice();
     void changeImage();
     void togglePause();
-    void toggleFF();
+    void toggleFastForward();
     void togglePosition();
     void toggleDirection();
     void toggleTrace();
@@ -80,7 +80,7 @@ private :
     bool boolMove=false;
 
     bool boolPause;
-    bool boolFF;
+    bool boolFastForward;
     bool boolPosition;
     bool boolDirection;
     bool boolTrace;
