@@ -44,7 +44,19 @@ namespace traitement
   void RobotInformation::stockPos(Position pos,uint64_t time_stamp){
     robot_trace[time_stamp]=pos;
   }
-
+  void RobotInformation::removeOnePos(uint64_t time_stamp)
+  {
+    robot_trace.erase(time_stamp);
+  }
+  
+  void RobotInformation::removeFiewPos(uint64_t time_stamp)
+  {
+    auto it=robot_trace.upper_bound(time_stamp);
+    robot_trace.erase(it, robot_trace.end());
+  }
+  
+    
+  
   RobotMsg RobotInformation::getMessageRobot()
   {
     return message_by_robot;

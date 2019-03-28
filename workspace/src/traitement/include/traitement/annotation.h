@@ -27,8 +27,13 @@ namespace traitement{
     int delay_annotation;
     uint32_t team_id = 0;
     uint32_t id_robot = 0;
+    float s_to_us = 1000000.0;
+  
+   
+    
 
     int sizecircle;
+    float sizenumber = 0.0;
     int sizecircletrace;
     int sizearrow;
     int robottrace;
@@ -38,6 +43,7 @@ namespace traitement{
     int robotball;
     int teamball;
     int targetsize;
+    int dashsize;
     int robottarget;
     int teamtarget;
     std::map<int ,cv::Scalar> color;

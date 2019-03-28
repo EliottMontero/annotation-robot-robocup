@@ -61,11 +61,13 @@ namespace traitement{
     checkMember(root["ball"], "robot_num");
     checkMember(root["ball"], "team_num");
     checkMember(root["target"], "target_size");
+    checkMember(root["target"], "dash_size");
     checkMember(root["target"], "robot_num");
     checkMember(root["target"], "team_num");
 
 
     sizecircle = root["position"]["circle_size"].asUInt();
+    sizenumber = sizecircle*0.75; //define to see better the numbers
     sizecircletrace = root["trace"]["circle_size"].asUInt();
     sizearrow = root["direction"]["arrow_size"].asUInt();
     robottrace = root["trace"]["robot_num"].asUInt();
@@ -75,6 +77,7 @@ namespace traitement{
     robotball = root["ball"]["robot_num"].asUInt();
     teamball = root["ball"]["team_num"].asUInt();
     targetsize = root["target"]["target_size"].asUInt();
+    dashsize = root["target"]["dash_size"].asUInt();
     robottarget = root["target"]["robot_num"].asUInt();
     teamtarget = root["target"]["team_num"].asUInt();
 
@@ -88,31 +91,33 @@ namespace traitement{
     checkMember(root["color_team_2"], "b");
     checkMember(root["color_team_2"], "g");
 
+    cv::Scalar color0 = {0,0,0};
 
     cv::Scalar color1 = {root["color_team_1"]["r"].asUInt(), root["color_team_1"]["g"].asUInt(), root["color_team_1"]["b"].asUInt()};
 
     cv::Scalar color2 = {root["color_team_2"]["r"].asUInt(), root["color_team_2"]["g"].asUInt(), root["color_team_2"]["b"].asUInt()};
 
+    //0 for unkonwn teams because we initialize team_id = 0
+    color[0]=color0;
     color[root["color_team_1"]["num"].asUInt()]=color1;
     color[root["color_team_2"]["num"].asUInt()]=color2;
   }
-
-
 
   Annotation::~Annotation(){
   }
 
   bool Annotation::IsMessageValid(uint64_t time_stamp, uint64_t now, int delay){
-    return ((((delay*1000000.0-(now-time_stamp))/delay*1000000.0)>0 ));
+    return ((((delay*s_to_us-(now-time_stamp))/delay*s_to_us)>0 )); //seconds to microseconds
   }
 
 
   cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information,Position pos ,cv::Mat display,  uint64_t now){
+    
     cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+    
     if (annotation_choice["optimized"]){
-      //calcul compliqué à cause du time stamp
-      float delay = delay_annotation*1000000.0;
+      float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now-pos.time_stamp))/delay;
       if (opacity>0){
 	cv::Mat overlay;
@@ -120,7 +125,7 @@ namespace traitement{
 	if (color.find(team_id)!=color.end())
 	  cv::circle(overlay,pos_in_img, sizecircle, color[team_id],cv::FILLED);
 	else
-	  cv::circle(overlay,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);
+	  cv::circle(overlay,pos_in_img, sizecircle, color[0],cv::FILLED);
 	cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);	
       }
     }
@@ -129,97 +134,107 @@ namespace traitement{
       if (color.find(team_id)!=color.end())
 	cv::circle(display,pos_in_img, sizecircle, color[team_id],cv::FILLED);
       else
-	cv::circle(display,pos_in_img, sizecircle, cv::Scalar(0,0,0),cv::FILLED);      
+	cv::circle(display,pos_in_img, sizecircle, color[0],cv::FILLED);
     }
     
     if (annotation_choice["number"]){
-      cv::putText(display, std::to_string(id_robot), cv::Point2f(pos_in_img.x-sizecircle*3/4,pos_in_img.y+sizecircle*3/4), cv::FONT_HERSHEY_TRIPLEX ,0.7,cv::Scalar(0,0,0),2);
+      if (team_id == 0 || color.find(team_id)==color.end())
+	cv::putText(display, std::to_string(id_robot), cv::Point2f(pos_in_img.x-sizenumber,pos_in_img.y+sizenumber), cv::FONT_HERSHEY_SIMPLEX ,sizenumber/10,cv::Scalar(255,255,255),2);
+      else
+	cv::putText(display, std::to_string(id_robot), cv::Point2f(pos_in_img.x-sizenumber,pos_in_img.y+sizenumber), cv::FONT_HERSHEY_SIMPLEX ,sizenumber/10,cv::Scalar(0,0,0),2);
     }
     
     return display;
   }
 
   cv::Mat  Annotation::annoteTarget(CameraMetaInformation camera_information,RobotMsg robot ,Position pos_target,cv::Mat display,  uint64_t now){
+    
     cv::Point3f pos_in_field(pos_target.x, pos_target.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
     
     if (annotation_choice["optimized"]){
-      float delay = delay_annotation*1000000.0;
+      float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now-pos_target.time_stamp))/delay;
       if (opacity>0){
+	
 	cv::Mat overlay;
 	display.copyTo(overlay);
-	cv::Scalar s =  cv::Scalar(0,0,0);
+	cv::Scalar s = color[0];
 	if (color.find(team_id)!=color.end())
-	  s=color[team_id];	 
-	cv::drawMarker (overlay,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, 10, 2, 8);
+	  s = color[team_id];
+	
+	// s/2 gives us the color but darker
+	cv::drawMarker (overlay,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, targetsize, 2, 8);
 	
 	if (robot.has_perception()) {
+	  
 	  const Perception & perception = robot.perception();
-	  //  if (robot.has_weighted_pose())
-	  //    {
 	  const WeightedPose & weighted_pose = perception.self_in_field(0);
+	  
 	  if (weighted_pose.pose().has_position())
 	    {
 	      const PositionDistribution & position = weighted_pose.pose().position();
+	      
 	      cv::Point3f pos_in_fieldr(position.x(),position.y(), 0.0);
 	      cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
-	      cv::LineIterator it(overlay, pos_in_img, pos_in_imgr, 8);            // get a line iterator
+	      
+	      cv::LineIterator it(overlay, pos_in_img, pos_in_imgr, 8);            
 	      for(int i = 0; i < it.count; i++,it++)
-		if ( i%10<5 ) {
+		if ( i%dashsize*2<dashsize ) {
 		  (*it)[0] = s[0]/2;
 		  (*it)[1] = s[1]/2;
 		  (*it)[2] = s[2]/2;
 		}
 	    }
-	
 	}
-	
 	cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
       }
   
     }
     
     
-  else{
-    cv::Scalar s = cv::Scalar(0,0,0);
-    if (color.find(team_id)!=color.end())
-      s =  color[team_id];    
-    cv::drawMarker (display,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, 10, 2, 8);
-    if (robot.has_perception()) {
-      const Perception & perception = robot.perception();
-      //	  if (robot.has_weighted_pose())
-      //{
-      const WeightedPose & weighted_pose = perception.self_in_field(0);
-      if (weighted_pose.pose().has_position())
-	{
-	  const PositionDistribution & position = weighted_pose.pose().position();
-	  cv::Point3f pos_in_fieldr(position.x(),position.y(), 0.0);
-	  cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
-	  cv::LineIterator it(display, pos_in_img, pos_in_imgr, 8);            // get a line iterator
-	  for(int i = 0; i < it.count; i++,it++)
-	    if ( i%10<5 ) {
-	      (*it)[0] = s[0]/2;
-	      (*it)[1] = s[1]/2;
-	      (*it)[2] = s[2]/2;
-	    }
-	}
-      // }
+    else{
+
+      cv::Scalar s = color[0];
+      if (color.find(team_id)!=color.end())
+	s = color[team_id];
+      cv::drawMarker (display,pos_in_img, cv::Scalar(s[0]/2,s[1]/2,s[2]/2), cv::MARKER_TILTED_CROSS, targetsize, 2, 8);
+    
+      if (robot.has_perception()) {
+      
+	const Perception & perception = robot.perception();
+	const WeightedPose & weighted_pose = perception.self_in_field(0);
+      
+	if (weighted_pose.pose().has_position())
+	  {
+	    const PositionDistribution & position = weighted_pose.pose().position();
+	  
+	    cv::Point3f pos_in_fieldr(position.x(),position.y(), 0.0);
+	    cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
+	  
+	    cv::LineIterator it(display, pos_in_img, pos_in_imgr, 8);            
+	    for(int i = 0; i < it.count; i++,it++)
+	      if ( i%dashsize*2<dashsize ) {
+		(*it)[0] = s[0]/2;
+		(*it)[1] = s[1]/2;
+		(*it)[2] = s[2]/2;
+	      }
+	  }
+      }
     }
-  }
   
     return display;
   }
 
   cv::Mat  Annotation::annoteDirection( CameraMetaInformation camera_information,  Direction dir, Position pos,cv::Mat display, uint64_t now){
-    // calcul pos
+
     cv::Point3f pos_in_field(pos.x, pos.y, 0.0);
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-    //calcul dir
+
     cv::Point3f pos_in_fielddir(pos.x+cos(dir.mean), pos.y+sin(dir.mean), 0.0);
     cv::Point2f pos_in_imgdir = fieldToImg(pos_in_fielddir, camera_information);
-    /* reduction taille des flèches à une longueur de 50 pour que la taille des flèches soit homogène*/
+    /*reducing size of arrows for homogeneity*/
     float hypo = sqrt((pos_in_imgdir.x - pos_in_img.x)*(pos_in_imgdir.x - pos_in_img.x) +(pos_in_imgdir.y- pos_in_img.y)*(pos_in_imgdir.y- pos_in_img.y));
     cv::Point2f fleche;
     fleche.x =  pos_in_img.x + (sizearrow*(pos_in_imgdir.x - pos_in_img.x)/hypo);
@@ -227,38 +242,38 @@ namespace traitement{
     
     
     if (annotation_choice["optimized"]){
-      float delay = delay_annotation*1000000.0;
+      float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now-dir.time_stamp))/delay;
       if (opacity>0){
 	cv::Mat overlay;
 	display.copyTo(overlay);
-	/*Affichage couleur pour les angles de degrès bizarre*/
+	/* If the direction is > 2*PI, we draw the arrow in black*/
 	if (dir.mean > 2*CV_PI)
 	  cv :: arrowedLine(overlay, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
 	else
 	  if (color.find(team_id)!=color.end())
 	    cv :: arrowedLine(overlay, pos_in_img, fleche, color[team_id], 2, 0, 0.1);
 	  else
-	    cv :: arrowedLine(overlay, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+	    cv :: arrowedLine(overlay, pos_in_img, fleche, color[0], 2, 0, 0.1);
+       
 	cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
       }
     }
     else {
-      /*Affichage couleur pour les angles de degrès bizarre*/
       if (dir.mean > 2*CV_PI)
 	cv :: arrowedLine(display, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
       else
 	if (color.find(team_id)!=color.end())
 	  cv :: arrowedLine(display, pos_in_img, fleche, color[team_id], 2, 0, 0.1);
 	else
-	  cv :: arrowedLine(display, pos_in_img, fleche, cv::Scalar(0,0,0), 2, 0, 0.1);
+	  cv :: arrowedLine(display, pos_in_img, fleche, color[0], 2, 0, 0.1);
     }
     return display;
 
   }
 
 
-
+  
   cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information,  RobotInformation robot,cv::Mat display,  uint64_t now){
 
     Position old_pos;
@@ -273,23 +288,20 @@ namespace traitement{
 	  cv::Mat overlay;
 	  display.copyTo(overlay);
 	 
-	  float delay = delay_old_pos*1000000.0;
+	  float delay = delay_old_pos*s_to_us;
 	  float opacity = (delay-(now-p.time_stamp))/delay;
-	  
+	  // we do not draw the position if more than the half is covered by the old one
 	  if(it==robot.robot_trace.begin()|| (it!=robot.robot_trace.begin() && (abs(old_pos.x-p.x)>sizecircletrace*1.5/100 || abs(old_pos.y-p.y)>sizecircletrace*1.5/100))){
 	    old_pos=p;
 	    cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	    cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 	    
-	    if (color.find(team_id)!=color.end()){
-	      cv::Scalar s =  color[team_id];
-	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
-	    }
-	    else{
-	      cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
-	    }
-	    
-	    cv::addWeighted(overlay,opacity, display,1- opacity, 0,display);
+	    cv::Scalar s = color[0];
+	    if (color.find(team_id)!=color.end())
+	      s = color[team_id];
+	    cv::circle(overlay,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	  	    
+	    cv::addWeighted(overlay,opacity, display,1-opacity, 0,display);
 	  }
 	  
 	}
@@ -300,14 +312,14 @@ namespace traitement{
 	  
 	  cv::Point3f pos_in_field(p.x, p.y, 0.0);
 	  cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
-	  if (color.find(team_id)!=color.end()){
-	    cv::Scalar s =  color[team_id];
-	    cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
-	  }
-	  else
-	    cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(0,0,0),cv::FILLED);
+	  cv::Scalar s = color[0];
+	  if (color.find(team_id)!=color.end())
+	    s = color[team_id];
+	  cv::circle(display,pos_in_img, sizecircletrace, cv::Scalar(s[0]/2,s[1]/2,s[2]/2),cv::FILLED);
+	 
 	}
       }
+    
 
   
     return display;
@@ -322,7 +334,7 @@ namespace traitement{
     cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
     if (annotation_choice["optimized"]){
-      float delay = delay_annotation*1000000.0;
+      float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now- pos_ball.time_stamp))/delay;
       if (opacity>0)
 	{
@@ -343,22 +355,34 @@ namespace traitement{
 
 
   cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation robot ,cv::Mat display,  uint64_t now){
-    if (robot.robot_trace.size()!=0 ){
-      uint64_t limit_time = now-(delay_old_pos*1000000.0);
+    
+    if (!robot.robot_trace.empty()){
+      
+      uint64_t limit_time = now-(delay_old_pos*s_to_us);
       //erase too old position
-      for (std::map<uint64_t, Position>::iterator it=robot.robot_trace.begin();it->first<limit_time; ++it)
-	
-	robot.robot_trace.erase(it->first);
+      for (std::map<uint64_t, Position>::iterator it=robot.robot_trace.begin();(it->first<=limit_time && it->first != 0); ++it)
+	{	  
+	  robot.removeOnePos(it->first);
+	}
+     
       //erase too recent position (if we go back in the video)
       auto it=robot.robot_trace.upper_bound(now);
       if (it!=robot.robot_trace.end())
-	robot.robot_trace.erase(it, robot.robot_trace.end());
-      
+	{ 
+	  robot.removeFiewPos(now);
 	}
+      
+      
+    }
+    	
     RobotMsg rb = robot.getMessageRobot();
     
     team_id = robot.team;
     id_robot = robot.robot;
+
+    if (annotation_choice["trace"] && id_robot == robottrace &&  team_id == teamtrace && !robot.getRobotTrace().empty()){
+      display = annoteTrace(camera_information, robot, display, now);
+    }
   
     if (IsMessageValid(rb.time_stamp(), now, delay_annotation))
       {
@@ -392,9 +416,8 @@ namespace traitement{
 	  
 	}
 
-	if (annotation_choice["trace"] && id_robot == robottrace &&  team_id == teamtrace && !robot.getRobotTrace().empty()){
-	  display = annoteTrace(camera_information, robot, display, now);
-	}
+		
+
     
 	if (rb.has_intention()) {
 	  const Intention & intention = rb.intention();
@@ -407,7 +430,7 @@ namespace traitement{
 	}
       }
     
- 
+    
     return display;
   }
 

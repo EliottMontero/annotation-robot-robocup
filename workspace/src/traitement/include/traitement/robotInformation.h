@@ -40,6 +40,9 @@ namespace traitement
     Position getTraceRobot(uint64_t time_stamp);
     /*add a postion in the map*/
     void stockPos(Position pos, uint64_t time_stamp);
+    void removeOnePos(uint64_t time_stamp);
+    void removeFiewPos(uint64_t time_stamp);
+    
     RobotMsg getMessageRobot();
     std::map<uint64_t, Position> getRobotTrace();
     void setTeam(int team_id);
