@@ -1,0 +1,49 @@
+{
+    "color_team_1":{
+	"num" : 9,
+	"r" : 255,
+	"g" : 255,
+	"b" : 0
+    },
+    "_comment" : "num of team_2 is 12 for 2vs1 video and 3 for 2019_03_21 video",
+    "color_team_2":{
+	"num" : 12,
+	"r" : 255,
+	"g" : 0,
+	"b" : 255
+    },
+    "position":{
+	"write": true,
+	"circle_size" : 10,
+	"number" : true, 
+	"exactitude" : false
+    },
+    "direction" : {
+	"write": true,
+	"arrow_size" : 50
+    },
+    "trace" : {
+	"write": true,
+	"robot_num" : 4,
+	"team_num" : 9,
+	"circle_size" : 5,
+	"delay_old_pos" : 5
+    },
+    "ball" : {
+	"write" : true,
+	"robot_num": 4,
+	"team_num" : 9,
+	"ball_size" : 8
+    },
+    "target" : {
+	"write" : true,
+	"robot_num" : 4,
+	"team_num" : 9,
+	"target_size" : 8,
+	"dash_size" : 5
+    },
+    "optimized" : false,
+    "delay_annotation" : 2
+    
+
+}

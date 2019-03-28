@@ -1,0 +1,8 @@
+{
+	"match_setting" :
+	{
+	    "config" : "replay.json",
+	    "field" : "eirlab.json",
+	    "speed_optimized" : false
+	}
+}
