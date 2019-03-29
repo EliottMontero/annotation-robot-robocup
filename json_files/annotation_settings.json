@@ -42,7 +42,6 @@
 	"target_size" : 8,
 	"dash_size" : 5
     },
-    ,
     "field" : {
 	"write" : true,
 	"name" : "eirlab.json"
