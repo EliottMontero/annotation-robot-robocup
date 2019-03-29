@@ -385,18 +385,18 @@ namespace traitement{
 
   cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information, RobotInformation robot ,cv::Mat display,  uint64_t now){
     
-    if (!robot.robot_trace.empty()){
+    if (!robot.getRobotTrace().empty()){
       
       uint64_t limit_time = now-(delay_old_pos*s_to_us);
       //erase too old position
-      for (std::map<uint64_t, Position>::iterator it=robot.robot_trace.begin();(it->first<=limit_time && it->first != 0); ++it)
+      for (std::map<uint64_t, Position>::iterator it=robot.getRobotTrace().begin();(it->first<=limit_time && it->first != 0); ++it)
 	{	  
-	  robot.removeOnePos(it->first);
+	  robot.removeOnePos(it->first);	  
 	}
      
       //erase too recent position (if we go back in the video)
-      auto it=robot.robot_trace.upper_bound(now);
-      if (it!=robot.robot_trace.end())
+      auto it=robot.getRobotTrace().upper_bound(now);
+      if (it!=robot.getRobotTrace().end())
 	{ 
 	  robot.removeFiewPos(now);
 	}
@@ -408,8 +408,7 @@ namespace traitement{
     
     team_id = robot.team;
     id_robot = robot.robot;
-
-    
+	      
     if (annotation_choice["trace"] && id_robot == robottrace &&  team_id == teamtrace && !robot.getRobotTrace().empty()){
       display = annoteTrace(camera_information, robot, display, now);
     }
@@ -419,18 +418,19 @@ namespace traitement{
 	if (rb.has_perception()) {
 	  const Perception & perception = rb.perception();
 	  const WeightedPose & weighted_pose = perception.self_in_field(0);	  
-	  if (annotation_choice["position"]&& weighted_pose.pose().has_position())
+	  if (weighted_pose.pose().has_position())
 	    {
 	      const PositionDistribution & position = weighted_pose.pose().position();
 	      Position pos;
 	      pos.setPosition(position.x(),position.y(), rb.time_stamp());
 	      
-	      if (annotation_choice["direction"]&& weighted_pose.pose().has_dir())
+	      if (weighted_pose.pose().has_dir())
 		{
 		  const AngleDistribution & dir = weighted_pose.pose().dir();
 		  Direction direction;
-		  direction.SetMean(dir.mean(),rb.time_stamp());		  
-		  display = annoteDirection( camera_information,direction, pos, display, now);
+		  direction.SetMean(dir.mean(),rb.time_stamp());
+		  if(annotation_choice["direction"])
+		    display = annoteDirection( camera_information,direction, pos, display, now);
 		      
 		  if (annotation_choice["ball"] &&  team_id == teamball && id_robot == robotball){
 		    const PositionDistribution & ball = perception.ball_in_self();
@@ -441,7 +441,8 @@ namespace traitement{
 		  
 		}
 	      /*Position is the last add on the image*/
-	      display = annotePosition(camera_information, pos, display, now);
+	      if(annotation_choice["position"])
+		display = annotePosition(camera_information, pos, display, now);
 	    }
 	  
 	}

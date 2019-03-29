@@ -38,7 +38,7 @@ namespace traitement
   }
   
 
-  RobotInformation Team::GetRobot(int robot_id){
+  RobotInformation Team::getRobot(int robot_id){
     return robots[robot_id];
   }
 

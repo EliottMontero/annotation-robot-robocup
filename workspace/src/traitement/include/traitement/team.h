@@ -30,7 +30,7 @@ namespace traitement
     void setScore(uint32_t score);
     uint32_t getScore();
     
-    RobotInformation GetRobot(int robot_id);
+    RobotInformation getRobot(int robot_id);
     std::map<int, RobotInformation> getRobotMap();
     void updateRobot(int robot_id, RobotMsg rb_msg);
     void setGCMessage(int robot_id, GCRobotMsg gc_msg);

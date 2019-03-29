@@ -64,15 +64,19 @@ uint64_t stop = now+6000000;
       now += NEXT_FRAME;
       }
     MessageManager::Status status = manager.getStatus(now);
-
-   std::map<std::string, CalibratedImage> images_by_source =
+    
+    // std::cout << "GCMSG : " << status.gc_message.time_stamp() <<std::endl;
+    
+    
+    std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
-   for (const auto & entry : images_by_source) {
-     cv::Mat display_img = entry.second.getImg().clone();
+    for (const auto & entry : images_by_source) {
+      cv::Mat display_img = entry.second.getImg().clone();
      if (entry.second.isFullySpecified()) {
        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
        for (const auto & robot_entry : status.robot_messages) {
 	 uint64_t message_time = robot_entry.second.time_stamp();
+	 //std::cout << "GCROBOT "<<  robot_entry.first.robot_id() < " : " << message_time <<std::endl;
 	 uint32_t team_id = robot_entry.first.team_id();
 	 if (teams.find(team_id)==teams.end()){
 	   Team t1;
@@ -103,7 +107,7 @@ uint64_t stop = now+6000000;
 	   
 	 }
 	
-	 display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
+	 display_img =annotation.AddAnnotation(camera_information, teams[team_id].getRobot(robot_entry.first.robot_id()) , display_img, now);
        }
      
        

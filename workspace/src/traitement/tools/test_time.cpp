@@ -73,7 +73,6 @@ int main(int argc, char ** argv) {
   uint64_t begin_time = now;
 
   uint64_t time_stamp = 0; //used for calculs
-  uint64_t old_time_stamp = 0; //stock the time_stamp of the previous message
 
   
   auto begin = std::chrono::system_clock::now(); //initialized at the begining of the programm, used to regulate the time
@@ -161,10 +160,10 @@ int main(int argc, char ** argv) {
 		teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
 		teams[team_id].setRobotNum(robot_entry.first.robot_id());
 	      }
-	      if (robot_entry.second.time_stamp() != old_time_stamp)
-		teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
+	      if (robot_entry.second.time_stamp() !=  teams[team_id].getRobot(robot_entry.first.robot_id()).getMessageRobot().time_stamp())
+	      teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
 
-	      display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
+	      display_img =annotation.AddAnnotation(camera_information, teams[team_id].getRobot(robot_entry.first.robot_id()) , display_img, now);
 
 	    }
 
@@ -185,7 +184,6 @@ int main(int argc, char ** argv) {
 	  end = std::chrono::system_clock::now();
 	  elapsed_useconds = end-loop;
 	  time_stamp = elapsed_useconds.count();
-	  old_time_stamp = status.gc_message.time_stamp();
 	  fprintf(csv,"%" PRIu64 ";", time_stamp);
 	  elapsed_useconds = end-begin;
 	  	  

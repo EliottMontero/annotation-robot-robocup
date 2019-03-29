@@ -74,16 +74,17 @@ int main() {
     }
 
     MessageManager::Status status = manager.getStatus(now);
-  
+    
     for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
       {
 	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
+	
 	if (team_msg.has_team_number() && team_msg.has_score())
 	  {
 	    uint32_t team_number = team_msg.team_number();
 	    if (teams.find(team_number)==teams.end()){
 	      Team t1;
-	      teams[team_number]=t1;
+	      teams[team_number]=t1;	      
 	    }
 	    teams[team_number].setScore(team_msg.score());
 	  }
@@ -104,7 +105,7 @@ int main() {
 	      annotation.annoteScore(teams, display_img);
 	    
 	    for (const auto & robot_entry : status.robot_messages) 
-	      {		
+	      {
 		uint32_t team_id = robot_entry.first.team_id();
 		if (teams.find(team_id)==teams.end()){
 		  Team t1;
@@ -115,9 +116,11 @@ int main() {
 		  teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
 		  teams[team_id].setRobotNum(robot_entry.first.robot_id());
 		}
-		teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
+
+		if (robot_entry.second.time_stamp() !=  teams[team_id].getRobot(robot_entry.first.robot_id()).getMessageRobot().time_stamp())
+		  teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
 	   	   
-		display_img =annotation.AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
+		display_img =annotation.AddAnnotation(camera_information, teams[team_id].getRobot(robot_entry.first.robot_id()) , display_img, now);
 	      }
 	  }
    
