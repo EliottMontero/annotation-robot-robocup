@@ -21,6 +21,9 @@
 
 #include <sstream>
 
+#define SECONDS_TO_MS 1000
+#define NEXT_FRAME 30000 //30fps in microseconds  
+
 
 using namespace hl_communication;
 using namespace hl_monitoring;
@@ -38,7 +41,6 @@ int main(int argc, char ** argv) {
   match_settings >> root;
 
   checkMember(root["match_setting"], "config");
-  checkMember(root["match_setting"], "field");
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
@@ -46,46 +48,22 @@ int main(int argc, char ** argv) {
   MonitoringManager manager;
   manager.loadConfig(conf);
 
-  std::string f = root["match_setting"]["field"].asString();
-  Field field;
-  field.loadFile(f);
-
-  std::cout << f << std::endl;
-
   Annotation annotation("annotation_settings.json");
   std::map<int, Team>teams;
-// While exit was not explicitly required, run
   uint64_t now = 0;
-  uint64_t dt = 30 * 1000;//[microseconds]
   if (!manager.isLive()) {
     now = manager.getStart();
-    //time_start = manager.getStart();
   }
-  uint64_t stop = now+6000000;
+uint64_t stop = now+6000000;
 
   while(manager.isGood()) {
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();
     } else {
-      now += dt;
+      now += NEXT_FRAME;
       }
     MessageManager::Status status = manager.getStatus(now);
-    std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-    std::map<uint32_t,cv::Scalar> colors_by_team;
-
-    //std::cout << "Temps de Jeu : " << manager.getTime() << std::endl;
-    /*  for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
-      std::cout << " team size : " << idx  << std::endl;  
-      const GCTeamMsg & team_msg = status.gc_message.teams(idx);
-      if (team_msg.has_team_number() && team_msg.has_team_color()) {
-        uint32_t team_color = team_msg.team_color();
-        uint32_t team_number = team_msg.team_number();
-        colors_by_team[team_number] = team_colors[team_color];
-      }
-    }
-    */
-
 
    std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
@@ -93,8 +71,6 @@ int main(int argc, char ** argv) {
      cv::Mat display_img = entry.second.getImg().clone();
      if (entry.second.isFullySpecified()) {
        const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-       field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-       // Basic drawing of robot estimated position
        for (const auto & robot_entry : status.robot_messages) {
 	 uint64_t message_time = robot_entry.second.time_stamp();
 	 uint32_t team_id = robot_entry.first.team_id();
@@ -108,7 +84,7 @@ int main(int argc, char ** argv) {
 	   teams[team_id].setRobotNum(robot_entry.first.robot_id());
 	 }
 	 if (robot_entry.first.robot_id() ==1){//pos for robot 1
-	   if (now<stop-4000000 || now >stop+4000000 ){ //no position during 6s
+	   if (now<stop-4000000 || now >stop+4000000 ){ //no position during 8s
 	     teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
 	   }
 	 }

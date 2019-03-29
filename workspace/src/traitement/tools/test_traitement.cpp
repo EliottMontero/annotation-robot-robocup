@@ -21,6 +21,9 @@
 
 #include <sstream>
 
+#define SECONDS_TO_MS 1000
+#define NEXT_FRAME 30000 //30fps in microseconds  
+
 
 using namespace hl_communication;
 using namespace hl_monitoring;
@@ -50,9 +53,7 @@ int main() {
 
   Annotation annotation("annotation_settings.json");
   std::map<int, Team>teams;
-  // While exit was not explicitly required, run
   uint64_t now = 0;
-  uint64_t dt = 30 * 1000;//[microseconds]
 
   //Use to optimize the speed of the video
   uint64_t begin_time = now;  
@@ -69,13 +70,11 @@ int main() {
     if (manager.isLive()) {
       now = getTimeStamp();
     } else {
-      now += dt;
+      now += NEXT_FRAME;
     }
 
     MessageManager::Status status = manager.getStatus(now);
-    // std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-    //std::map<uint32_t,cv::Scalar> colors_by_team;
-
+  
     for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
       {
 	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
@@ -132,15 +131,11 @@ int main() {
 	    {
 	      end = std::chrono::system_clock::now();
 	      elapsed_useconds = end-start;
-	      if (elapsed_useconds.count() >=(now-begin_time)-1000){
+	      if (elapsed_useconds.count() >=(now-begin_time)-SECONDS_TO_MS){
 		cv::waitKey(1);
-		//	std::cout << "fast" << std::endl;
-
 	      }
 	      else{
-		cv::waitKey(((now-begin_time)-elapsed_useconds.count())/1000);
-		//		std::cout << "slow" << std::endl;
-
+		cv::waitKey(((now-begin_time)-elapsed_useconds.count())/SECONDS_TO_MS);
 	      }
 	    }
 	 
@@ -148,8 +143,6 @@ int main() {
 	}
        else
 	    {
-	      //	      std::cout << "skip image" << std::endl;
-
 	      elapsed_useconds = end-start;
 	    }
     }  

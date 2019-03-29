@@ -28,6 +28,9 @@
 
 #include <sstream>
 
+#define SECONDS_TO_MS 1000
+#define NEXT_FRAME 30000 //30fps in microseconds  
+
 
 using namespace hl_communication;
 using namespace hl_monitoring;
@@ -47,7 +50,8 @@ int main(int argc, char ** argv) {
     fprintf(stderr, "\nErreur: Impossible d'écrire dans le fichier %s\n","out.csv");
     exit(EXIT_FAILURE);
   }
-  fprintf(csv, "Time getCalibratedImage; Time cloneCalibratedImage; Time addFieldLines;Time addAnnotations; total elapsed_time; Time for next image\n");
+  
+  fprintf(csv, "Time getCalibratedImage; Time cloneCalibratedImage; Time Annotations Field&Score;Time addAnnotations; total elapsed_time; Time for next image\n");
   
   std::ifstream match_settings("match_settings.json");
   if (!match_settings.good())
@@ -55,7 +59,6 @@ int main(int argc, char ** argv) {
   match_settings >> root;
 
   checkMember(root["match_setting"], "config");
-  checkMember(root["match_setting"], "field");
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
@@ -63,17 +66,10 @@ int main(int argc, char ** argv) {
   MonitoringManager manager;
   manager.loadConfig(conf);
 
-  std::string f = root["match_setting"]["field"].asString();
-  Field field;
-  field.loadFile(f);
-
-  std::cout << f << std::endl;
 
   Annotation annotation("annotation_settings.json");
   std::map<int, Team>teams;
-  // While exit was not explicitly required, run
   uint64_t now = 0;
-  uint64_t dt = 30 * 1000;//[microseconds]
   uint64_t begin_time = now;
 
   uint64_t time_stamp = 0; //used for calculs
@@ -97,7 +93,7 @@ int main(int argc, char ** argv) {
     if (manager.isLive()) {
       now = getTimeStamp();
     } else {
-      now += dt;
+      now += NEXT_FRAME;
     }
     start = std::chrono::system_clock::now();
     loop = std::chrono::system_clock::now();
@@ -105,9 +101,20 @@ int main(int argc, char ** argv) {
     
     MessageManager::Status status = manager.getStatus(now);
 
-    std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-    std::map<uint32_t,cv::Scalar> colors_by_team;
-
+    for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
+      {
+	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
+	if (team_msg.has_team_number() && team_msg.has_score())
+	  {
+	    uint32_t team_number = team_msg.team_number();
+	    if (teams.find(team_number)==teams.end()){
+	      Team t1;
+	      teams[team_number]=t1;
+	    }
+	    teams[team_number].setScore(team_msg.score());
+	  }
+      }
+    
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     
@@ -132,8 +139,11 @@ int main(int argc, char ** argv) {
    
 	  if ( entry.second.isFullySpecified()) {
 	    const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-	    field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-
+	    if (annotation.annotation_choice["field"])
+	      annotation.field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+	    if (annotation.annotation_choice["score"])
+	      annotation.annoteScore(teams, display_img);
+	    
 	    end = std::chrono::system_clock::now();
 	    elapsed_useconds =end-start;
 	    time_stamp = elapsed_useconds.count();
@@ -178,13 +188,14 @@ int main(int argc, char ** argv) {
 	  old_time_stamp = status.gc_message.time_stamp();
 	  fprintf(csv,"%" PRIu64 ";", time_stamp);
 	  elapsed_useconds = end-begin;
+	  	  
 	  
-	  if (elapsed_useconds.count() >=(now-begin_time)-1000){
+	  if (elapsed_useconds.count() >=(now-begin_time)-SECONDS_TO_MS){
 	    cv::waitKey(1);
 	    fprintf(csv, "fast\n");  
 	  }
 	  else{
-	    cv::waitKey(((now-begin_time)-elapsed_useconds.count())/1000);
+	    cv::waitKey(((now-begin_time)-elapsed_useconds.count())/SECONDS_TO_MS);
 	    fprintf(csv, "slow\n");
 	  
 	  }
