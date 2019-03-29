@@ -2,6 +2,8 @@
 
 
 
+#define NEXT_FRAME 30000 //30fps in microseconds  
+
 #define CV_IMG_WIDTH 480
 #define CV_IMG_HEIGHT 640
 #define SPD_INTERVAL 30
@@ -65,22 +67,14 @@ MainWindow::MainWindow()
   match_settings >> root;
 
   checkMember(root["match_setting"], "config");
-  checkMember(root["match_setting"], "field");
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
   manager.loadConfig(conf);
 
-  std::string f = root["match_setting"]["field"].asString();
-  field.loadFile(f);
-
-  std::cout << f << std::endl;
-
   annotation = new Annotation("annotation_settings.json");
 
-  // // While exit was not explicitly required, run
   now = 0;
-  dt = 30 * 1000;//[microseconds]
   if (!manager.isLive()) {
     now = manager.getStart();
   }
@@ -145,19 +139,17 @@ void MainWindow::changeImage(){
 
       else {
         if(boolMove){
-          now+=dt*200;
+          now+=NEXT_FRAME*200;
           boolMove=false;
         }
         else{
-          now += dt;
+          now += NEXT_FRAME;
         }
         char str[20];
         sprintf(str,"%d\n",now);
         sliderValue->setText(str);
       }
       MessageManager::Status status = manager.getStatus(now);
-      std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-      std::map<uint32_t,cv::Scalar> colors_by_team;
       std::map<uint32_t,cv::Scalar> score_by_team;
 
       //Team Msg
@@ -182,8 +174,9 @@ void MainWindow::changeImage(){
         cv::Mat display_img = entry.second.getImg().clone();
         if (entry.second.isFullySpecified()) {
           const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-          field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-
+	   if (annotation->annotation_choice["field"])
+	      annotation->field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+	   
           //Robot Msg
           for (const auto & robot_entry : status.robot_messages) {
             uint32_t team_id = robot_entry.first.team_id();
@@ -200,39 +193,6 @@ void MainWindow::changeImage(){
 	    display_img =annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_entry.first.robot_id()) , display_img, now);
 	  }
 
-	  /*if (robot_entry.second.has_perception()) {
-	    const Perception & perception = robot_entry.second.perception();
-	    for (int pos_idx = 0; pos_idx < perception.self_in_field_size(); pos_idx++) {
-
-	  */       /* position du robot */
-	  /*       const WeightedPose & weighted_pose = perception.self_in_field(pos_idx);
-		   const PositionDistribution & position = weighted_pose.pose().position();
-		   Position pos;
-		   pos.setPosition(position.x(),position.y(), now);
-		   teams[team_id].setRobotPos(robot_id,pos);
-
-		   const AngleDistribution & dir = weighted_pose.pose().dir();
-		   Direction direction;
-		   direction.SetMean (dir.mean(),now);
-		   teams[team_id].setRobotDirRobot(robot_id,direction);
-
-		   const PositionDistribution & ball = perception.ball_in_self();
-		   Position pos_ball;
-		   pos_ball.setPosition(ball.x(), ball.y(), now);
-		   teams[team_id].setRobotPosBall(robot_id, pos_ball);
-
-		   //pour l'affichage de la position souhaitée mais pas encore fini.
-           	   const Intention & intention = robot_entry.second.intention();
-           	   const PositionDistribution & target_pos = intention.target_pose_in_field().position();
-
-           	   Position pos_target;
-           	   pos_target.setPosition(target_pos.x(),target_pos.y(), now);
-           	   teams[team_id].setRobotPosTarget(robot_entry.first.robot_id(), pos_target);
-
-		   display_img = annotation->AddAnnotation(camera_information, teams[team_id].GetRobot(robot_id) , display_img, now);
-		   }
-		   }
-		   }*/
     }
     cv::cvtColor(display_img, display_img, CV_BGR2RGB);
     this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));

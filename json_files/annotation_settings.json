@@ -48,6 +48,7 @@
 	"name" : "eirlab.json"
     },
     "score" : {
+	"_comment" : "only for treatement",
 	"write" : true,
 	"_comment" : " advice for positionnig the score (video is 480*640)
 top right corner x = 20, y = 50
