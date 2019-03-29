@@ -42,6 +42,19 @@
 	"target_size" : 8,
 	"dash_size" : 5
     },
+    ,
+    "field" : {
+	"write" : true,
+	"name" : "eirlab.json"
+    },
+    "score" : {
+	"write" : true,
+	"_comment" : " advice for positionnig the score (video is 480*640)
+top right corner x = 20, y = 50
+bottom left corner x = 450, y = 430",
+	"x" : 20,
+	"y" : 50
+    },
     "optimized" : false,
     "delay_annotation" : 2
     

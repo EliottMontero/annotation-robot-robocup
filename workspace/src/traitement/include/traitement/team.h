@@ -26,6 +26,10 @@ namespace traitement
 
     void AddRobot(int robot_id);
     bool IsRobot(int robot_id);
+
+    void setScore(uint32_t score);
+    uint32_t getScore();
+    
     RobotInformation GetRobot(int robot_id);
     std::map<int, RobotInformation> getRobotMap();
     void updateRobot(int robot_id, RobotMsg rb_msg);
@@ -33,6 +37,7 @@ namespace traitement
     void setRobotTeam(int robot_id, int team_id);
     void setRobotNum(int robot_id);
   private:
+    uint32_t team_score;
     std::map<int, RobotInformation>robots;
   };
 }

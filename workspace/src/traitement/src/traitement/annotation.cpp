@@ -36,6 +36,8 @@ namespace traitement{
     checkMember(root["ball"], "write");
     checkMember(root, "target");
     checkMember(root["target"], "write");
+    checkMember(root["field"], "write");
+    checkMember(root["score"], "write");
     checkMember(root, "optimized");
 
 
@@ -45,8 +47,11 @@ namespace traitement{
     annotation_choice["trace"]=root["trace"]["write"].asBool();
     annotation_choice["ball"]=root["ball"]["write"].asBool();
     annotation_choice["target"]=root["target"]["write"].asBool();
+    annotation_choice["field"]=root["field"]["write"].asBool();
+    annotation_choice["score"]=root["score"]["write"].asBool();
     annotation_choice["optimized"]=root["optimized"].asBool();
-
+    
+    
     checkMember(root, "delay_annotation");
     delay_annotation=root["delay_annotation"].asInt();
 
@@ -64,7 +69,9 @@ namespace traitement{
     checkMember(root["target"], "dash_size");
     checkMember(root["target"], "robot_num");
     checkMember(root["target"], "team_num");
-
+    checkMember(root["field"], "name");
+    checkMember(root["score"], "x");
+    checkMember(root["score"], "y");
 
     sizecircle = root["position"]["circle_size"].asUInt();
     sizenumber = sizecircle*0.75; //define to see better the numbers
@@ -80,6 +87,11 @@ namespace traitement{
     dashsize = root["target"]["dash_size"].asUInt();
     robottarget = root["target"]["robot_num"].asUInt();
     teamtarget = root["target"]["team_num"].asUInt();
+    f = root["field"]["name"].asString();
+    field.loadFile(f);
+    score_pos = cv::Point2f(root["score"]["x"].asUInt(),root["score"]["y"].asUInt());
+    
+    
 
     checkMember(root["color_team_1"], "num");
     checkMember(root["color_team_1"], "r");
@@ -109,6 +121,23 @@ namespace traitement{
   bool Annotation::IsMessageValid(uint64_t time_stamp, uint64_t now, int delay){
     return ((((delay*s_to_us-(now-time_stamp))/delay*s_to_us)>0 )); //seconds to microseconds
   }
+
+  cv::Mat Annotation::annoteScore(std::map<int, Team>teams, cv::Mat display)
+  {
+    std::stringstream scoreString;
+    for (std::map<int, Team>::iterator it=teams.begin();it != teams.end(); ++it)
+      {	  
+	if (it == teams.begin())
+	  scoreString << teams[it->first].getScore();
+	else
+	  scoreString << "-" << teams[it->first].getScore();
+      }
+    std::string score = scoreString.str();
+    
+    cv::putText(display, score, score_pos, cv::FONT_HERSHEY_SIMPLEX, 1.5, color[0], 2);
+    return display;
+  }
+  
 
 
   cv::Mat  Annotation::annotePosition(CameraMetaInformation camera_information,Position pos ,cv::Mat display,  uint64_t now){
@@ -380,6 +409,7 @@ namespace traitement{
     team_id = robot.team;
     id_robot = robot.robot;
 
+    
     if (annotation_choice["trace"] && id_robot == robottrace &&  team_id == teamtrace && !robot.getRobotTrace().empty()){
       display = annoteTrace(camera_information, robot, display, now);
     }

@@ -24,6 +24,20 @@ namespace traitement
        return true;
   }
 
+  void Team::setScore(uint32_t score)
+  {
+    if (team_score!=score)
+      {
+	team_score = score;
+      }
+  }
+
+  uint32_t Team::getScore()
+  {
+    return team_score;
+  }
+  
+
   RobotInformation Team::GetRobot(int robot_id){
     return robots[robot_id];
   }

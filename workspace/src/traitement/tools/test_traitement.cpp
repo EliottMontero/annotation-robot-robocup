@@ -38,7 +38,6 @@ int main() {
   match_settings >> root;
 
   checkMember(root["match_setting"], "config");
-  checkMember(root["match_setting"], "field");
   checkMember(root["match_setting"], "speed_optimized");
   bool speed_optimized = root["match_setting"]["speed_optimized"].asBool();
   
@@ -48,12 +47,6 @@ int main() {
 
   MonitoringManager manager;
   manager.loadConfig(conf);
-
-  std::string f = root["match_setting"]["field"].asString();
-  Field field;
-  field.loadFile(f);
-
-  std::cout << f << std::endl;
 
   Annotation annotation("annotation_settings.json");
   std::map<int, Team>teams;
@@ -80,10 +73,24 @@ int main() {
     }
 
     MessageManager::Status status = manager.getStatus(now);
-    std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
-    std::map<uint32_t,cv::Scalar> colors_by_team;
+    // std::vector<cv::Scalar> team_colors = {cv::Scalar(255,0,255), cv::Scalar(255,255,0)};
+    //std::map<uint32_t,cv::Scalar> colors_by_team;
 
+    for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
+      {
+	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
+	if (team_msg.has_team_number() && team_msg.has_score())
+	  {
+	    uint32_t team_number = team_msg.team_number();
+	    if (teams.find(team_number)==teams.end()){
+	      Team t1;
+	      teams[team_number]=t1;
+	    }
+	    teams[team_number].setScore(team_msg.score());
+	  }
+      }
 
+    
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     for (const auto & entry : images_by_source) {
@@ -92,7 +99,11 @@ int main() {
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  if (entry.second.isFullySpecified()) {
 	    const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-	    //field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+	    if (annotation.annotation_choice["field"])
+	      annotation.field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+	    if (annotation.annotation_choice["score"])
+	      annotation.annoteScore(teams, display_img);
+	    
 	    for (const auto & robot_entry : status.robot_messages) 
 	      {		
 		uint32_t team_id = robot_entry.first.team_id();

@@ -6,6 +6,7 @@
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
 #include <traitement/robotInformation.h>
+#include <traitement/team.h>
 #include <traitement/position.h>
 #include <traitement/direction.h>
 #include <hl_communication/wrapper.pb.h>
@@ -47,13 +48,17 @@ namespace traitement{
     int robottarget;
     int teamtarget;
     std::map<int ,cv::Scalar> color;
-
-
+    std::string f;
+    Field field;
+    cv::Point2f score_pos;
+    
     Annotation(std::string);
     ~Annotation();
 
     bool IsMessageValid(uint64_t time_stamp, uint64_t now, int delay);
 
+    cv::Mat annoteScore(std::map<int, Team>teams, cv::Mat display);
+    
     cv::Mat annotePosition(CameraMetaInformation camera_information,Position pos,cv::Mat display,  uint64_t now);
     cv::Mat annoteTarget(CameraMetaInformation camera_information, RobotMsg robot, Position pos_target ,cv::Mat display,  uint64_t now);
     cv::Mat annoteDirection(CameraMetaInformation camera_information, Direction dir, Position pos,cv::Mat display,  uint64_t now);
