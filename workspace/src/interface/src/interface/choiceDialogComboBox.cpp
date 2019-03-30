@@ -8,7 +8,9 @@ ChoiceDialogComboBox::ChoiceDialogComboBox()
   QHBoxLayout * layoutBox = new QHBoxLayout;
 
   teamComboBox = new QComboBox;
+  teamComboBox->setToolTip("Number Team");
   robotComboBox = new QComboBox;
+  robotComboBox->setToolTip("Number Robot");
 
   layoutBox->addWidget(teamComboBox);
   layoutBox->addWidget(robotComboBox);
