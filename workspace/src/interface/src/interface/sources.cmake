@@ -3,4 +3,5 @@ set(SOURCES
 	teamPanel.cpp
 	robotPanel.cpp
 	choiceDialog.cpp
+	choiceDialogComboBox.cpp
 	)

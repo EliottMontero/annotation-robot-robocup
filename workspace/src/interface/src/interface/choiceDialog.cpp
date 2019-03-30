@@ -29,46 +29,13 @@ ChoiceDialog::ChoiceDialog()
   line->setFrameShape(QFrame::VLine);
   line->setFrameShadow(QFrame::Sunken);
 
-  //***TRACE COMBOBOX***
-  QGroupBox *traceBox = new QGroupBox;
-  traceBox->setTitle("Trace");
-  QHBoxLayout * layoutTraceBox = new QHBoxLayout;
-
-  traceTeamComboBox = new QComboBox;
-  traceRobotComboBox = new QComboBox;
-
-  traceRobotComboBox->addItem((QString)"Robot 1");
-  traceRobotComboBox->addItem((QString)"Robot 2");
-
-  layoutTraceBox->addWidget(traceTeamComboBox);
-  layoutTraceBox->addWidget(traceRobotComboBox);
-  traceBox->setLayout(layoutTraceBox);
-
-  //***BALL COMBOBOX***
-  QGroupBox *ballBox = new QGroupBox;
-  ballBox->setTitle("Ball");
-  QHBoxLayout * layoutBallBox = new QHBoxLayout;
-
-  ballTeamComboBox = new QComboBox;
-  ballRobotComboBox = new QComboBox;
-
-  layoutBallBox->addWidget(ballTeamComboBox);
-  layoutBallBox->addWidget(ballRobotComboBox);
-  ballBox->setLayout(layoutBallBox);
-
-
-  //***TARGET COMBOBOX***
-  QGroupBox *targetBox = new QGroupBox;
-  targetBox->setTitle("Target");
-  QHBoxLayout * layoutTargetBox = new QHBoxLayout;
-
-  targetTeamComboBox = new QComboBox;
-  targetRobotComboBox = new QComboBox;
-
-  layoutTargetBox->addWidget(targetTeamComboBox);
-  layoutTargetBox->addWidget(targetRobotComboBox);
-  targetBox->setLayout(layoutTargetBox);
-
+  /***COMBOBOX***/
+  traceBox = new ChoiceDialogComboBox();
+  traceBox->setTitle(QString("Trace"));
+  ballBox = new ChoiceDialogComboBox();
+  ballBox->setTitle(QString("Ball"));
+  targetBox = new ChoiceDialogComboBox();
+  targetBox->setTitle(QString("Target"));
 
 
   QDialogButtonBox * buttonDialog =
@@ -88,21 +55,13 @@ ChoiceDialog::ChoiceDialog()
   /*** CONNECT ***/
   connect(buttonDialog, SIGNAL(accepted()),this, SLOT(accept()));
   connect(buttonDialog, SIGNAL(rejected()),this, SLOT(reject()));
-
-  connect(traceTeamComboBox, SIGNAL(currentIndexChanged(int)),this, SLOT(chargeRobotTrace(int)));
-  connect(ballTeamComboBox, SIGNAL(currentIndexChanged(int)),this, SLOT(chargeRobotBall(int)));
-  connect(targetTeamComboBox, SIGNAL(currentIndexChanged(int)),this, SLOT(chargeRobotTarget(int)));
-
 }
 
 void
 ChoiceDialog::setTeamMap(std::map<int,Team> & teams) {
-  teamMap = teams;
-  for(auto team : teamMap){
-    traceTeamComboBox->addItem(QString::number(team.first));
-    ballTeamComboBox->addItem(QString::number(team.first));
-    targetTeamComboBox->addItem(QString::number(team.first));
-  }
+  traceBox->setTeamMap(teams);
+  ballBox->setTeamMap(teams);
+  targetBox->setTeamMap(teams);
 }
 
 void
@@ -116,38 +75,17 @@ ChoiceDialog::setInitGeneral(bool position, bool direction, bool trace, bool bal
 
 void
 ChoiceDialog::setCurrentTrace(int team, int robot) {
-  int numberTeam = traceTeamComboBox->findText(QString::number(team));
-  if(numberTeam != -1){
-    traceTeamComboBox->setCurrentIndex(numberTeam);
-  }
-  int numberRobot = traceRobotComboBox->findText(QString::number(robot));
-  if(numberRobot != -1){
-    traceRobotComboBox->setCurrentIndex(numberRobot);
-  }
+  traceBox->setCurrent(team,robot);
 }
 
 void
 ChoiceDialog::setCurrentBall(int team, int robot) {
-  int numberTeam = ballTeamComboBox->findText(QString::number(team));
-  if(numberTeam != -1){
-    ballTeamComboBox->setCurrentIndex(numberTeam);
-  }
-  int numberRobot = ballRobotComboBox->findText(QString::number(robot));
-  if(numberRobot != -1){
-    ballRobotComboBox->setCurrentIndex(numberRobot);
-  }
+  ballBox->setCurrent(team,robot);
 }
 
 void
 ChoiceDialog::setCurrentTarget(int team, int robot) {
-  int numberTeam = targetTeamComboBox->findText(QString::number(team));
-  if(numberTeam != -1){
-    targetTeamComboBox->setCurrentIndex(numberTeam);
-  }
-  int numberRobot = targetRobotComboBox->findText(QString::number(robot));
-  if(numberRobot != -1){
-    targetRobotComboBox->setCurrentIndex(numberRobot);
-  }
+  targetBox->setCurrent(team,robot);
 }
 
 
@@ -176,64 +114,34 @@ ChoiceDialog::getGeneralTarget(){
   return targetCheck->isChecked();
 }
 
-void
-ChoiceDialog::chargeRobotTrace(int i) {
-  int numberTeam = (traceTeamComboBox->itemText(i)).toInt();
-  std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
-  traceRobotComboBox->clear();
-  for(auto robot : robots){
-      traceRobotComboBox->addItem(QString::number(robot.first));
-  }
-}
-
-void
-ChoiceDialog::chargeRobotBall(int i) {
-  int numberTeam = (ballTeamComboBox->itemText(i)).toInt();
-  std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
-  ballRobotComboBox->clear();
-  for(auto robot : robots){
-      ballRobotComboBox->addItem(QString::number(robot.first));
-  }
-}
-
-void
-ChoiceDialog::chargeRobotTarget(int i) {
-  int numberTeam = (targetTeamComboBox->itemText(i)).toInt();
-  std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
-  targetRobotComboBox->clear();
-  for(auto robot : robots){
-      targetRobotComboBox->addItem(QString::number(robot.first));
-  }
-}
-
 int
 ChoiceDialog::getNumberRobotTrace() {
 
-  return (traceRobotComboBox->currentText()).toInt();
+  return traceBox->getNumberRobot();
 }
 
 int
 ChoiceDialog::getNumberTeamTrace() {
 
-  return (traceTeamComboBox->currentText()).toInt();
+  return traceBox->getNumberTeam();
 }
 
 int
 ChoiceDialog::getNumberRobotBall() {
-  return (ballRobotComboBox->currentText()).toInt();
+  return ballBox->getNumberRobot();
 }
 
 int
 ChoiceDialog::getNumberTeamBall() {
-  return (ballTeamComboBox->currentText()).toInt();
+  return ballBox->getNumberTeam();
 }
 
 int
 ChoiceDialog::getNumberRobotTarget() {
-  return (targetRobotComboBox->currentText()).toInt();
+  return targetBox->getNumberRobot();
 }
 
 int
 ChoiceDialog::getNumberTeamTarget() {
-  return (targetTeamComboBox->currentText()).toInt();
+  return targetBox->getNumberTeam();
 }
