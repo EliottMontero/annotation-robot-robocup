@@ -74,7 +74,7 @@ int main() {
     }
 
     MessageManager::Status status = manager.getStatus(now);
-    
+
     for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
       {
 	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
@@ -146,9 +146,7 @@ int main() {
 	  
 	}
        else
-	 {
-	   std::cout << "skip" <<std::endl;
-	   
+	 {	   
 	   end = std::chrono::system_clock::now();
 	   elapsed_useconds = end-start;
 	 }

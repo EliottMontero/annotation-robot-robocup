@@ -1,9 +1,9 @@
 {
     "color_team_1":{
 	"num" : 9,
-	"r" : 255,
+	"r" : 0,
 	"g" : 255,
-	"b" : 0
+	"b" : 255
     },
     "_comment" : "num of team_2 is 12 for 2vs1 video and 3 for 2019_03_21 video",
     "color_team_2":{
@@ -16,7 +16,6 @@
 	"write": true,
 	"circle_size" : 10,
 	"number" : true, 
-	"exactitude" : false
     },
     "direction" : {
 	"write": true,
