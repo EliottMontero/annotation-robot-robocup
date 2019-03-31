@@ -111,7 +111,7 @@ int main() {
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     for (const auto & entry : images_by_source) {      
-      if (elapsed_useconds.count()>=(now-begin_time) || !speed_optimized)
+      if (elapsed_useconds.count()<=(now-begin_time) || !speed_optimized)
 	{	  
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  if (entry.second.isFullySpecified()) {
@@ -147,6 +147,8 @@ int main() {
 	}
        else
 	 {
+	   std::cout << "skip" <<std::endl;
+	   
 	   end = std::chrono::system_clock::now();
 	   elapsed_useconds = end-start;
 	 }
