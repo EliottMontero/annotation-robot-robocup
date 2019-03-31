@@ -98,13 +98,13 @@ namespace traitement{
 
     cv::Scalar color0 = {0,0,0};
 
-    cv::Scalar color1 = {root["color_team_1"]["r"].asUInt(),
+    cv::Scalar color1 = {root["color_team_1"]["b"].asUInt(),
                          root["color_team_1"]["g"].asUInt(),
-                         root["color_team_1"]["b"].asUInt()};
+                         root["color_team_1"]["r"].asUInt()};
 
-    cv::Scalar color2 = {root["color_team_2"]["r"].asUInt(),
+    cv::Scalar color2 = {root["color_team_2"]["b"].asUInt(),
                          root["color_team_2"]["g"].asUInt(),
-                         root["color_team_2"]["b"].asUInt()};
+                         root["color_team_2"]["r"].asUInt()};
 
     //0 for unkonwn teams because we initialize team_id = 0
     color[0]=color0;

@@ -74,7 +74,7 @@ int main() {
     }
 
     MessageManager::Status status = manager.getStatus(now);
-    
+
     for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
       {
 	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
@@ -111,7 +111,7 @@ int main() {
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     for (const auto & entry : images_by_source) {      
-      if (elapsed_useconds.count()>=(now-begin_time) || !speed_optimized)
+      if (elapsed_useconds.count()<=(now-begin_time) || !speed_optimized)
 	{	  
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  if (entry.second.isFullySpecified()) {
@@ -146,7 +146,7 @@ int main() {
 	  
 	}
        else
-	 {
+	 {	   
 	   end = std::chrono::system_clock::now();
 	   elapsed_useconds = end-start;
 	 }
