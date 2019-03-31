@@ -155,6 +155,8 @@ void MainWindow::changeImage(){
         now += FRAME_DURATION;
         actualFrameNumber++;
 
+        slider->setValue(actualFrameNumber*100/totalFrameNumber);
+
         oldSliderValue=slider->value();
 
         char str[20];
