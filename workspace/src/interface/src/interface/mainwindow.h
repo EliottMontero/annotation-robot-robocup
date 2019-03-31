@@ -66,6 +66,7 @@ private :
 
     QTimer * timer;
     uint64_t now;
+    uint64_t initialTime;
     uint64_t dt;
 
     std::map<int, Team> teams;
@@ -77,6 +78,9 @@ private :
 
     QSlider * slider;
     QLabel * sliderValue;
+    int oldSliderValue;
+    int totalFrameNumber;
+    int actualFrameNumber;
     bool boolMove=false;
 
     bool boolPause;

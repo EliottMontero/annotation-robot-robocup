@@ -2,7 +2,7 @@
 
 
 
-#define NEXT_FRAME 30000 //30fps in microseconds  
+#define FRAME_DURATION 30000 //30fps in microseconds  
 
 #define CV_IMG_WIDTH 480
 #define CV_IMG_HEIGHT 640
@@ -15,7 +15,7 @@ MainWindow::MainWindow()
 
   gamePicture = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
   cv::cvtColor(*gamePicture,*gamePicture, CV_BGR2RGB);
-
+  actualFrameNumber=0;
   zoneCentral = new QWidget;
   layout = new QGridLayout;
 
@@ -135,16 +135,32 @@ void MainWindow::changeImage(){
       manager.update();
       if (manager.isLive()) {
         now = getTimeStamp();
+        initialTime=now;
+
       }
 
       else {
-        if(boolMove){
-          now+=NEXT_FRAME*200;
-          boolMove=false;
-        }
-        else{
-          now += NEXT_FRAME;
-        }
+        	if(slider->value()>oldSliderValue){
+        		while(actualFrameNumber<slider->value()*totalFrameNumber/100){
+        			now += FRAME_DURATION;
+        			actualFrameNumber++;
+        		}
+        	}
+        	else if(slider->value()<oldSliderValue){
+        		while(actualFrameNumber>slider->value()*totalFrameNumber/100){
+        			now -= FRAME_DURATION;
+        			actualFrameNumber--;
+        		}
+        	}
+        /*if (actualFrameNumber>=totalFrameNumber-1000){
+        	printf("AAAAAAAAAAAAA\n");
+        	now-=FRAME_DURATION;
+        }*/
+        now += FRAME_DURATION;
+        actualFrameNumber++;
+
+        oldSliderValue=slider->value();
+
         char str[20];
         sprintf(str,"%d\n",now);
         sliderValue->setText(str);
@@ -196,9 +212,7 @@ void MainWindow::changeImage(){
     }
     cv::cvtColor(display_img, display_img, CV_BGR2RGB);
     this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
-    char str_test[20];
-    sprintf(str_test,"%d\n",manager.getImageProvider(source_name).getNbFrames());
-    sliderValue->setText(str_test);
+    totalFrameNumber = manager.getImageProvider(source_name).getNbFrames();
   }
 }
 for (auto it : teamPanels){
