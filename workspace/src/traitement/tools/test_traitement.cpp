@@ -56,7 +56,8 @@ int main() {
   uint64_t now = 0;
 
   //Use to optimize the speed of the video
-  uint64_t begin_time = now;  
+  uint64_t begin_time = now;
+  
   auto end = std::chrono::system_clock::now();
   auto start = std::chrono::system_clock::now(); 
   std::chrono::duration<double, std::micro> elapsed_useconds = end-start;
@@ -77,8 +78,8 @@ int main() {
 
     for (int idx = 0; idx < status.gc_message.teams_size(); idx++)
       {
+
 	const GCTeamMsg& team_msg = status.gc_message.teams(idx);
-	
 	if (team_msg.has_team_number() && team_msg.has_score())
 	  {
 	    uint32_t team_number = team_msg.team_number();
@@ -111,7 +112,7 @@ int main() {
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     for (const auto & entry : images_by_source) {      
-      if (elapsed_useconds.count()<=(now-begin_time) || !speed_optimized)
+      if (elapsed_useconds.count()>=(now-begin_time) || !speed_optimized)
 	{	  
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  if (entry.second.isFullySpecified()) {
@@ -122,7 +123,10 @@ int main() {
 	      annotation.annoteScore(teams, display_img);
 	    
 	    for (const auto & robot_entry : status.robot_messages) 
+	      {		
 		display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
+	      }
+	    
 	  }
    
 	  cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
@@ -152,5 +156,7 @@ int main() {
 	 }
     }  
   }
+  std::cout<< "end of video" << std::endl;
+  
   return 0;
 }

@@ -218,9 +218,9 @@ namespace traitement{
 
         for(int i = 0; i < it.count; i++,it++)
           if (i%dashsize*2<dashsize){
-            (*it)[0] = s[0]/2;
-            (*it)[1] = s[1]/2;
-            (*it)[2] = s[2]/2;
+            (*it)[0] = s[0];
+            (*it)[1] = s[1];
+            (*it)[2] = s[2];
           }
         }
 
@@ -274,41 +274,53 @@ namespace traitement{
 
 
   cv::Mat  Annotation::annoteTrace(CameraMetaInformation camera_information,
-                        RobotInformation robot,cv::Mat display,  uint64_t now){
+				   std::map<uint64_t, Position> trace,cv::Mat display,  uint64_t now){
 
     Position old_pos;
     std::map<uint64_t, Position>::iterator it;
-    for (it = robot.robot_trace.begin(); it != robot.robot_trace.end(); ++it){
-      Position p;
-      p = robot.getTraceRobot(it->first);
+    uint64_t limit_time = now-(delay_old_pos*s_to_us);
+    
+    for (it = trace.begin(); it != trace.end(); ++it){
+      if(it->first >= limit_time && it->first<= now)
+	{
+	  
+	  Position p;
+	  p = trace[it->first];
 
-      cv::Scalar s = color[0];
-      if (color.find(team_id)!=color.end())
-        s = 0.5 * color[team_id];
+	  cv::Scalar s = color[0];
+	  if (color.find(team_id)!=color.end())
+	    s = 0.5 * color[team_id];
 
-      cv::Point3f pos_in_field(p.x, p.y, 0.0);
-      cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
+	  cv::Point3f pos_in_field(p.x, p.y, 0.0);
+	  cv::Point2f pos_in_img = fieldToImg(pos_in_field, camera_information);
 
-      if (annotation_choice["optimized"]){
-        float delay = delay_old_pos*s_to_us;
-        float opacity = (delay-(now-p.time_stamp))/delay;
+	  if (annotation_choice["optimized"]){
+	    float delay = delay_old_pos*s_to_us;
+	    float opacity = (delay-(now-p.time_stamp))/delay;
 
-        cv::Mat overlay;
-        display.copyTo(overlay);
+	    cv::Mat overlay;
+	    display.copyTo(overlay);
 
-        float tmp = sizecircletrace*1.5/100;
-  // we do not draw the position if more than the half is covered by the old one
-        if(it==robot.robot_trace.begin()
-            || (abs(old_pos.x-p.x)>tmp || abs(old_pos.y-p.y)>tmp)){
-          old_pos=p;
-          cv::circle(overlay, pos_in_img, sizecircletrace, s, cv::FILLED);
-          cv::addWeighted(overlay, opacity, display, 1-opacity, 0, display);
-        }
-      }
-      else{
-        cv::circle(display, pos_in_img, sizecircletrace, s, cv::FILLED);
-      }
+	    // we do not draw the position if more than the half is covered by the old one
+	    float tmp = sizecircletrace*1.5/100;
+	    if(it == trace.begin()
+	       || (abs(old_pos.x-p.x)>tmp || abs(old_pos.y-p.y)>tmp)){
+	      old_pos=p;
+	      cv::circle(overlay, pos_in_img, sizecircletrace, s, cv::FILLED);
+	      cv::addWeighted(overlay, opacity, display, 1-opacity, 0, display);
+	    }
+	  }
+	  else{
+	    cv::circle(display, pos_in_img, sizecircletrace, s, cv::FILLED);
+	  }
+
+     
+	}
+											  
+	  
     }
+    
+    
     return display;
   }
 
@@ -346,29 +358,13 @@ namespace traitement{
   cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information,
                         RobotInformation robot ,cv::Mat display,  uint64_t now){
 
-    if (!robot.getRobotTrace().empty()){
-      uint64_t limit_time = now-(delay_old_pos*s_to_us);
-
-      //erase too old position
-      std::map<uint64_t, Position>::iterator it = robot.getRobotTrace().begin();
-      for(it ; (it->first<=limit_time && it->first != 0); ++it){
-        robot.removeOnePos(it->first);
-      }
-
-      //erase too recent position (if we go back in the video)
-      auto it2=robot.getRobotTrace().upper_bound(now);
-      if (it2!=robot.getRobotTrace().end()){
-        robot.removeFiewPos(now);
-      }
-    }
-
     RobotMsg rb = robot.getMessageRobot();
     team_id = robot.team;
     id_robot = robot.robot;
 
     if (annotation_choice["trace"] && id_robot == robottrace
         &&  team_id == teamtrace && !robot.getRobotTrace().empty()){
-      display = annoteTrace(camera_information, robot, display, now);
+      display = annoteTrace(camera_information, robot.getRobotTrace(), display, now);
     }
 
     if (IsMessageValid(rb.time_stamp(), now, delay_annotation)){
