@@ -152,17 +152,13 @@ void MainWindow::changeImage(){
         			actualFrameNumber--;
         		}
         	}
-        /*if (actualFrameNumber>=totalFrameNumber-1000){
-        	printf("AAAAAAAAAAAAA\n");
-        	now-=FRAME_DURATION;
-        }*/
         now += FRAME_DURATION;
         actualFrameNumber++;
 
         oldSliderValue=slider->value();
 
         char str[20];
-        sprintf(str,"%d\n",now);
+        sprintf(str,"%d:%d\n",actualFrameNumber/SPD_INTERVAL/60,actualFrameNumber/SPD_INTERVAL%60 );
         sliderValue->setText(str);
       }
       MessageManager::Status status = manager.getStatus(now);
