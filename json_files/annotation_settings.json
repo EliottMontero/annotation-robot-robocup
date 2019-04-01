@@ -54,8 +54,8 @@ bottom left corner x = 450, y = 430",
 	"x" : 20,
 	"y" : 50
     },
-    "optimized" : false,
-    "delay_annotation" : 2
+    "delay_annotation" : 3,
+    "optimized" : false
     
 
 }

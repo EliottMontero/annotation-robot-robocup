@@ -106,14 +106,14 @@ int main() {
 	if (robot_entry.second.time_stamp() !=  teams[team_id].getRobot(robot_entry.first.robot_id()).getMessageRobot().time_stamp())
 	  teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
       }
-    
 
-    
+  
     std::map<std::string, CalibratedImage> images_by_source =
       manager.getCalibratedImages(now);
     for (const auto & entry : images_by_source) {      
-      if (elapsed_useconds.count()>=(now-begin_time) || !speed_optimized)
-	{	  
+      if (elapsed_useconds.count()<=(now-begin_time) || !speed_optimized)
+	{
+	 
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  if (entry.second.isFullySpecified()) {
 	    const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
@@ -123,7 +123,7 @@ int main() {
 	      annotation.annoteScore(teams, display_img);
 	    
 	    for (const auto & robot_entry : status.robot_messages) 
-	      {		
+	      {
 		display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
 	      }
 	    
@@ -150,7 +150,7 @@ int main() {
 	  
 	}
        else
-	 {	   
+	 {
 	   end = std::chrono::system_clock::now();
 	   elapsed_useconds = end-start;
 	 }

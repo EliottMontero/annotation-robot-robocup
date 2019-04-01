@@ -61,7 +61,8 @@ namespace traitement{
     ~Annotation();
 
     bool IsMessageValid(uint64_t time_stamp, uint64_t now, int delay);
-
+    bool IsPosValid(cv::Point2f pos, int img_x, int img_y);
+    
     cv::Mat annoteScore(std::map<int, Team>teams, cv::Mat display);
 
     cv::Mat annotePosition(CameraMetaInformation camera_information,
