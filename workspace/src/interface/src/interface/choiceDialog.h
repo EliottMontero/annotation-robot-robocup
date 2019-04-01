@@ -12,7 +12,7 @@
 #include <QDialogButtonBox>
 
 #include <traitement/team.h>
-#include "choiceDialogComboBox.h"
+#include "choiceComboBox.h"
 #include <string>
 
 using namespace traitement;
@@ -31,10 +31,10 @@ class ChoiceDialog : public QDialog
     QCheckBox * traceCheck;
     QCheckBox * ballCheck;
     QCheckBox * targetCheck;
-    
-    ChoiceDialogComboBox * traceBox;
-    ChoiceDialogComboBox * ballBox;
-    ChoiceDialogComboBox * targetBox;
+
+    ChoiceComboBox * traceBox;
+    ChoiceComboBox * ballBox;
+    ChoiceComboBox * targetBox;
 
     void setInitGeneral(bool position, bool direction, bool trace, bool ball, bool target);
     void setCurrentTrace(int team, int robot);

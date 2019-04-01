@@ -30,11 +30,11 @@ ChoiceDialog::ChoiceDialog()
   line->setFrameShadow(QFrame::Sunken);
 
   /***COMBOBOX***/
-  traceBox = new ChoiceDialogComboBox();
+  traceBox = new ChoiceComboBox();
   traceBox->setTitle(QString("Trace"));
-  ballBox = new ChoiceDialogComboBox();
+  ballBox = new ChoiceComboBox();
   ballBox->setTitle(QString("Ball"));
-  targetBox = new ChoiceDialogComboBox();
+  targetBox = new ChoiceComboBox();
   targetBox->setTitle(QString("Target"));
 
 

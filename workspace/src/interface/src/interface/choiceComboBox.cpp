@@ -1,6 +1,6 @@
-#include "choiceDialogComboBox.h"
+#include "choiceComboBox.h"
 
-ChoiceDialogComboBox::ChoiceDialogComboBox()
+ChoiceComboBox::ChoiceComboBox()
 {
 
   groupBox = new QGroupBox;
@@ -26,12 +26,12 @@ ChoiceDialogComboBox::ChoiceDialogComboBox()
 }
 
 void
-ChoiceDialogComboBox::setTitle(QString title) {
+ChoiceComboBox::setTitle(QString title) {
   groupBox->setTitle(title);
 }
 
 void
-ChoiceDialogComboBox::setTeamMap(std::map<int,Team> & teams) {
+ChoiceComboBox::setTeamMap(std::map<int,Team> & teams) {
   teamMap = teams;
   for(auto team : teamMap){
     teamComboBox->addItem(QString::number(team.first));
@@ -40,7 +40,7 @@ ChoiceDialogComboBox::setTeamMap(std::map<int,Team> & teams) {
 
 
 void
-ChoiceDialogComboBox::setCurrent(int team, int robot) {
+ChoiceComboBox::setCurrent(int team, int robot) {
   int numberTeam = teamComboBox->findText(QString::number(team));
   if(numberTeam != -1){
     teamComboBox->setCurrentIndex(numberTeam);
@@ -52,7 +52,7 @@ ChoiceDialogComboBox::setCurrent(int team, int robot) {
 }
 
 void
-ChoiceDialogComboBox::chargeRobot(int i) {
+ChoiceComboBox::chargeRobot(int i) {
   int numberTeam = (teamComboBox->itemText(i)).toInt();
   std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
   robotComboBox->clear();
@@ -62,11 +62,11 @@ ChoiceDialogComboBox::chargeRobot(int i) {
 }
 
 int
-ChoiceDialogComboBox::getNumberTeam() {
+ChoiceComboBox::getNumberTeam() {
   return (teamComboBox->currentText()).toInt();
 }
 
 int
-ChoiceDialogComboBox::getNumberRobot() {
+ChoiceComboBox::getNumberRobot() {
   return (robotComboBox->currentText()).toInt();
 }
