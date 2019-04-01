@@ -1,5 +1,5 @@
-#ifndef CHOICEDIALOGCOMBOBOX_H
-#define CHOICEDIALOGCOMBOBOX_H
+#ifndef CHOICECOMBOBOX_H
+#define CHOICECOMBOBOX_H
 
 #include <QWidget>
 #include <QObject>
@@ -15,12 +15,12 @@
 
 using namespace traitement;
 
-class ChoiceDialogComboBox : public QWidget
+class ChoiceComboBox : public QWidget
 {
   Q_OBJECT
 
   public :
-    ChoiceDialogComboBox();
+    ChoiceComboBox();
 
     std::map<int,Team> teamMap;
 
@@ -44,4 +44,4 @@ class ChoiceDialogComboBox : public QWidget
 
 };
 
-#endif //CHOICEDIALOGCOMBOBOX_H
+#endif //CHOICECOMBOBOX_H
