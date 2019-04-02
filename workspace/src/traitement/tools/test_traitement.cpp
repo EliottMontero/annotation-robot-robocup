@@ -61,12 +61,25 @@ int main() {
   auto end = std::chrono::system_clock::now();
   auto start = std::chrono::system_clock::now(); 
   std::chrono::duration<double, std::micro> elapsed_useconds = end-start;
+
+  uint64_t end_video = 0;
+  
   
   if (!manager.isLive()) {
-    now = manager.getStart();
+    std::set<std::string> image_provider =  manager.getImageProvidersNames();
+    
+    for (const auto & entry : image_provider)
+      {
+	
+	if (now < manager.getImageProvider(entry).getStart())
+	  now =  manager.getImageProvider(entry).getStart();
+	if (end_video == 0 || end_video <  manager.getImageProvider(entry).getEnd())
+	  end_video =  manager.getImageProvider(entry).getEnd();
+      }
+    
     begin_time = now;
   }
-  while(manager.isGood()) {
+  while(now+NEXT_FRAME< end_video) {
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();

@@ -16,6 +16,8 @@ MainWindow::MainWindow()
   gamePicture = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
   cv::cvtColor(*gamePicture,*gamePicture, CV_BGR2RGB);
   actualFrameNumber=0;
+  totalFrameNumber = 1;
+  
   zoneCentral = new QWidget;
   layout = new QGridLayout;
 
@@ -24,6 +26,7 @@ MainWindow::MainWindow()
   labelVideo->setStyleSheet("QLabel { background-color : red}");
   labelVideo->setScaledContents(true);
   labelVideo->setPixmap(QPixmap::fromImage(QImage(gamePicture->data, gamePicture->cols, gamePicture->rows, gamePicture->step, QImage::Format_RGB888)));
+
 
   sliderValue=new QLabel(this);
   sliderValue->setText("0");
@@ -57,7 +60,6 @@ MainWindow::MainWindow()
   boolTarget = true;
   boolBall = true;
 
-
   Json::Reader reader;
   Json::Value root;
 
@@ -65,18 +67,23 @@ MainWindow::MainWindow()
   if (!match_settings.good())
   throw std::runtime_error("failde to open file match_settings.json");
   match_settings >> root;
-
   checkMember(root["match_setting"], "config");
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
+  // manager = new MonitoringManager();
   manager.loadConfig(conf);
-
+	    
+	     
   annotation = new Annotation("annotation_settings.json");
-
+  
   now = 0;
   if (!manager.isLive()) {
-    now = manager.getStart();
+      std::set<std::string> image_provider =  manager.getImageProvidersNames();
+    
+    for (const auto & entry : image_provider)
+      if (now < manager.getImageProvider(entry).getStart())
+	  now =  manager.getImageProvider(entry).getStart();
   }
 
   timer = new QTimer(this);
@@ -152,7 +159,10 @@ void MainWindow::changeImage(){
         			actualFrameNumber--;
         		}
         	}
+		
+		
         now += FRAME_DURATION;
+	
         actualFrameNumber++;
 
         slider->setValue(actualFrameNumber*100/totalFrameNumber);
@@ -165,7 +175,6 @@ void MainWindow::changeImage(){
       }
       MessageManager::Status status = manager.getStatus(now);
       std::map<uint32_t,cv::Scalar> score_by_team;
-
       //Team Msg
       for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
         const GCTeamMsg & team_msg = status.gc_message.teams(idx);
@@ -180,7 +189,6 @@ void MainWindow::changeImage(){
           teamPanels[team_id]->updateScore(team_score);
         }
       }
-
       std::map<std::string, CalibratedImage> images_by_source;
       images_by_source = manager.getCalibratedImages(now);
       for (const auto & entry : images_by_source) {
