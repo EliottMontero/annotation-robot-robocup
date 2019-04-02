@@ -45,7 +45,6 @@ public:
     void createRobot(int robotId, int teamId);
 
     public slots:
-    void sliderControl(int i);
     void robotChoice();
     void changeImage();
     void togglePause();
@@ -80,6 +79,7 @@ private :
     QSlider * slider;
     QLabel * sliderValue;
     int oldSliderValue;
+
     bool boolMove=false;
 
     bool boolPause;

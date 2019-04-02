@@ -16,6 +16,11 @@ MainWindow::MainWindow()
   gamePicture = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
   cv::cvtColor(*gamePicture,*gamePicture, CV_BGR2RGB);
   
+  initialTime=0; 
+  now=0;
+  endTime=1;
+  oldSliderValue=0;
+
   zoneCentral = new QWidget;
   layout = new QGridLayout;
 
@@ -38,7 +43,6 @@ MainWindow::MainWindow()
   connect(buttonRobotChoice, SIGNAL(released()), this, SLOT (robotChoice()));
   connect(buttonPause, SIGNAL (released()), this, SLOT (togglePause()));
   connect(buttonFastForward, SIGNAL (released()), this, SLOT (toggleFastForward()));
-  connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderControl(int)));
 
   layout->addWidget(labelVideo,1,1,5,4);
   layout->addWidget(slider,7,1,1,4);
@@ -87,11 +91,6 @@ MainWindow::MainWindow()
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(changeImage()));
   timer->start(SPD_INTERVAL);
-}
-
-
-void MainWindow::sliderControl(int value){
-  boolMove=true;
 }
 
 
@@ -145,12 +144,12 @@ void MainWindow::changeImage(){
 			else {
 				uint64_t total_duration = endTime - initialTime;
 				if(slider->value()>oldSliderValue){
-					while(now - initialTime<total_duration * slider->value()/100){
+					while(now - initialTime<(total_duration * slider->value())/100){
 						now += FRAME_DURATION;
 					}
 				}
 				else if(slider->value()<oldSliderValue){
-					while(now - initialTime>(total_duration * slider->value()/100)+total_duration/100){
+					while(now - initialTime>((total_duration * slider->value())/100)){
 						now -= FRAME_DURATION;
 					}
 				}
