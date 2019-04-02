@@ -15,8 +15,6 @@ MainWindow::MainWindow()
 
   gamePicture = new cv::Mat(CV_IMG_WIDTH,CV_IMG_HEIGHT,CV_8UC4, Scalar(0,0,255));
   cv::cvtColor(*gamePicture,*gamePicture, CV_BGR2RGB);
-  actualFrameNumber=0;
-  totalFrameNumber = 1;
   
   zoneCentral = new QWidget;
   layout = new QGridLayout;
@@ -132,102 +130,102 @@ Slot qui affiche l'image traitÃ©e sur labelVideo
 */
 void MainWindow::changeImage(){
 
-  if(!manager.isGood()){
-    while(true){
-      printf("FINI WESH");
-    }
-  }
-  else{
-    if(!boolPause){
-      manager.update();
-      if (manager.isLive()) {
-        now = getTimeStamp();
-        initialTime=now;
+	if(!manager.isGood()){
+		while(true){
+			printf("FINI WESH");
+		}
+	}
+	else{
+		if(!boolPause){
+			manager.update();
+			if (manager.isLive()) {
+				now = getTimeStamp();
+			}
 
-      }
+			else {
+				uint64_t total_duration = endTime - initialTime;
+				if(slider->value()>oldSliderValue){
+					while(now - initialTime<total_duration * slider->value()/100){
+						now += FRAME_DURATION;
+					}
+				}
+				else if(slider->value()<oldSliderValue){
+					while(now - initialTime>(total_duration * slider->value()/100)+total_duration/100){
+						now -= FRAME_DURATION;
+					}
+				}
 
-      else {
-        	if(slider->value()>oldSliderValue){
-        		while(actualFrameNumber<slider->value()*totalFrameNumber/100){
-        			now += FRAME_DURATION;
-        			actualFrameNumber++;
-        		}
-        	}
-        	else if(slider->value()<oldSliderValue){
-        		while(actualFrameNumber>slider->value()*totalFrameNumber/100){
-        			now -= FRAME_DURATION;
-        			actualFrameNumber--;
-        		}
-        	}
-		
-		
-        now += FRAME_DURATION;
-	
-        actualFrameNumber++;
 
-        slider->setValue(actualFrameNumber*100/totalFrameNumber);
+				now += FRAME_DURATION;
 
-        oldSliderValue=slider->value();
+				slider->setValue((now - initialTime)*100.0/total_duration);
 
-        char str[20];
-        sprintf(str,"%d:%d\n",actualFrameNumber/SPD_INTERVAL/60,actualFrameNumber/SPD_INTERVAL%60 );
-        sliderValue->setText(str);
-      }
-      MessageManager::Status status = manager.getStatus(now);
-      std::map<uint32_t,cv::Scalar> score_by_team;
+				oldSliderValue=slider->value();
+
+				char str[20];
+				sprintf(str,"%d:%d\n",((now - initialTime)/1000000)/60, ((now - initialTime)/1000000)%60);
+				sliderValue->setText(str);
+			}
+			MessageManager::Status status = manager.getStatus(now);
+			std::map<uint32_t,cv::Scalar> score_by_team;
       //Team Msg
-      for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
-        const GCTeamMsg & team_msg = status.gc_message.teams(idx);
-        uint32_t team_id = team_msg.team_number();
+			for (int idx = 0; idx < status.gc_message.teams_size(); idx++) {
+				const GCTeamMsg & team_msg = status.gc_message.teams(idx);
+				uint32_t team_id = team_msg.team_number();
 
-        if(teamPanels.find(team_id) == teamPanels.end()){
-          createTeam(team_id);
-        }
+				if(teamPanels.find(team_id) == teamPanels.end()){
+					createTeam(team_id);
+				}
 
-        if (team_msg.has_score()) {
-          uint32_t team_score = team_msg.score();
-          teamPanels[team_id]->updateScore(team_score);
-        }
-      }
-      std::map<std::string, CalibratedImage> images_by_source;
-      images_by_source = manager.getCalibratedImages(now);
-      for (const auto & entry : images_by_source) {
-        std::string source_name = entry.first;
-        cv::Mat display_img = entry.second.getImg().clone();
-        if (entry.second.isFullySpecified()) {
-          const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
-	   if (annotation->annotation_choice["field"])
-	      annotation->field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
-	   
+				if (team_msg.has_score()) {
+					uint32_t team_score = team_msg.score();
+					teamPanels[team_id]->updateScore(team_score);
+				}
+			}
+			std::map<std::string, CalibratedImage> images_by_source;
+			images_by_source = manager.getCalibratedImages(now);
+			for (const auto & entry : images_by_source) {
+				std::string source_name = entry.first;
+				cv::Mat display_img = entry.second.getImg().clone();
+				if (entry.second.isFullySpecified()) {
+					const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
+					if (annotation->annotation_choice["field"])
+						annotation->field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
+
           //Robot Msg
-          for (const auto & robot_entry : status.robot_messages) {
-            uint32_t team_id = robot_entry.first.team_id();
-            if(teamPanels.find(team_id) == teamPanels.end()){
-              createTeam(team_id);
-            }
+					for (const auto & robot_entry : status.robot_messages) {
+						uint32_t team_id = robot_entry.first.team_id();
+						if(teamPanels.find(team_id) == teamPanels.end()){
+							createTeam(team_id);
+						}
 
-            uint32_t robot_id = robot_entry.first.robot_id();
-            if(!teams[team_id].IsRobot(robot_id)){
-              createRobot(robot_id, team_id);
-            }
-	    teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
-	   	   
-	    display_img =annotation->AddAnnotation(camera_information, teams[team_id].getRobot(robot_entry.first.robot_id()) , display_img, now);
-	  }
+						uint32_t robot_id = robot_entry.first.robot_id();
+						if(!teams[team_id].IsRobot(robot_id)){
+							createRobot(robot_id, team_id);
+						}
+						teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
 
-    }
-    cv::cvtColor(display_img, display_img, CV_BGR2RGB);
-    this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
-    totalFrameNumber = manager.getImageProvider(source_name).getNbFrames();
-  }
-}
-for (auto it : teamPanels){
-  (it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
+						display_img =annotation->AddAnnotation(camera_information, teams[team_id].getRobot(robot_entry.first.robot_id()) , display_img, now);
+					}
+
+				}
+				cv::cvtColor(display_img, display_img, CV_BGR2RGB);
+				this->labelVideo->setPixmap(QPixmap::fromImage(QImage(display_img.data, display_img.cols, display_img.rows, display_img.step, QImage::Format_RGB888)));
+
+				std::set<std::string> image_provider =  manager.getImageProvidersNames();
+				for (const auto & entry : image_provider){
+					initialTime = manager.getImageProvider(entry).getStart();
+					endTime = manager.getImageProvider(entry).getEnd();
+				}
+			}
+		}
+		for (auto it : teamPanels){
+			(it.second)->updateAnnotation(boolPosition, boolDirection, boolTrace, boolBall, boolTarget,
 				annotation->getTeamTrace(), annotation->getRobotTrace(),
 				annotation->getTeamBall(), annotation->getRobotBall(),
 				annotation->getTeamTarget(), annotation->getRobotTarget());
- }
-}
+		}
+	}
 }
 
 void MainWindow::createTeam(int id){
