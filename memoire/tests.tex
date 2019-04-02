@@ -1,0 +1,73 @@
+\chapter{Tests effectués}
+
+\section{Le traitement}
+
+\subsection{Tests sur l'utilisation du Json}
+
+Tous les réglages des annotations s'effectuent dans le fichier annotation\_settings.json. Nous avons donc testé les différents problèmes que nous pouvons rencontrer dans la lecture de ce fichier Json.
+\bigskip
+
+\begin{itemize}
+    \item \textbf{Il manque un item dans le fichier} : Pour tous les éléments utilisés nous utilisons une fonction \textit{CheckMember} qui va vérifier qu'il ne manque pas d'informations dans le fichier Json.
+    
+    Il faut noter que même si une annotation n'est pas utilisée, nous vérifions que tous ses items sont là. En effet, grâce à l'interface nous pouvons changer les annotations sans relancer notre exécutable. Il est donc important de vérifier que tous les objets du Json sont présent dès le début afin de pouvoir les utiliser si besoin en changeant les annotations.
+    \item \textbf{Un item a été ajouté en trop} : Les éléments présents dans le fichier annotation\_settings.json mais non utilisés dans nos fonctions ne gênent en aucun cas l'ajout des annotations dans la vidéo. Ils sont justes ignorés.
+    \item \textbf{Un item est présent deux fois dans le fichier} : Nous avons testé ce cas là en dupliquant des éléments du Json. Dans ce cas là, la dernière itération de l'élément sera celle prise en compte.
+\end{itemize}
+
+\subsection{Tests sur la lecture des logs}
+
+Le problème principal sur les logs que l'on peut trouver en match est l'interruption de l'envoi des messages par les robots. Les tests sur l'interruption des logs s'effectuent dans le fichier test.cpp, dont l'exécutable est tools/test\_logs.
+\bigskip
+
+Pour cela nous avons eu besoin d'identifier les dépendances entre les différentes annotations.
+
+\begin{itemize}
+    \item \textbf{La Position }: rien.
+    \item \textbf{La Direction }: Nécessite la Position.
+    \item \textbf{La Balle }: Nécessite la Direction et la Position.
+    \item \textbf{La Trace }: Nécessite au moins une Position.
+    \item \textbf{La Position souhaitée } : Nécessite la Position actuelle pour avoir le trajet à effectuer par le robot, sinon rien.
+\end{itemize}
+\bigskip
+
+Si nous nous plaçons maintenant dans la fonction AddAnnotation de la classe Annotation nous pouvoir l'application de la hiérarchie dans les annotations.
+
+La trace place en premier afin qu'elle ne chevauche pas sur les autres annotations et, annotée en premier elle se place donc à l'arrière plan.
+C'est également la seule qui peut être affichée même s'il n'y a pas de messages (si on choisi un temps d'expiration du message inférieur au temps désiré pour la trace).
+\bigskip
+
+Ensuite, nous vérifions si le dernier message du robot est encore valide puis nous ajoutant les annotations en lisant dans le message et en organisant le plan (par exemple, la position est affichée après la direction pour que la flèche n'efface pas le chiffre).
+\bigskip
+
+Enfin dans le fichier de test nous interrompons les différentes annotations à des temps différents pour chaque messages. La reprise des annotations après interruption ne présente pas de problème sur notre fichier de test.
+\bigskip 
+
+Il y a cependant quelques faits intéressants à noter sur les logs des robots.
+\bigskip
+
+Si on dé-commente les lignes 68 et 79 du fichier test.cpp, cela nous affiche les time\_stamp du GC\_Msg et des Robot\_Msg.
+On voit donc à ce moment que chaque message s'actualise à des temps différents et que les messages sont donc utilisés pour plusieurs frame de la vidéo. C'est pour cela que nous avons ajouté une ligne permettant d'optimiser la performance en empêchant la réécriture d'un même message.
+\bigskip
+
+Il est important de noter que le Robot\_Msg se décompose en deux parties. Pour accéder au Robot\_Identifier, il faut appeler robot\_entry.first et le reste du message (Robot\_Msg) est accessible depuis robot\_entry.second. (voir Figure~\ref{fig:message}, page~\pageref{fig:message})
+
+\subsection{Tests sur la performance}
+
+Les tests sur la performance de notre programme s'effectuent dans le fichier test\_time.cpp.
+\bigskip
+
+L'essentiel de ce test nous permet de créer un fichier resultat.csv comprenant le temps des 4 éléments majeurs du programme : Récupération de l'image, clonage de l'image, ajout des annotations lignes du terrain et score, ajout des autres annotations.
+\bigskip
+
+à tester = temps moyen par annotation.
+Différence optimisé ou non.
+Différence une ou deux vidéos.
+
+Un des problèmes identifié de notre programme est la suppression des anciennes positions 
+\bigskip
+
+Nous avons un dernier fichier de test appelé test\_video.cpp qui est un script permettant de lancer plusieurs fois le programme et la vidéo du match. Elle peut nous permettre de comparer l'avancée de la vidéo avec la version optimisée de la vitesse de la vidéo ou de tester la performance en lançant de multiples fois le programme.
+
+\section{L'interface}
+
