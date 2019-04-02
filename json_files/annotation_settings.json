@@ -16,6 +16,7 @@
 	"write": true,
 	"circle_size" : 10,
 	"number" : true, 
+	"exactitude" : false
     },
     "direction" : {
 	"write": true,
@@ -23,8 +24,8 @@
     },
     "trace" : {
 	"write": true,
-	"robot_num" : 4,
-	"team_num" : 9,
+	"robot_num" : 1,
+	"team_num" : 12,
 	"circle_size" : 5,
 	"delay_old_pos" : 5
     },
@@ -46,7 +47,6 @@
 	"name" : "eirlab.json"
     },
     "score" : {
-	"_comment" : "only for treatement",
 	"write" : true,
 	"_comment" : " advice for positionnig the score (video is 480*640)
 top right corner x = 20, y = 50
@@ -54,8 +54,8 @@ bottom left corner x = 450, y = 430",
 	"x" : 20,
 	"y" : 50
     },
-    "delay_annotation" : 3,
-    "optimized" : false
+    "optimized" : false,
+    "delay_annotation" : 2
     
 
 }

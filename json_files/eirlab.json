@@ -1,0 +1,15 @@
+{
+    "border_strip_width_x" : 0.7,
+    "border_strip_width_y" : 0.7,
+   "center_radius" : 0.75,
+   "field_length" : 9,
+   "field_width" : 6,
+   "goal_area_length" : 1,
+   "goal_area_width" : 5,
+   "goal_depth" : 0.6,
+   "goal_width" : 2.6,
+   "line_width" : 0.05,
+   "penalty_mark_dist" : 2.1,
+   "penalty_mark_length" : 0.1,
+   "ball_radius" : 0.075
+}
