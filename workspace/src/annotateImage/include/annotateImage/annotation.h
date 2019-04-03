@@ -33,8 +33,8 @@ namespace annotateImage{
   public:
     std::map<std::string, bool>annotation_choice;
     int delay_annotation;
-    uint32_t team_id = 0;
-    uint32_t id_robot = 0;
+    int team_id = 0;
+    int id_robot = 0;
     float s_to_us = 1000000.0;
 
 
