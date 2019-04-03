@@ -1,15 +1,13 @@
 #include "annotateImage/team.h"
 
-
-namespace annotateImage
-{
+namespace annotateImage {
 
   Team::Team(){
     std::map<int, RobotInformation>robots;
   }
 
   Team::~Team(){
-}
+  }
 
   void Team::addRobot(int robot_id){
     if (robots.find(robot_id)==robots.end()){
@@ -17,26 +15,22 @@ namespace annotateImage
       robots[robot_id]=rb;
     }
   }
+
   bool Team::isRobot(int robot_id){
-     if (robots.find(robot_id)==robots.end())
-       return false;
-     else
-       return true;
+    if (robots.find(robot_id)==robots.end())
+      return false;
+    else
+      return true;
   }
 
-  void Team::setScore(uint32_t score)
-  {
+  void Team::setScore(uint32_t score){
     if (team_score!=score)
-      {
-	team_score = score;
-      }
+      team_score = score;
   }
 
-  uint32_t Team::getScore()
-  {
+  uint32_t Team::getScore(){
     return team_score;
   }
-
 
   RobotInformation Team::getRobot(int robot_id){
     return robots[robot_id];
@@ -44,23 +38,20 @@ namespace annotateImage
 
   std::map<int,RobotInformation> Team::getRobotMap(){
     std::map<int,RobotInformation> copy_robots;
+
     for(auto robot : robots){
       copy_robots[robot.first] = robot.second;
     }
+
     return copy_robots;
   }
 
-  void Team::updateRobot(int robot_id, RobotMsg rb_msg)
-  {
-
+  void Team::updateRobot(int robot_id, RobotMsg rb_msg){
     robots[robot_id].updateRobotMessage(rb_msg);
     robots[robot_id].updateRobotTrace(rb_msg);
-
   }
 
-  void Team::setGCMessage(int robot_id, GCRobotMsg gc_msg)
-  {
-
+  void Team::setGCMessage(int robot_id, GCRobotMsg gc_msg){
     robots[robot_id].updateGCMessage(gc_msg);
   }
 

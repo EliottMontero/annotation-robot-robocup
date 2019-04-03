@@ -1,26 +1,11 @@
 #pragma once
 
-#include <hl_communication/utils.h>
-#include <hl_communication/message_manager.h>
-#include <hl_monitoring/monitoring_manager.h>
-#include <hl_monitoring/utils.h>
-#include <hl_monitoring/field.h>
-
 #include <annotateImage/robotInformation.h>
-#include <annotateImage/position.h>
-#include <annotateImage/direction.h>
-#include <hl_communication/wrapper.pb.h>
 
-using namespace hl_communication;
-using namespace hl_monitoring;
-
-namespace annotateImage
-{
-
+namespace annotateImage {
   class Team {
 
-  public:
-
+  public :
     Team();
     ~Team();
 
@@ -36,8 +21,10 @@ namespace annotateImage
     void setGCMessage(int robot_id, GCRobotMsg gc_msg);
     void setRobotTeam(int robot_id, int team_id);
     void setRobotNum(int robot_id);
-  private:
+
+  private : 
     uint32_t team_score;
     std::map<int, RobotInformation>robots;
+
   };
 }

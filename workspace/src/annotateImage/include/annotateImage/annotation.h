@@ -1,42 +1,30 @@
 #pragma once
 
+#include <annotateImage/team.h>
+
 #include <hl_communication/utils.h>
-#include <hl_communication/message_manager.h>
+
 #include <hl_monitoring/monitoring_manager.h>
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
-#include <annotateImage/robotInformation.h>
-#include <annotateImage/team.h>
-#include <annotateImage/position.h>
-#include <annotateImage/direction.h>
-#include <hl_communication/wrapper.pb.h>
 
 #include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
 
-#include <string>
-#include <sstream>
 #include <iostream>
-#include <json/value.h>
-#include <jsoncpp/json/json.h>
 #include <fstream>
-
-#include <google/protobuf/message.h>
-
 
 using namespace hl_monitoring;
 using namespace hl_communication;
 
-
 namespace annotateImage{
   class Annotation{
-  public:
+
+    public :
     std::map<std::string, bool>annotation_choice;
     int delay_annotation;
     int team_id = 0;
     int id_robot = 0;
     float s_to_us = 1000000.0;
-
 
     int sizecircle;
     float sizenumber = 0.0;
@@ -60,25 +48,30 @@ namespace annotateImage{
     Annotation(std::string);
     ~Annotation();
 
-    bool IsMessageValid(uint64_t time_stamp, uint64_t now, int delay);
-    bool IsPosValid(cv::Point2f pos, int img_x, int img_y);
-    
+    bool isMessageValid(uint64_t time_stamp, uint64_t now, int delay);
+    bool isPosValid(cv::Point2f pos, int img_x, int img_y);
+
     cv::Mat annoteScore(std::map<int, Team>teams, cv::Mat display);
 
     cv::Mat annotePosition(CameraMetaInformation camera_information,
-                                  Position pos,cv::Mat display,  uint64_t now);
-    cv::Mat annoteTarget(CameraMetaInformation camera_information,RobotMsg robot,
-                           Position pos_target ,cv::Mat display,  uint64_t now);
+                           Position pos, cv::Mat display, uint64_t now);
+    cv::Mat annoteTarget(CameraMetaInformation camera_information,
+                         RobotMsg robot, Position pos_target,
+                         cv::Mat display,  uint64_t now);
     cv::Mat annoteDirection(CameraMetaInformation camera_information,
-                    Direction dir, Position pos,cv::Mat display,  uint64_t now);
+                            Direction dir, Position pos,
+                            cv::Mat display, uint64_t now);
     cv::Mat annoteTrace(CameraMetaInformation camera_information,
-                         std::map<uint64_t, Position> trace,cv::Mat display,  uint64_t now);
-    cv::Mat annoteBall(CameraMetaInformation camera_information,Position pos_ball,
-                    Position pos, Direction dir,cv::Mat display,  uint64_t now);
+                        std::map<uint64_t, Position> trace,
+                        cv::Mat display, uint64_t now);
+    cv::Mat annoteBall(CameraMetaInformation camera_information,
+                       Position pos_ball, Position pos, Direction dir,
+                       cv::Mat display, uint64_t now);
     cv::Mat addAnnotation(CameraMetaInformation camera_information,
-                         RobotInformation robot,cv::Mat display,  uint64_t now);
+                          RobotInformation robot,
+                          cv::Mat display, uint64_t now);
 
-    /*this is for the interface*/
+    /*This is for the interface*/
     void togglePositionChoice();
     void toggleDirectionChoice();
     void toggleTraceChoice();

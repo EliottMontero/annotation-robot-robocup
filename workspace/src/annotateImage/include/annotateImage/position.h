@@ -1,17 +1,11 @@
 #pragma once
 
-#include <hl_monitoring/camera.pb.h>
 #include <google/protobuf/message.h>
 
-#include <opencv2/core.hpp>
+namespace annotateImage {
+  class Position {
 
-
-namespace annotateImage
-{
-	/*Créer des positions pour la facilité de stockage */
-
-class Position {
-  public:
+  public :
     float x;
     float y;
     float uncertainty;
@@ -19,7 +13,9 @@ class Position {
 
     Position();
     ~Position();
+
     void setPosition(float xp, float yp,  uint64_t time_stamp);
     void setTimeStamp(uint64_t t_s);
+
   };
 }
