@@ -47,7 +47,7 @@ int main(int argc, char ** argv) {
   csv = fopen("results.csv", "w");
 
   if (csv == NULL){
-    fprintf(stderr, "\nErreur: Impossible d'écrire dans le fichier %s\n","out.csv");
+    fprintf(stderr, "\nErreur: Impossible d'écrire dans le fichier %s\n","result.csv");
     exit(EXIT_FAILURE);
   }
   
@@ -102,7 +102,7 @@ int main(int argc, char ** argv) {
   }
 
 
-  while((now-begin_time) / NEXT_FRAME< 100) {    
+  while((now-begin_time) / NEXT_FRAME< 1000) {    
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();
@@ -143,7 +143,7 @@ int main(int argc, char ** argv) {
 	  teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
       }
 
-     
+    
     end = std::chrono::system_clock::now();
     elapsed_useconds =end-start;
     time_stamp = elapsed_useconds.count();
@@ -166,13 +166,17 @@ int main(int argc, char ** argv) {
        if (elapsed_useconds.count()<=(now-begin_time) || !speed_optimized)
 	{
 	  cv::Mat display_img = entry.second.getImg().clone();
-
-	
+	  
+	  if (entry.first != images_by_source.begin()->first)
+	    {
+	      
 	  end = std::chrono::system_clock::now();
 	  elapsed_useconds =end-start;
 	  time_stamp = elapsed_useconds.count();
 	  fprintf(csv,"%" PRIu64 ";", time_stamp);
 	  start = std::chrono::system_clock::now();
+	    }
+	  
    
 	  if ( entry.second.isFullySpecified()) {
 	    const CameraMetaInformation & camera_information = entry.second.getCameraInformation();
@@ -180,39 +184,51 @@ int main(int argc, char ** argv) {
 	      annotation.field.tagLines(camera_information, &display_img, cv::Scalar(0,0,0), 2);
 	    if (annotation.annotation_choice["score"])
 	      annotation.annoteScore(teams, display_img);
-	    
+
+	     if (entry.first != images_by_source.begin()->first)
+	    {
+	      
 	    end = std::chrono::system_clock::now();
 	    elapsed_useconds =end-start;
 	    time_stamp = elapsed_useconds.count();
 	    fprintf(csv,"%" PRIu64 ";", time_stamp);
 	    start = std::chrono::system_clock::now();
+	    }
+	     
 	  
 	    for (const auto & robot_entry : status.robot_messages) {
 	      display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
 
 	    }
+	     if (entry.first != images_by_source.begin()->first)
+	    {
+	      
 
 	    end = std::chrono::system_clock::now();
 	    elapsed_useconds =end-start;
-	    time_stamp = elapsed_useconds.count();
+	    time_stamp = elapsed_useconds.count();	    
 	    fprintf(csv,"%" PRIu64 ";", time_stamp);
 	    start = std::chrono::system_clock::now();
-	  
+
+	    }
+	     
 	  }
 	
 	
 
 	  /*	  cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
-	  cv::imshow(entry.first, display_img);
-
-
+		  cv::imshow(entry.first, display_img);*/
+	  
+	   if (entry.first != images_by_source.begin()->first)
+	    {
+	      
 	  end = std::chrono::system_clock::now();
 	  elapsed_useconds = end-loop;
-	  time_stamp = elapsed_useconds.count();a
+	  time_stamp = elapsed_useconds.count();
 	  fprintf(csv,"%" PRIu64 ";", time_stamp);
-	  elapsed_useconds = end-begin;*/
 
-	  
+	    }
+	   
 	  	  
 	  if(!speed_optimized)
 	    {
@@ -221,10 +237,13 @@ int main(int argc, char ** argv) {
 	    }
 	  
 	  else
+	    {  if (entry.first != images_by_source.begin()->first)
 	    {
+	      
 	      end = std::chrono::system_clock::now();	      
 	      elapsed_useconds = end-begin;
-	      if (elapsed_useconds.count() >=(now-begin_time)-SECONDS_TO_MS){
+	      
+	      if (elapsed_useconds.count() >=(now-begin_time)){
 		cv::waitKey(1);
 		fprintf(csv, "fast \n");
 	      }
@@ -233,12 +252,18 @@ int main(int argc, char ** argv) {
 		fprintf(csv, "slow \n");
 	      }
 	    }
+	    }
+	  
 	 
 	  
 	}
        else
-	 {
-	   fprintf(csv, " skip image \n");
+	 { if (entry.first != images_by_source.begin()->first)
+	    {
+	      
+	   fprintf(csv, "0;0;0;0;skip image \n");
+	    }
+	   
 	 }
        
        

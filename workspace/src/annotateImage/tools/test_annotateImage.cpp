@@ -152,7 +152,7 @@ int main() {
 	    {
 	      end = std::chrono::system_clock::now();	      
 	      elapsed_useconds = end-start;
-	      if (elapsed_useconds.count() >=(now-begin_time)-SECONDS_TO_MS){
+	      if (elapsed_useconds.count() >=(now-begin_time)){
 		cv::waitKey(1);
 	      }
 	      else{
