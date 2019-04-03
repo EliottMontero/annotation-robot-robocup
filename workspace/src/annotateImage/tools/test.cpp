@@ -30,7 +30,7 @@ using namespace hl_monitoring;
 
 using namespace annotateImage;
 
-int main(int argc, char ** argv) {
+int main() {
   Json::Reader reader;
   Json::Value root;
 
