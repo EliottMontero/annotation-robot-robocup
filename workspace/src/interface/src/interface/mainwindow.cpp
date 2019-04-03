@@ -53,11 +53,6 @@ MainWindow::MainWindow(){
 
   boolPause = false;
   boolFastForward = false;
-  boolPosition = true;
-  boolDirection = true;
-  boolTrace = true;
-  boolTarget = true;
-  boolBall = true;
 
   Json::Value root;
 
@@ -74,6 +69,12 @@ MainWindow::MainWindow(){
   manager.loadConfig(conf);
 
   annotation = new Annotation("annotation_settings.json");
+
+  boolPosition = annotation->annotation_choice["position"];
+  boolDirection = annotation->annotation_choice["direction"];
+  boolTrace = annotation->annotation_choice["trace"];
+  boolTarget = annotation->annotation_choice["target"];
+  boolBall = annotation->annotation_choice["ball"];
 
   now = 0;
   if (!manager.isLive()) {
