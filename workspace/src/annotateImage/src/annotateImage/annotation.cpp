@@ -379,7 +379,7 @@ namespace annotateImage{
   }
 
 
-  cv::Mat Annotation::AddAnnotation( CameraMetaInformation camera_information,
+  cv::Mat Annotation::addAnnotation( CameraMetaInformation camera_information,
                         RobotInformation robot ,cv::Mat display,  uint64_t now){
 
     RobotMsg rb = robot.getMessageRobot();

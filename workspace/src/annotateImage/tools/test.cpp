@@ -96,6 +96,7 @@ uint64_t stop = now+6000000;
       }
     for (const auto & robot_entry : status.robot_messages) 
       {
+	//std::cout << "RobotMSG n°" << robot_entry.first.robot_id()<<" : " << robot_entry.second.time_stamp() <<std::endl;
 	uint32_t team_id = robot_entry.first.team_id();
 	if (teams.find(team_id)==teams.end()){
 	  Team t1;
@@ -143,7 +144,7 @@ uint64_t stop = now+6000000;
 	    
 	    for (const auto & robot_entry : status.robot_messages) 
 	      {
-		display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
+		display_img =annotation.addAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
 	      }
 	    
 	  }

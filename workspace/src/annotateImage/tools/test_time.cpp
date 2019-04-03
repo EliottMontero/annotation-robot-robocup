@@ -30,7 +30,7 @@
 
 #define SECONDS_TO_MS 1000
 #define NEXT_FRAME 30000 //30fps in microseconds  
-
+#define NB_FRAME_READ 1000
 
 using namespace hl_communication;
 using namespace hl_monitoring;
@@ -102,7 +102,7 @@ int main(int argc, char ** argv) {
   }
 
 
-  while((now-begin_time) / NEXT_FRAME< 1000) {    
+  while((now-begin_time) / NEXT_FRAME< NB_FRAME_READ) {    
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();
@@ -167,7 +167,7 @@ int main(int argc, char ** argv) {
 	{
 	  cv::Mat display_img = entry.second.getImg().clone();
 	  
-	  if (entry.first != images_by_source.begin()->first)
+	  if (entry.first != images_by_source.begin()->first || images_by_source.size()==1)
 	    {
 	      
 	  end = std::chrono::system_clock::now();
@@ -185,7 +185,7 @@ int main(int argc, char ** argv) {
 	    if (annotation.annotation_choice["score"])
 	      annotation.annoteScore(teams, display_img);
 
-	     if (entry.first != images_by_source.begin()->first)
+	     if (entry.first != images_by_source.begin()->first  || images_by_source.size()==1)
 	    {
 	      
 	    end = std::chrono::system_clock::now();
@@ -197,10 +197,10 @@ int main(int argc, char ** argv) {
 	     
 	  
 	    for (const auto & robot_entry : status.robot_messages) {
-	      display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
+	      display_img =annotation.addAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
 
 	    }
-	     if (entry.first != images_by_source.begin()->first)
+	     if (entry.first != images_by_source.begin()->first || images_by_source.size()==1)
 	    {
 	      
 
@@ -219,7 +219,7 @@ int main(int argc, char ** argv) {
 	  	  cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
 		  cv::imshow(entry.first, display_img);
 	  
-	   if (entry.first != images_by_source.begin()->first)
+	   if (entry.first != images_by_source.begin()->first || images_by_source.size()==1)
 	    {
 	      
 	  end = std::chrono::system_clock::now();
@@ -237,7 +237,7 @@ int main(int argc, char ** argv) {
 	    }
 	  
 	  else
-	    {  if (entry.first != images_by_source.begin()->first)
+	    {  if (entry.first != images_by_source.begin()->first || images_by_source.size()==1)
 	    {
 	      
 	      end = std::chrono::system_clock::now();	      
@@ -258,7 +258,7 @@ int main(int argc, char ** argv) {
 	  
 	}
        else
-	 { if (entry.first != images_by_source.begin()->first)
+	 { if (entry.first != images_by_source.begin()->first || images_by_source.size()==1)
 	    {
 	      
 	   fprintf(csv, "0;0;0;0;skip image \n");

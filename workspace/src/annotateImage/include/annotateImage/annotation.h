@@ -75,7 +75,7 @@ namespace annotateImage{
                          std::map<uint64_t, Position> trace,cv::Mat display,  uint64_t now);
     cv::Mat annoteBall(CameraMetaInformation camera_information,Position pos_ball,
                     Position pos, Direction dir,cv::Mat display,  uint64_t now);
-    cv::Mat AddAnnotation(CameraMetaInformation camera_information,
+    cv::Mat addAnnotation(CameraMetaInformation camera_information,
                          RobotInformation robot,cv::Mat display,  uint64_t now);
 
     /*this is for the interface*/

@@ -137,7 +137,7 @@ int main() {
 	    
 	    for (const auto & robot_entry : status.robot_messages) 
 	      {
-		display_img =annotation.AddAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
+		display_img =annotation.addAnnotation(camera_information, teams[robot_entry.first.team_id()].getRobot(robot_entry.first.robot_id()) , display_img, now);
 	      }
 	    
 	  }
