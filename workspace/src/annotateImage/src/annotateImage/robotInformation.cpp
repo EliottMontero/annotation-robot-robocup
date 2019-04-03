@@ -1,6 +1,6 @@
-#include "traitement/robotInformation.h"
+#include "annotateImage/robotInformation.h"
 
-namespace traitement
+namespace annotateImage
 {
 
   RobotInformation::RobotInformation(){

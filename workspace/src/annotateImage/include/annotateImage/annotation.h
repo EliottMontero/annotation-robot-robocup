@@ -5,10 +5,10 @@
 #include <hl_monitoring/monitoring_manager.h>
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
-#include <traitement/robotInformation.h>
-#include <traitement/team.h>
-#include <traitement/position.h>
-#include <traitement/direction.h>
+#include <annotateImage/robotInformation.h>
+#include <annotateImage/team.h>
+#include <annotateImage/position.h>
+#include <annotateImage/direction.h>
 #include <hl_communication/wrapper.pb.h>
 
 #include <opencv2/imgproc.hpp>
@@ -28,7 +28,7 @@ using namespace hl_monitoring;
 using namespace hl_communication;
 
 
-namespace traitement{
+namespace annotateImage{
   class Annotation{
   public:
     std::map<std::string, bool>annotation_choice;

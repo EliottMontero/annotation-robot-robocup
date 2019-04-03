@@ -1,4 +1,4 @@
-#include "traitement/direction.h"
+#include "annotateImage/direction.h"
 
 #include <hl_communication/utils.h>
 #include <hl_monitoring/field.h>
@@ -12,7 +12,7 @@
 using namespace hl_communication;
 using namespace hl_monitoring;
 
-namespace traitement {
+namespace annotateImage {
 
 #define ARROW_SIZE 50
 

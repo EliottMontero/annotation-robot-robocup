@@ -10,10 +10,10 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 
-#include <traitement/team.h>
+#include <annotateImage/team.h>
 #include <string>
 
-using namespace traitement;
+using namespace annotateImage;
 
 class ChoiceComboBox : public QWidget
 {

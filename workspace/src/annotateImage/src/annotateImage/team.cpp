@@ -1,7 +1,7 @@
-#include "traitement/team.h"
+#include "annotateImage/team.h"
 
 
-namespace traitement
+namespace annotateImage
 {
 
   Team::Team(){

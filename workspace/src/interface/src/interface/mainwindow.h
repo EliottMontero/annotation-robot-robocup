@@ -11,10 +11,10 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
 
-#include <traitement/annotation.h>
-#include <traitement/position.h>
-#include <traitement/direction.h>
-#include <traitement/team.h>
+#include <annotateImage/annotation.h>
+#include <annotateImage/position.h>
+#include <annotateImage/direction.h>
+#include <annotateImage/team.h>
 
 #include "teamPanel.h"
 #include "choiceDialog.h"
@@ -32,7 +32,7 @@
 using namespace cv;
 using namespace hl_communication;
 using namespace hl_monitoring;
-using namespace traitement;
+using namespace annotateImage;
 
 
 class MainWindow : public QMainWindow

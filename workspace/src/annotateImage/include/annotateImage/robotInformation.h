@@ -6,8 +6,8 @@
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
 
-#include <traitement/position.h>
-#include <traitement/direction.h>
+#include <annotateImage/position.h>
+#include <annotateImage/direction.h>
 #include <hl_communication/wrapper.pb.h>
 
 #include <queue>       
@@ -15,7 +15,7 @@
 using namespace hl_communication;
 using namespace hl_monitoring;
 
-namespace traitement
+namespace annotateImage
 {
   /* Dans cette classe, nous stockons les informations des robots que l'on obtient dans les messages*/
   class RobotInformation {

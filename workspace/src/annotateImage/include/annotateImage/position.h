@@ -6,7 +6,7 @@
 #include <opencv2/core.hpp>
 
 
-namespace traitement
+namespace annotateImage
 {
 	/*Créer des positions pour la facilité de stockage */
 

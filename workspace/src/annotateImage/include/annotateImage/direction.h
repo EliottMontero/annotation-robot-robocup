@@ -5,7 +5,7 @@
 
 #include <opencv2/core.hpp>
 
-namespace traitement
+namespace annotateImage
 
 {
 class Direction {

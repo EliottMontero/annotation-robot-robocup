@@ -33,7 +33,7 @@ SOURCES += \
 
 HEADERS += \
          include/interface/mainwindow.h
-          ../traitement/include/annotation.h
+          ../annotateImage/include/annotation.h
 FORMS += \
         mainwindow.ui
 

@@ -1,4 +1,4 @@
-#include <traitement/annotation.h>
+#include <annotateImage/annotation.h>
 
 
 #include <hl_communication/utils.h>
@@ -6,9 +6,9 @@
 #include <hl_monitoring/monitoring_manager.h>
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
-#include <traitement/position.h>
-#include <traitement/direction.h>
-#include <traitement/team.h>
+#include <annotateImage/position.h>
+#include <annotateImage/direction.h>
+#include <annotateImage/team.h>
 #include <hl_communication/perception.pb.h>
 
 
@@ -28,7 +28,7 @@
 using namespace hl_communication;
 using namespace hl_monitoring;
 
-using namespace traitement;
+using namespace annotateImage;
 
 int main(int argc, char ** argv) {
   Json::Reader reader;

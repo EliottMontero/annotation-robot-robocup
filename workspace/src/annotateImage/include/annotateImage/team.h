@@ -6,15 +6,15 @@
 #include <hl_monitoring/utils.h>
 #include <hl_monitoring/field.h>
 
-#include <traitement/robotInformation.h>
-#include <traitement/position.h>
-#include <traitement/direction.h>
+#include <annotateImage/robotInformation.h>
+#include <annotateImage/position.h>
+#include <annotateImage/direction.h>
 #include <hl_communication/wrapper.pb.h>
 
 using namespace hl_communication;
 using namespace hl_monitoring;
 
-namespace traitement
+namespace annotateImage
 {
 
   class Team {

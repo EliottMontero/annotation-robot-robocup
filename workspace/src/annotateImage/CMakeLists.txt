@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(traitement)
+project(annotateImage)
 
 
 find_package(catkin REQUIRED COMPONENTS
@@ -28,7 +28,7 @@ include_directories(${DELEGATE_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS}  )
 
 
 set(SOURCES_DIRECTORIES
-  src/traitement
+  src/annotateImage
   )
 
   #Include Sources sub sources
@@ -48,12 +48,12 @@ add_library (${PROJECT_NAME} SHARED ${ALL_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(main_traitement tools/test_traitement.cpp)
-target_link_libraries(main_traitement ${PROJECT_NAME} ${catkin_LIBRARIES})
+add_executable(main_annotateImage tools/test_annotateImage.cpp)
+target_link_libraries(main_annotateImage ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-option(BUILD_TRAITEMENT_TOOLS "Building TRAITEMENT tools" OFF)
+option(BUILD_ANNOTATEIMAGE_TOOLS "Building ANNOTATEIMAGE tools" OFF)
 
-if (BUILD_TRAITEMENT_TOOLS)
+if (BUILD_ANNOTATEIMAGE_TOOLS)
   add_executable(init_match tools/init.cpp)
   target_link_libraries(init_match ${PROJECT_NAME} ${catkin_LIBRARIES})
   

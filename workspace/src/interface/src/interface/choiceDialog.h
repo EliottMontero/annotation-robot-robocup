@@ -11,11 +11,11 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 
-#include <traitement/team.h>
+#include <annotateImage/team.h>
 #include "choiceComboBox.h"
 #include <string>
 
-using namespace traitement;
+using namespace annotateImage;
 
 class ChoiceDialog : public QDialog
 {

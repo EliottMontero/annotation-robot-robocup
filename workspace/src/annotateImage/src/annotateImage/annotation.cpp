@@ -1,9 +1,9 @@
-#include "traitement/annotation.h"
+#include "annotateImage/annotation.h"
 
 using namespace hl_communication;
 using namespace hl_monitoring;
 
-namespace traitement{
+namespace annotateImage{
 
   Annotation::Annotation(std::string file){
     Json::Reader reader;

@@ -1,4 +1,4 @@
-#include "traitement/position.h"
+#include "annotateImage/position.h"
 
 #include <hl_communication/utils.h>
 #include <hl_monitoring/field.h>
@@ -13,7 +13,7 @@ using namespace hl_communication;
 using namespace hl_monitoring;
 
 
-namespace traitement
+namespace annotateImage
 {
 	Position::Position(){
 		x = 0;
