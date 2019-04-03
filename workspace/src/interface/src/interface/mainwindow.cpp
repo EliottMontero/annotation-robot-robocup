@@ -146,7 +146,7 @@ void MainWindow::changeImage(){
         now-=FRAME_DURATION;
         sprintf(str,"end of video");
       }else{
-        sprintf(str,"%d:%d\n",((now - initialTime)/SECONDS_TO_US)/60,
+        sprintf(str,"%lu:%lu\n",((now - initialTime)/SECONDS_TO_US)/60,
                               ((now - initialTime)/SECONDS_TO_US)%60);
       }
       sliderValue->setText(str);
