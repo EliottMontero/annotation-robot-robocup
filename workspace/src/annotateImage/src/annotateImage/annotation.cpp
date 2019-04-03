@@ -27,7 +27,7 @@ namespace annotateImage{
     checkMember(root["target"], "write");
     checkMember(root["field"], "write");
     checkMember(root["score"], "write");
-    checkMember(root, "optimized");
+    checkMember(root, "transparency");
 
 
     annotation_choice["position"]=root["position"]["write"].asBool();
@@ -38,7 +38,7 @@ namespace annotateImage{
     annotation_choice["target"]=root["target"]["write"].asBool();
     annotation_choice["field"]=root["field"]["write"].asBool();
     annotation_choice["score"]=root["score"]["write"].asBool();
-    annotation_choice["optimized"]=root["optimized"].asBool();
+    annotation_choice["transparency"]=root["transparency"].asBool();
 
 
     checkMember(root, "delay_annotation");
@@ -156,7 +156,7 @@ namespace annotateImage{
     if (color.find(team_id)!=color.end())
       colorAnnotation = color[team_id];
 
-    if (annotation_choice["optimized"]){
+    if (annotation_choice["transparency"]){
       float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now-pos.time_stamp))/delay;
       if (opacity > 0){
@@ -199,7 +199,7 @@ namespace annotateImage{
 
     float opacity = 1;
     cv::Mat overlay;
-    if (annotation_choice["optimized"]){
+    if (annotation_choice["transparency"]){
       float delay = delay_annotation*s_to_us;
       opacity = (delay-(now-pos_target.time_stamp))/delay;
       if (opacity > 0){
@@ -222,7 +222,7 @@ namespace annotateImage{
         cv::Point2f pos_in_imgr = fieldToImg(pos_in_fieldr, camera_information);
 	
         cv::LineIterator it = cv::LineIterator(display, pos_in_img, pos_in_imgr, 8);
-        if(annotation_choice["optimized"])
+        if(annotation_choice["transparency"])
           it = cv::LineIterator(overlay, pos_in_img, pos_in_imgr, 8);
 
 	
@@ -235,7 +235,7 @@ namespace annotateImage{
 	  
       }
       
-        if(annotation_choice["optimized"])
+        if(annotation_choice["transparency"])
           cv::addWeighted(overlay,opacity, display, 1-opacity, 0,display);
 	     }
       }
@@ -272,7 +272,7 @@ namespace annotateImage{
     if (dir.mean > 2*CV_PI)
       colorAnnotation = color[0];
 
-    if (annotation_choice["optimized"]){
+    if (annotation_choice["transparency"]){
       float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now-dir.time_stamp))/delay;
       if (opacity > 0){
@@ -313,7 +313,7 @@ namespace annotateImage{
 	  if (IsPosValid(pos_in_img, display.cols, display.rows))
 	    {
 	      
-	  if (annotation_choice["optimized"]){
+	  if (annotation_choice["transparency"]){
 	    float delay = delay_old_pos*s_to_us;
 	    float opacity = (delay-(now-p.time_stamp))/delay;
 
@@ -359,7 +359,7 @@ namespace annotateImage{
 	
     cv::Scalar colorBall = cv::Scalar(125,125,125);
 
-    if (annotation_choice["optimized"]){
+    if (annotation_choice["transparency"]){
       float delay = delay_annotation*s_to_us;
       float opacity = (delay-(now- pos_ball.time_stamp))/delay;
       if (opacity > 0)
