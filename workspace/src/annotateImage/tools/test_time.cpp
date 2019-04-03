@@ -216,8 +216,8 @@ int main(int argc, char ** argv) {
 	
 	
 
-	  /*	  cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
-		  cv::imshow(entry.first, display_img);*/
+	  cv::namedWindow(entry.first, cv::WINDOW_AUTOSIZE);
+	  cv::imshow(entry.first, display_img);
 	  
 	   if (entry.first != images_by_source.begin()->first)
 	    {
