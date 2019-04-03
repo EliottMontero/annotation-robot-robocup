@@ -243,7 +243,7 @@ int main(int argc, char ** argv) {
 	      end = std::chrono::system_clock::now();	      
 	      elapsed_useconds = end-begin;
 	      
-	      if (elapsed_useconds.count() >=(now-begin_time)){
+	      if (elapsed_useconds.count() >=(now-begin_time)-SECONDS_TO_MS){
 		cv::waitKey(1);
 		fprintf(csv, "fast \n");
 	      }
