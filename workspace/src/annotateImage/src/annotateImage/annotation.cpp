@@ -118,7 +118,8 @@ bool Annotation::isMessageValid(uint64_t time_stamp,
 }
 
 bool Annotation::isPosValid(cv::Point2f pos, int img_x, int img_y){
-  return (pos.x <= img_x && pos.y <= img_y);
+  return (pos.x <= img_x && pos.y <= img_y
+          && pos.x >= 0 && pos.y >= 0);
 }
 
 cv::Mat Annotation::annoteScore(std::map<int, Team>teams, cv::Mat display){
