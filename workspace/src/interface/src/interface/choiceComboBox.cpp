@@ -1,11 +1,11 @@
 #include "choiceComboBox.h"
 
-ChoiceComboBox::ChoiceComboBox()
-{
+ChoiceComboBox::ChoiceComboBox(){
+
+  QHBoxLayout * layout = new QHBoxLayout;
+  QHBoxLayout * layoutBox = new QHBoxLayout;
 
   groupBox = new QGroupBox;
-
-  QHBoxLayout * layoutBox = new QHBoxLayout;
 
   teamComboBox = new QComboBox;
   teamComboBox->setToolTip("Number Team");
@@ -16,31 +16,28 @@ ChoiceComboBox::ChoiceComboBox()
   layoutBox->addWidget(robotComboBox);
   groupBox->setLayout(layoutBox);
 
+  connect(teamComboBox, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(chargeRobot(int)));
 
-  /*** CONNECT ***/
-  connect(teamComboBox, SIGNAL(currentIndexChanged(int)),this, SLOT(chargeRobot(int)));
-
-  QHBoxLayout * layout = new QHBoxLayout;
   layout->addWidget(groupBox);
   this->setLayout(layout);
 }
 
 void
-ChoiceComboBox::setTitle(QString title) {
+ChoiceComboBox::setTitle(QString title){
   groupBox->setTitle(title);
 }
 
 void
-ChoiceComboBox::setTeamMap(std::map<int,Team> & teams) {
+ChoiceComboBox::setTeamMap(std::map<int,Team> & teams){
   teamMap = teams;
   for(auto team : teamMap){
     teamComboBox->addItem(QString::number(team.first));
   }
 }
 
-
 void
-ChoiceComboBox::setCurrent(int team, int robot) {
+ChoiceComboBox::setCurrent(int team, int robot){
   int numberTeam = teamComboBox->findText(QString::number(team));
   if(numberTeam != -1){
     teamComboBox->setCurrentIndex(numberTeam);
@@ -51,22 +48,23 @@ ChoiceComboBox::setCurrent(int team, int robot) {
   }
 }
 
-void
-ChoiceComboBox::chargeRobot(int i) {
-  int numberTeam = (teamComboBox->itemText(i)).toInt();
-  std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
-  robotComboBox->clear();
-  for(auto robot : robots){
-      robotComboBox->addItem(QString::number(robot.first));
-  }
-}
-
 int
-ChoiceComboBox::getNumberTeam() {
+ChoiceComboBox::getNumberTeam(){
   return (teamComboBox->currentText()).toInt();
 }
 
 int
-ChoiceComboBox::getNumberRobot() {
+ChoiceComboBox::getNumberRobot(){
   return (robotComboBox->currentText()).toInt();
+}
+
+/*** SLOTS ***/
+void
+ChoiceComboBox::chargeRobot(int i){
+  int numberTeam = (teamComboBox->itemText(i)).toInt();
+  std::map<int, RobotInformation> robots = (teamMap[numberTeam]).getRobotMap();
+  robotComboBox->clear();
+  for(auto robot : robots){
+    robotComboBox->addItem(QString::number(robot.first));
+  }
 }

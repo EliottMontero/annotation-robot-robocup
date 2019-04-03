@@ -1,46 +1,40 @@
+#pragma once
+
 #ifndef CHOICECOMBOBOX_H
 #define CHOICECOMBOBOX_H
 
 #include <QWidget>
 #include <QObject>
-#include <QDialog>
 #include <QFormLayout>
 #include <QGroupBox>
-#include <QButtonGroup>
 #include <QComboBox>
-#include <QDialogButtonBox>
 
 #include <annotateImage/team.h>
-#include <string>
-
 using namespace annotateImage;
 
 class ChoiceComboBox : public QWidget
 {
   Q_OBJECT
 
-  public :
-    ChoiceComboBox();
+public :
+  ChoiceComboBox();
 
-    std::map<int,Team> teamMap;
+  void setTitle(QString title);
+  void setTeamMap(std::map<int,Team> & teams);
+  void setCurrent(int team, int robot);
 
-    QGroupBox * groupBox;
+  int getNumberTeam();
+  int getNumberRobot();
 
-    QComboBox * teamComboBox;
-    QComboBox * robotComboBox;
+public slots :
+  void chargeRobot(int i);
 
-    void setTitle(QString title);
+private :
+  std::map<int,Team> teamMap;
 
-    void setCurrent(int team, int robot);
-    void setTeamMap(std::map<int,Team> & teams);
-
-    int getNumberRobot();
-    int getNumberTeam();
-
-    signals:
-
-    public slots :
-    void chargeRobot(int i);
+  QGroupBox * groupBox;
+  QComboBox * teamComboBox;
+  QComboBox * robotComboBox;
 
 };
 

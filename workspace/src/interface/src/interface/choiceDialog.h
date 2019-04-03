@@ -1,64 +1,54 @@
+#pragma once
+
 #ifndef CHOICEDIALOG_H
 #define CHOICEDIALOG_H
 
-#include <QWidget>
-#include <QObject>
 #include <QDialog>
-#include <QFormLayout>
 #include <QCheckBox>
-#include <QGroupBox>
-#include <QButtonGroup>
-#include <QComboBox>
 #include <QDialogButtonBox>
 
-#include <annotateImage/team.h>
 #include "choiceComboBox.h"
-#include <string>
-
-using namespace annotateImage;
 
 class ChoiceDialog : public QDialog
 {
   Q_OBJECT
 
-  public :
-    ChoiceDialog();
+public :
+  ChoiceDialog();
 
-    std::map<int,Team> teamMap;
+  void setTeamMap(std::map<int,Team> & teams);
+  void setInitGeneral(bool position, bool direction, bool trace,
+                      bool ball, bool target);
+  void setCurrentTrace(int team, int robot);
+  void setCurrentBall(int team, int robot);
+  void setCurrentTarget(int team, int robot);
 
-    QCheckBox * positionCheck;
-    QCheckBox * directionCheck;
-    QCheckBox * traceCheck;
-    QCheckBox * ballCheck;
-    QCheckBox * targetCheck;
+  bool getGeneralPosition();
+  bool getGeneralDirection();
+  bool getGeneralTrace();
+  bool getGeneralBall();
+  bool getGeneralTarget();
 
-    ChoiceComboBox * traceBox;
-    ChoiceComboBox * ballBox;
-    ChoiceComboBox * targetBox;
+  int getNumberRobotBall();
+  int getNumberRobotTrace();
+  int getNumberRobotTarget();
+  int getNumberTeamTrace();
+  int getNumberTeamBall();
+  int getNumberTeamTarget();
 
-    void setInitGeneral(bool position, bool direction, bool trace, bool ball, bool target);
-    void setCurrentTrace(int team, int robot);
-    void setCurrentBall(int team, int robot);
-    void setCurrentTarget(int team, int robot);
-    void setTeamMap(std::map<int,Team> & teams);
+private :
+  std::map<int,Team> teamMap;
 
-    bool getGeneralPosition();
-    bool getGeneralDirection();
-    bool getGeneralTrace();
-    bool getGeneralBall();
-    bool getGeneralTarget();
+  QCheckBox * positionCheck;
+  QCheckBox * directionCheck;
+  QCheckBox * traceCheck;
+  QCheckBox * ballCheck;
+  QCheckBox * targetCheck;
 
-    int getNumberRobotBall();
-    int getNumberRobotTrace();
-    int getNumberRobotTarget();
-    int getNumberTeamBall();
-    int getNumberTeamTrace();
-    int getNumberTeamTarget();
+  ChoiceComboBox * traceBox;
+  ChoiceComboBox * ballBox;
+  ChoiceComboBox * targetBox;
 
-    signals:
+  };
 
-    public slots :
-
-};
-
-#endif //CHOICEDIALOG_H
+  #endif //CHOICEDIALOG_H

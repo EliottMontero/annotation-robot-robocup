@@ -1,7 +1,6 @@
 #include "robotPanel.h"
 
-RobotPanel::RobotPanel()
-{
+RobotPanel::RobotPanel(){
   QLayout * layout = new QVBoxLayout;
 
   label_number = new QLabel;
@@ -21,7 +20,6 @@ RobotPanel::RobotPanel()
   label_target = new QLabel;
   label_target->setText("   TARGET : OFF");
 
-
   layout->addWidget(label_number);
   layout->addWidget(label_position);
   layout->addWidget(label_direction);
@@ -30,7 +28,6 @@ RobotPanel::RobotPanel()
   layout->addWidget(label_target);
 
   this->setLayout(layout);
-
 }
 
 void RobotPanel::updateNumber(int i){
@@ -38,10 +35,11 @@ void RobotPanel::updateNumber(int i){
   idRobot = i;
 }
 
-void RobotPanel::updateAnnotation(bool pos, bool dir, bool trace,bool ball, bool target,
-                      bool teamTrace, int robotTrace,
-                      bool teamBall, int robotBall,
-                      bool teamTarget, int robotTarget){
+void RobotPanel::updateAnnotation(bool pos, bool dir, bool trace,
+                                  bool ball, bool target,
+                                  bool teamTrace, int robotTrace,
+                                  bool teamBall, int robotBall,
+                                  bool teamTarget, int robotTarget){
 
   if(pos){
     label_position->setText("   POS : ON");
@@ -51,7 +49,7 @@ void RobotPanel::updateAnnotation(bool pos, bool dir, bool trace,bool ball, bool
 
   if(dir){
     label_direction->setText("   DIR : ON");
-  }else{
+  }else {
     label_direction->setText("   DIR : OFF");
   }
 

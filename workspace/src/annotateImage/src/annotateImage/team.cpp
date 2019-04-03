@@ -11,13 +11,13 @@ namespace annotateImage
   Team::~Team(){
 }
 
-  void Team::AddRobot(int robot_id){
+  void Team::addRobot(int robot_id){
     if (robots.find(robot_id)==robots.end()){
       RobotInformation rb;
       robots[robot_id]=rb;
     }
   }
-  bool Team::IsRobot(int robot_id){
+  bool Team::isRobot(int robot_id){
      if (robots.find(robot_id)==robots.end())
        return false;
      else
@@ -36,7 +36,7 @@ namespace annotateImage
   {
     return team_score;
   }
-  
+
 
   RobotInformation Team::getRobot(int robot_id){
     return robots[robot_id];
@@ -52,15 +52,15 @@ namespace annotateImage
 
   void Team::updateRobot(int robot_id, RobotMsg rb_msg)
   {
-    
+
     robots[robot_id].updateRobotMessage(rb_msg);
     robots[robot_id].updateRobotTrace(rb_msg);
-    
+
   }
 
   void Team::setGCMessage(int robot_id, GCRobotMsg gc_msg)
   {
-    
+
     robots[robot_id].updateGCMessage(gc_msg);
   }
 

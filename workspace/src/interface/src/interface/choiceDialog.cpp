@@ -1,13 +1,12 @@
 #include "choiceDialog.h"
 
-ChoiceDialog::ChoiceDialog()
-{
-  QGridLayout * layout = new QGridLayout;
+ChoiceDialog::ChoiceDialog(){
 
-  //***GENERAL BOX***
-  QGroupBox * generalBox = new QGroupBox;
-  generalBox->setTitle("Général");
+  QGridLayout * layout = new QGridLayout;
   QVBoxLayout * layoutGeneralBox = new QVBoxLayout;
+
+  QGroupBox * generalBox = new QGroupBox;
+  generalBox->setTitle("General");
 
   positionCheck = new QCheckBox((QString)"Position");
   directionCheck = new QCheckBox((QString)"Direction");
@@ -20,16 +19,13 @@ ChoiceDialog::ChoiceDialog()
   layoutGeneralBox->addWidget(traceCheck);
   layoutGeneralBox->addWidget(ballCheck);
   layoutGeneralBox->addWidget(targetCheck);
-
   generalBox->setLayout(layoutGeneralBox);
-
 
   QFrame * line = new QFrame;
   line->setGeometry(QRect(320,150,170,5));
   line->setFrameShape(QFrame::VLine);
   line->setFrameShadow(QFrame::Sunken);
 
-  /***COMBOBOX***/
   traceBox = new ChoiceComboBox();
   traceBox->setTitle(QString("Trace"));
   ballBox = new ChoiceComboBox();
@@ -37,10 +33,11 @@ ChoiceDialog::ChoiceDialog()
   targetBox = new ChoiceComboBox();
   targetBox->setTitle(QString("Target"));
 
-
   QDialogButtonBox * buttonDialog =
     new QDialogButtonBox(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 
+  connect(buttonDialog, SIGNAL(accepted()),this, SLOT(accept()));
+  connect(buttonDialog, SIGNAL(rejected()),this, SLOT(reject()));
 
   layout->addWidget(generalBox,0,0,3,1);
   layout->addWidget(line,0,1,3,1);
@@ -50,22 +47,19 @@ ChoiceDialog::ChoiceDialog()
   layout->addWidget(buttonDialog,3,3,1,1);
 
   this->setLayout(layout);
-
-
-  /*** CONNECT ***/
-  connect(buttonDialog, SIGNAL(accepted()),this, SLOT(accept()));
-  connect(buttonDialog, SIGNAL(rejected()),this, SLOT(reject()));
 }
 
 void
-ChoiceDialog::setTeamMap(std::map<int,Team> & teams) {
+ChoiceDialog::setTeamMap(std::map<int,Team> & teams){
   traceBox->setTeamMap(teams);
   ballBox->setTeamMap(teams);
   targetBox->setTeamMap(teams);
 }
 
 void
-ChoiceDialog::setInitGeneral(bool position, bool direction, bool trace, bool ball, bool target){
+ChoiceDialog::setInitGeneral(bool position, bool direction, bool trace,
+                             bool ball, bool target){
+
   positionCheck->setChecked(position);
   directionCheck->setChecked(direction);
   traceCheck->setChecked(trace);
@@ -74,20 +68,19 @@ ChoiceDialog::setInitGeneral(bool position, bool direction, bool trace, bool bal
 }
 
 void
-ChoiceDialog::setCurrentTrace(int team, int robot) {
+ChoiceDialog::setCurrentTrace(int team, int robot){
   traceBox->setCurrent(team,robot);
 }
 
 void
-ChoiceDialog::setCurrentBall(int team, int robot) {
+ChoiceDialog::setCurrentBall(int team, int robot){
   ballBox->setCurrent(team,robot);
 }
 
 void
-ChoiceDialog::setCurrentTarget(int team, int robot) {
+ChoiceDialog::setCurrentTarget(int team, int robot){
   targetBox->setCurrent(team,robot);
 }
-
 
 bool
 ChoiceDialog::getGeneralPosition(){
@@ -115,33 +108,31 @@ ChoiceDialog::getGeneralTarget(){
 }
 
 int
-ChoiceDialog::getNumberRobotTrace() {
-
+ChoiceDialog::getNumberRobotTrace(){
   return traceBox->getNumberRobot();
 }
 
 int
-ChoiceDialog::getNumberTeamTrace() {
-
-  return traceBox->getNumberTeam();
-}
-
-int
-ChoiceDialog::getNumberRobotBall() {
+ChoiceDialog::getNumberRobotBall(){
   return ballBox->getNumberRobot();
 }
 
 int
-ChoiceDialog::getNumberTeamBall() {
-  return ballBox->getNumberTeam();
-}
-
-int
-ChoiceDialog::getNumberRobotTarget() {
+ChoiceDialog::getNumberRobotTarget(){
   return targetBox->getNumberRobot();
 }
 
 int
-ChoiceDialog::getNumberTeamTarget() {
+ChoiceDialog::getNumberTeamTrace(){
+  return traceBox->getNumberTeam();
+}
+
+int
+ChoiceDialog::getNumberTeamBall(){
+  return ballBox->getNumberTeam();
+}
+
+int
+ChoiceDialog::getNumberTeamTarget(){
   return targetBox->getNumberTeam();
 }

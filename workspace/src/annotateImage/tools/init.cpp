@@ -22,7 +22,7 @@
 #include <sstream>
 
 #define SECONDS_TO_MS 1000
-#define NEXT_FRAME 30000 //30fps in microseconds  
+#define NEXT_FRAME 30000 //30fps in microseconds
 #define INIT_TIME NEXT_FRAME*SECONDS_TO_MS //30s
 
 using namespace hl_communication;
@@ -33,7 +33,7 @@ using namespace annotateImage;
 int main() {
   Json::Reader reader;
   Json::Value root;
-  
+
 
   std::ifstream match_settings("match_settings.json");
   if (!match_settings.good())
@@ -41,7 +41,7 @@ int main() {
   match_settings >> root;
 
   checkMember(root["match_setting"], "config");
-  
+
   std::string conf = root["match_setting"]["config"].asString();
   std::cout << conf << std::endl;
 
@@ -51,14 +51,14 @@ int main() {
 
   std::map<int, Team>teams;
   uint64_t now = 0;
-  uint64_t begin_time = now;  
+  uint64_t begin_time = now;
 
   if (!manager.isLive()) {
     now = manager.getStart();
     begin_time = now;
   }
   while(now-begin_time<INIT_TIME) {
-    
+
     manager.update();
     if (manager.isLive()) {
       now = getTimeStamp();
@@ -67,16 +67,16 @@ int main() {
     }
 
     MessageManager::Status status = manager.getStatus(now);
-    
-    for (const auto & robot_entry : status.robot_messages) 
+
+    for (const auto & robot_entry : status.robot_messages)
       {
 	uint32_t team_id = robot_entry.first.team_id();
 	if (teams.find(team_id)==teams.end()){
 	  Team t1;
 	  teams[team_id]=t1;
 	}
-	if (!teams[team_id].IsRobot(robot_entry.first.robot_id())){
-	  teams[team_id].AddRobot(robot_entry.first.robot_id());
+	if (!teams[team_id].isRobot(robot_entry.first.robot_id())){
+	  teams[team_id].addRobot(robot_entry.first.robot_id());
 	  teams[team_id].setRobotTeam(robot_entry.first.robot_id(),team_id);
 	  teams[team_id].setRobotNum(robot_entry.first.robot_id());
 	}
@@ -84,10 +84,10 @@ int main() {
 	if (robot_entry.second.time_stamp() !=  teams[team_id].getRobot(robot_entry.first.robot_id()).getMessageRobot().time_stamp())
 	  teams[team_id].updateRobot(robot_entry.first.robot_id(), robot_entry.second);
       }
-    
+
   }
   std::cout << " In this game : " << std::endl;
-  
+
   for (std::map<int, Team>::iterator it_team=teams.begin();it_team != teams.end(); ++it_team)
     {
       for (std::map<int, RobotInformation>::iterator it_robot=teams[it_team->first].getRobotMap().begin();it_robot != teams[it_team->first].getRobotMap().end(); ++it_robot)
@@ -96,7 +96,7 @@ int main() {
 	}
 
     }
-  
-	  
+
+
   return 0;
 }

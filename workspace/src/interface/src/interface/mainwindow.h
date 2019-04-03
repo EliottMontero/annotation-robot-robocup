@@ -1,33 +1,20 @@
+#pragma once
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QTimer>
 #include <QSlider>
-
-#include "opencv2/core.hpp"
-#include <opencv/cv.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui.hpp>
-
-#include <annotateImage/annotation.h>
-#include <annotateImage/position.h>
-#include <annotateImage/direction.h>
-#include <annotateImage/team.h>
-
-#include "teamPanel.h"
-#include "choiceDialog.h"
+#include <QPushButton>
 
 #include <hl_communication/message_manager.h>
 #include <hl_monitoring/monitoring_manager.h>
-#include <hl_communication/utils.h>
-#include <hl_monitoring/utils.h>
-#include <hl_monitoring/field.h>
 
-#include <tclap/CmdLine.h>
-#include <sstream>
+#include <annotateImage/annotation.h>
 
+#include "teamPanel.h"
+#include "choiceDialog.h"
 
 using namespace cv;
 using namespace hl_communication;
@@ -37,61 +24,59 @@ using namespace annotateImage;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MainWindow();
-    void createTeam(int id);
-    void createRobot(int robotId, int teamId);
+  MainWindow();
+  void createTeam(int id);
+  void createRobot(int robotId, int teamId);
 
-    public slots:
-    void robotChoice();
-    void changeImage();
-    void togglePause();
-    void toggleFastForward();
-    void togglePosition();
-    void toggleDirection();
-    void toggleTrace();
-    void toggleBall();
-    void toggleTarget();
+public slots:
+  void changeImage();
+  void annotationChoice();
+  void togglePause();
+  void toggleFastForward();
+  void togglePosition();
+  void toggleDirection();
+  void toggleTrace();
+  void toggleBall();
+  void toggleTarget();
 
 private :
-    MonitoringManager manager;
-    Annotation *annotation;
-    Field field;
+  MonitoringManager manager;
+  Annotation *annotation;
+  Field field;
 
-    QLabel * labelVideo;
-    cv::Mat * gamePicture;
+  QLabel * labelVideo;
+  Mat * gamePicture;
 
-    QTimer * timer;
-    uint64_t now;
-    uint64_t initialTime;
-    uint64_t endTime;
-    uint64_t dt;
+  QTimer * timer;
+  uint64_t now;
+  uint64_t initialTime;
+  uint64_t endTime;
+  uint64_t dt;
 
-    std::map<int, Team> teams;
-    std::map<int, TeamPanel*> teamPanels;
+  std::map<int, Team> teams;
+  std::map<int, TeamPanel*> teamPanels;
 
-    QPushButton * buttonRobotChoice;
-    QPushButton * buttonPause;
-    QPushButton * buttonFastForward;
+  QWidget * zoneCentral;
+  QGridLayout * layout;
 
-    QSlider * slider;
-    QLabel * sliderValue;
-    int oldSliderValue;
+  QPushButton * buttonAnnotationChoice;
+  QPushButton * buttonPause;
+  QPushButton * buttonFastForward;
 
-    bool boolMove=false;
+  QSlider * slider;
+  QLabel * sliderValue;
+  int oldSliderValue;
 
-    bool boolPause;
-    bool boolFastForward;
-    bool boolPosition;
-    bool boolDirection;
-    bool boolTrace;
-    bool boolBall;
-    bool boolTarget;
-
-    QWidget * zoneCentral;
-    QGridLayout * layout;
+  bool boolPause;
+  bool boolFastForward;
+  bool boolPosition;
+  bool boolDirection;
+  bool boolTrace;
+  bool boolBall;
+  bool boolTarget;
 
 protected:
   void resizeEvent(QResizeEvent *event) override;

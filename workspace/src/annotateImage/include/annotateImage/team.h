@@ -24,12 +24,12 @@ namespace annotateImage
     Team();
     ~Team();
 
-    void AddRobot(int robot_id);
-    bool IsRobot(int robot_id);
+    void addRobot(int robot_id);
+    bool isRobot(int robot_id);
 
     void setScore(uint32_t score);
     uint32_t getScore();
-    
+
     RobotInformation getRobot(int robot_id);
     std::map<int, RobotInformation> getRobotMap();
     void updateRobot(int robot_id, RobotMsg rb_msg);
