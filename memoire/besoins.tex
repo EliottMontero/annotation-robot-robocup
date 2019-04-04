@@ -1,8 +1,277 @@
 \chapter{Besoins}
- reprendre  cahier des besoins + différence par rapport à ce qu'on a fait
- 
+
+Ce projet consiste à proposer une solution logicielle pour 
+incruster les données d'un match de football robotique sur un 
+flux vidéo.
+
+Ce logiciel devra répondre aux besoins qui ont été définis au 
+préalable avec les clients, des besoins \textit{fonctionnels} et 
+\textit{non fonctionnels}.
+\bigskip
+
+La liste des besoins de notre cahier des besoins n'était pas 
+bonne car notre compréhension du code fourni par le client était 
+à l'époque très faible. Nous rencontrions des problèmes avec 
+\textbf{Catkin} (Build system, fourni par le framework ROS 
+spécifique pour l'écriture de logiciel de robot), ce qui nous 
+empêchait de compiler. Ces problèmes ont rapidement été 
+surmontés, ce qui nous a permis de mieux cerner le projet. 
  
 \section{Fonctionnels}
 
+Comme tous les besoins n'ont pas une importance similaire, nous 
+avons décidé de les séparer en 3 niveaux de priorité.
+
+\subsection{Priorité 1}
+
+Les besoins fonctionnels de priorité 1 sont indispensables au 
+fonctionnement du programme. 
+\bigskip
+
+\begin{description}
+    \item[Interface]: Les clients désiraient une interface dans 
+    laquelle serait affichée une vidéo annotée. Depuis cette 
+    interface, il doit être possible de modifier les choix 
+    d'annotations.\\
+    
+    Nous avons donc créé une interface en utilisant le framework 
+    \textbf{Qt}. Elle doit communiquer avec le package qui 
+    s'occupe d'incruster les annotations sur la vidéo. Elle peut 
+    ainsi récupérer les images annotées et les afficher.
+    \bigskip
+    
+    L'interface affiche aussi des informations utiles (le temps 
+    et le score) pour le match en cours. Elle propose des moyens 
+    d'interaction pour personnaliser les annotations (menu 
+    Annotation Choice). On peut contrôler le visionnage de la 
+    vidéo grâce aux boutons Pause, Fast Forward et au Slider.
+    \bigskip
+    \item[Annotation de la position et de la direction] : 
+    Certaines annotations sont indispensables pour comprendre les
+    actions des robots. Il est important d'incruster sur la vidéo
+    l'endroit où chaque robot pense être, ainsi que sa direction.
+    \bigskip
+    
+    Nous avons choisi de représenter la position par un point de 
+    taille fixe de la couleur de l'équipe du robot (une couleur 
+    par équipe).  La direction est une flèche de même couleur que
+    le point qui part du centre du point position et dans la
+    direction indiquée par les données du robot.
+    \bigskip
+    
+    Nous avons implémenté ces solutions en utilisant les fonction
+    de dessin d'\textbf{OpenCV}, qui ne demandent que très peu de
+    puissance de calcul \ref{vitesse_annotation}. 
+    \bigskip
+    
+    \item[Compréhension et appropriation du code du client (et 
+    Catkin)]: Ce fut un des gros problèmes du début de projet. 
+    Nous avons eu beaucoup de mal à compiler le code client 
+    fourni, qui était nécessaire pour l'avancée du projet 
+    (notamment pour recevoir les messages des robots et les lire;
+    il sert aussi à décomposer la vidéo en images et permet de
+    transformer la position du robot en point sur l'image en 
+    prenant en compte les paramètres de la caméra). Le problème 
+    venait des dépendances avec Catkin, que nous ne savions pas 
+    comment utiliser.
+    \bigskip
+    
+    Finalement, après de nombreux essais pour faire fonctionner 
+    CMake, Catkin et les autres dépendances, et avec de l'aide de
+    nos clients, nous avons réussi à compiler le code fourni.
+    Nous avons ainsi pu intégrer notre code dans ce système de 
+    compilation. Plus tard, nous avons passé les modules clients 
+    ainsi que le paquet Catkin en  submodule de notre dépot git 
+    pour pouvoir les mettre à jour lorsque c'est nécessaire.
+\end{description}
+
+Ces besoins sont la base du projet, et étaient le minimum à 
+atteindre pour avoir un programme utilisable. 
+\bigskip
+
+Nous avions pensé devoir calculer l'équation de plan permettant  
+de récupérer un point sur l'image à partir d'une position sur le 
+terrain. Ces deux articles \cite{ref1} et \cite{ref2} nous ont 
+offerts une première approche sur le problème.
+
+Lorsque nous avons pu lire le code fourni par le client, nous 
+avons vu comment utiliser ses fonctions qui prenaient déjà en 
+compte l'équation et nous n'avons donc pas eu à travailler 
+dessus. 
+
+\subsection{Priorité 2}
+
+Ces besoins dépendent de ceux de priorité 1, mais sont 
+indispensables au bon fonctionnement du programme.
+\bigskip
+
+\begin{description}
+    \item[Relier l'annotation des images à l'interface]: 
+    L'interface offre du confort à l'utilisateur, notamment pour 
+    choisir les annotations. L'annotation de l'image se fait dans
+    le module \textbf{annotateImage}. Pour pouvoir afficher les
+    images annotées dans l'interface, il a fallu mettre en place 
+    une communication entre ces deux modules.
+    \bigskip
+    
+     Dans la première moitié du projet, nous avons eu beaucoup de
+     difficultés à relier ces deux parties. Ceci était
+     principalement dû à nos (nombreux) problèmes d'architecture 
+     précédant le rendu de la V1. Notre nouvelle architecture, 
+     plus robuste, nous a permis de résoudre ce problème de 
+     communication inter-modules. 
+    \bigskip
+    
+    Auparavant, nous appelions un manager depuis un autre manager
+    d'annotation. Le premier manager prenait alors la main, et ne
+    laissait pas le second s'exécuter. Nous avons résolu ce 
+    problème avec un QTimer qui met périodiquement le manager à 
+    jour.
+    \bigskip
+    
+    Nous appelons donc l'annotation d'images périodiquement pour 
+    rafraîchir l'image \textit{augmentée} dans l'interface. 
+    Celle-ci communique avec le manager pour choisir les 
+    annotations à incruster.
+    \bigskip
+    
+    \newpage
+    \item[Avoir une architecture permettant une adaptabilité du 
+    projet]: Les informations envoyées par les robots peuvent 
+    changer. À l'avenir, ils enverront peut être de nouvelles 
+    informations que nous ne pouvons pas afficher actuellement 
+    (comme l'indication du périmètre de sécurité autour d'un 
+    robot pour un coup-franc par exemple !). Nous devions faire 
+    en sorte qu'il soit simple d'ajouter de nouvelles annotations
+    au code. 
+    \bigskip
+    
+   Si on souhaite ajouter un nouveau type d'annotation, il suffit
+   d'ajouter une fonction d'incrustation dans
+   \textit{annotation.cpp} (paquet \textit{annotateImage}), et
+   d'ajouter un champ pour l'annotation dans le fichier json 
+   \textit{annotation\_settings.json} (qui gère les caractériques
+   des annotations (taille, couleur, ...).
+   \bigskip
+   
+    \item[Permettre à l'utilisateur de personnaliser ses
+    annotations et de faire des choix]: L'utilisateur doit être 
+    en mesure de configurer les paramètres esthétiques des 
+    annotations (taille, couleur ...). En effet, lors d'un match 
+    avec plusieurs robots, afficher toutes les annotations pour 
+    tous les robots rendrait la vidéo complètement illisible tant
+    il y aurait de contenu à l'écran. 
+    \bigskip
+    
+    De plus, ne pas avoir de personnalisation des annotations
+    rendrait le logiciel très peu flexible, et restreindrait
+    l'éventail des utilisations possibles.
+    C'est pourquoi nous avons mis en place un fichier
+    \textit{annotation\_settings.json} contenant les paramètres
+    principaux de chaque annotation, et qui est apte à être
+    modifié pour toute utilisation souhaitée.
+    
+\end{description}
+
+\subsection{Priorité 3}
+
+Ces besoins ne sont pas indispensables au fonctionnement du
+programme, mais lui permettent de gagner en ergonomie.
+\bigskip
+
+\begin{description}
+    \item[Faciliter le déplacement dans la vidéo]: Comme dans la
+    plupart des logiciels de lecture de vidéo, il est utile de
+    pouvoir se déplacer dans la vidéo. Nous avons solutionné ce
+    problème en implémentant un bouton \textit{play/pause}. Nous
+    avons également ajouté la possibilité de passer en mode 
+    \textit{fast-forward} pour avancer plus rapidement, ainsi
+    qu'un slider sous la vidéo, qui va permettre de se déplacer 
+    dans la vidéo et de visualiser son avancement.
+    \bigskip
+    
+    \item[Permettre à l'utilisateur de personnaliser 
+    l'incrustation]: Ce besoin est un peu englobé dans le besoin 
+    de l'interface, mais n'était pas indispensable pour obtenir 
+    une interface fonctionnelle. 
+    \bigskip
+    
+    Il est souhaitable que l'utilisateur puisse faire des choix 
+    de manière intuitive depuis l'interface pour personnaliser 
+    son expérience. Par exemple, choisir les annotations à 
+    afficher ou non. 
+    
+    Nous avons implémenté de nombreuses solutions à ce besoin 
+    dans l'interface, comme le menu Annotation Choice qui permet 
+    de choisir quelles annotations on souhaite afficher, ou 
+    encore la trace de quel robot on souhaite afficher.
+    
+    \item[Ajouter de nouvelles annotations]: L'incrustation de la
+    position et de la direction est un besoin essentiel. Cela
+    représente toutefois peu d'informations, et il serait 
+    souhaitable d'en proposer d'avantage. 
+    \bigskip
+    
+    Grâce à notre l'architecture, nous avons pu rajouter de 
+    nombreuses annotations comme par exemple une trace des 
+    dernières positions d'un robot, ou la position de la balle 
+    telle que perçue par un robot. On choisit le robot pour 
+    lequel afficher l'annotation car l'affichage serait trop 
+    surchargé si on l'affichait pour tous les robots.
+    \bigskip
+    
+    \item[Afficher l'état de la partie sur l'interface]: Les 
+    clients souhaitaient voir les informations sur les équipes, 
+    les robots, et le match dans l'interface. 
+    \bigskip
+    
+    Nous avons choisi d'afficher le score ainsi que la liste des 
+    robots de chaque équipe, mais aussi quelle annotation est 
+    activée pour chaque robot.
+\end{description}
+
+\newpage
 
 \section{Besoins non fonctionnels}
+
+\begin{description}
+    \item[Dépendances à jour]: Pour faire tourner le projet, nous
+    utilisons de nombreuses dépendances (qui sont listées dans le
+    README d'installation) comme OpenCV 3, QT 5.9.5, mais aussi 
+    Catkin, CMake, python ou encore protobuf. 
+    \bigskip
+    
+    Sans ces dépendances, on ne peut pas compiler le projet 
+    (suivre le \textit{README} pour configurer).
+    \bigskip
+    
+    \item[Vidéo du match]: La vidéo du match doit être de 
+    résolution 640x480, les formats avi, mov et mp4 sont tous 
+    acceptés. 
+    \bigskip
+    
+    La caméra doit rester statique pendant tout l'enregistrement 
+    (on ne peut pas mettre à jour l'équation de plan), et ne pas 
+    avoir de trop grosse déformations (par exemple l'effet 
+    fisheye d'une caméra grand angle va générer des erreurs).
+    \bigskip
+    
+    \item[Logs et fichiers de configuration]: La vidéo du match 
+    doit se trouver dans le même dossier que les logs du match, 
+    ainsi que les fichiers de configuration json. 
+    \bigskip
+    
+    Voir l'exemple avec les dossiers présents dans le google 
+    drive donné dans le README, qui contient les fichiers et les 
+    vidéos de matchs de football robotique.
+    
+    \item[Equipes de robots qui respectent la hiérarchie des 
+    logs]: Tous les robots ne communiquent pas de la même 
+    manière, et tous les logs ne suivent pas la même 
+    architecture. 
+    
+    Nos clients ont mis en place une architecture de logs. Les 
+    logs fournis doivent donc suivre l'architecture définie par 
+    le client pour être exploitables par notre logiciel.
+\end{description}
+

@@ -1,0 +1,75 @@
+\chapter{Conclusion}
+
+Grâce à nos deux modes d'affichage et nos multiples annotations, 
+notre outil de visionnage permet de mieux saisir l'état du jeu tel
+qu'il est perçu par un robot.
+\bigskip
+
+On peut imaginer une interface dédiée aux développeurs qui serait
+centrée sur un robot ou une équipe. Cela leur permettrait d'avoir 
+des informations précises plus détaillées et complètes 
+qu'actuellement.
+\bigskip
+
+Notre interface ne traite qu'une seule vidéo à la fois. Pouvoir 
+changer de point de vue lors d'un match serait un atout pour 
+pouvoir mieux suivre les actions.
+\bigskip
+
+Nous avons préféré rester sur une interface plutôt générale mais 
+bien fonctionnelle (scroll dans les équipes, pop-up pour le choix 
+des annotations et slider). Ajouter les annotations à l'interface 
+au fur et à mesure a été moins compliqué que d'ajouter ces outils 
+ergonomiques.
+\bigskip
+
+Pour ce qui est des annotations, nous avons longtemps parlé de 
+faire des ellipses à la place des cercles. 
+\bigskip
+
+L'idée était exprimer la dispersion des probabilités de positons 
+qu'un robot peut envoyer. Ces ellipses pouvaient aussi représenter
+la distorsion de la caméra, nous permettant de mieux comprendre 
+l'angle de vision.
+\bigskip
+
+Finalement, nous n'avons jamais implémenté l'ellipse, n'ayant de 
+la part du robot qu'une simple position (x,y). Nous n'avons pas 
+jugé l'implémentation de l'ellipse prioritaire, nous avons préféré
+ajouter des annotations.
+\bigskip
+\newpage
+
+Nous avons pensé à ajouter les informations sur le jeu dans
+l'interface (temps restant en touche pour robot exclu, nombre de 
+cartons jaune et rouge par robot). Ces informations étaient d'une 
+utilité limitée dans les premières vidéos tournées (pas de buts). 
+Nous avons trouvé plus pertinent d'afficher à la place les choix 
+des annotations.
+\bigskip
+
+En revanche, si l'on stocke les \textbf{GCRobotMsg}, il paraît 
+plutôt simple d'afficher ces informations. Il suffit de lire le 
+message dans la classe \textbf{RobotInformation}, puis lire le 
+message grâce aux fonctions proto déjà implémentées.
+\bigskip
+
+Ajouter des annotations comme les penalty, la position des 
+adversaires ou encore la cible de la frappe est assez rapide.
+Ce sont des simples cercles à afficher comme la balle ou la 
+position du robot.
+\bigskip
+
+Enfin, il aurait été intéressant de pouvoir enregistrer une vidéo 
+annotée. Nous avions testé l'enregistrement d'une vidéo à partir 
+d'images lors du premier rendu du cahier des besoins. 
+
+Nous n'avons pas adapté notre code de test aux fichiers du client,
+mais nous avions réussi à enregistrer à partir d'une liste
+d'image.
+\bigskip
+
+Au terme de ce travail, nous avons pu créer un outil de
+visualisation de match de football robotique qui répond à une
+majorité des besoins du client. Notre projet est destiné à évoluer
+grâce aux nombreuses extensions possibles.

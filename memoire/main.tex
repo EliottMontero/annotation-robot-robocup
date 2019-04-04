@@ -7,16 +7,22 @@
 \usepackage{lmodern}  
 \usepackage{color}  
 \usepackage{graphicx}  
+\usepackage{subfig}
 \usepackage{appendix}
 \usepackage{subfiles}
 \usepackage{hyperref} 
 \usepackage{float}
+\usepackage{subfig}
+
 
 \usepackage[
 backend=biber,
 style=alphabetic,
 sorting=ynt
 ]{biblatex}
+
+\addbibresource{bibli.bib}
+
 
 \title{Visualisation de matchs de football robotique}
 \author{ 
@@ -25,13 +31,13 @@ sorting=ynt
 \textit{Lucie MATHÉ}\\
 \textit{Eliott MONTERO}\\
 } 
-\date{9 avril 2019}
+\date{4 avril 2019}
 
 \begin{document}
 
 \begin{figure}[!b]  
 \begin{center}  
-\includegraphics[scale=1]{images/vin.png}  
+\includegraphics[scale=0.25]{images/bx.jpg}  
 \end{center}  
 \end{figure} 
 \maketitle
@@ -47,9 +53,13 @@ sorting=ynt
 
 \subfile{tests}
 
+\subfile{problemes}
+
+\subfile{conclusion}
 \printbibliography
 
 \newpage
+\input{annexe.tex}
 
 
 \end{document}
