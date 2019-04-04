@@ -73,11 +73,11 @@ In order to launch the treatment, you'll need a folder containing the video
 files and logs, see the INSTALLATION part to download the given 2vs1/ files
 containing examples of the needed files to test the project.
 
-After you changed the value of the BUILD_TRAITEMENT_TOOLS:BOOL to ON in
-workspace/build/treatment/CMakeCache.txt and built with catkin in workspace,
+After you changed the value of the BUILD_ANNOTATEIMAGE_TOOLS:BOOL to ON in
+workspace/build/annotateImage/CMakeCache.txt and built with catkin in workspace,
 go to the 2vs1/ folder and input the following line in the terminal :
 
-      ../workspace/devel/lib/treatment/test_treatment -c replay.json \
+      ../workspace/devel/lib/annotateImage/main_annotateImage -c replay.json \
       -f eirlab.json -a 1 -a 1 -t 4
 
 The first -a option indicates  whether you want to display the robots' position
@@ -89,7 +89,7 @@ The second -a option indicates wh
 
 # LAUNCH INTERFACE
 
-After you changed the value of the BUILD_TRAITEMENT_TOOLS:BOOL to ON in
+After you changed the value of the BUILD_ANNOTATEIMAGE_TOOLS:BOOL to ON in
 workspace/build/interface/CMakeCache.txt and built with catkin in workspace,
 go to the 2vs1/ folder and input the following line in the terminal :
 
