@@ -48,7 +48,7 @@ add_library (${PROJECT_NAME} SHARED ${ALL_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_executable(main_annotateImage tools/test_annotateImage.cpp)
+add_executable(main_annotateImage tools/main_annotateImage.cpp)
 target_link_libraries(main_annotateImage ${PROJECT_NAME} ${catkin_LIBRARIES})
 
 option(BUILD_ANNOTATEIMAGE_TOOLS "Building ANNOTATEIMAGE tools" OFF)
