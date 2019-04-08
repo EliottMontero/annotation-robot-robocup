@@ -12,9 +12,9 @@ The goal of this project is to display robots logs on a video from a football
 match of robots,, which is the equivalent of "Augmented Logs", and helps
 understand the logs' content through what happens in the video, and the robots'
 behaviour.
-There are two important packages in this project : treatment and interface, where
-treatment is in charge of treating images to display the informations, and
-interface is in charge of the UI and using the treatment package to display the
+There are two important packages in this project : annotateImage and interface, where
+annotateImage is in charge of treating images to display the informations, and
+interface is in charge of the UI and using the annotateImage package to display the
 modified video.
 
 # INSTALLATION
@@ -31,7 +31,7 @@ libjsoncpp-dev, libtclap-dev, qtmultimedia5-dev, libopencv, gcc, cmake, git :
 
       pip install -U catkin_tools
 
-- Import the project's submodules : 
+- Import the project's submodules :
 
       git submodule init
       git submodule update
@@ -67,25 +67,28 @@ If you want a package's executables files, you'll need to go to
 workspace/build/<package_name> and change the value of BUILD_TRAITEMENT_TOOLS:BOOL
 to ON in the CMakeCache.txt file.
 
-# LAUNCH TREATMENT
+# LAUNCH annotateImage
 
-In order to launch the treatment, you'll need a folder containing the video
-files and logs, see the INSTALLATION part to download the given 2vs1/ files
-containing examples of the needed files to test the project.
+In order to launch the annotateImage, you'll need a folder containing the video
+files and logs, see the INSTALLATION part to download the given files (2vs1/ or
+2019_03_21/ for instance) containing examples of the needed files to test the project.
 
-After you changed the value of the BUILD_ANNOTATEIMAGE_TOOLS:BOOL to ON in
+To lauch the annotateImage main executable, go to a given folder with video
+and input the following line :
+
+      ../workspace/devel/lib/annotateImage/main_annotateImage
+
+All settings can be changed in annotation_settings.json or match_settings.json.
+
+If you change the value of the BUILD_ANNOTATEIMAGE_TOOLS:BOOL to ON in
 workspace/build/annotateImage/CMakeCache.txt and built with catkin in workspace,
-go to the 2vs1/ folder and input the following line in the terminal :
+you now have the init and tests executables :
 
-      ../workspace/devel/lib/annotateImage/main_annotateImage -c replay.json \
-      -f eirlab.json -a 1 -a 1 -t 4
-
-The first -a option indicates  whether you want to display the robots' position
-or not (1 = ON, 0 = OFF)
-The second -a option indicates wh
-
-/!\ NEEDS CHANGE /!\
-
+init_match : gives us the robots and team playing in the match.
+test_log : reads the video with fake interruptions of logs for each robot.
+test_time : returns a result.csv which gives us execution times for some functions.
+test_video : launches five main_annotateImage and a test_time to test performance
+of the computer
 
 # LAUNCH INTERFACE
 
